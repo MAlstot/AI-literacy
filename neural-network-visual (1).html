@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Network: Layers and Weights</title>
+<style>
+  :root {
+    --green: #154734;
+    --gold: #FFB81C;
+    --gold-light: #fff5d6;
+    --green-light: #e8f0ec;
+    --ink: #1a1a1a;
+    --mid: #595959;
+    --paper: #f8f6f0;
+    --white: #ffffff;
+    --border: #d0ccc4;
+    --active: #FFB81C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 28px 16px 48px;
+  }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--green); color: white;
+    padding: 8px 16px; font-family: Arial, sans-serif;
+    font-size: 0.9rem; z-index: 9999;
+    text-decoration: none; border-radius: 0 0 4px 0;
+  }
+  .skip-link:focus { left: 0; }
+
+  .page { max-width: 820px; margin: 0 auto; }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid var(--gold);
+  }
+  .header h1 {
+    font-family: Georgia, serif;
+    font-size: 1.8rem;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-family: Arial, sans-serif;
+    font-size: 0.92rem;
+    color: var(--mid);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* INTRO HINT */
+  .hint {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 0.82rem;
+    color: var(--mid);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+
+  /* STAGE TABS */
+  .stage-tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .stage-tab {
+    padding: 9px 18px;
+    border-radius: 4px;
+    border: 2px solid var(--green);
+    background: var(--white);
+    font-family: Arial, sans-serif;
+    font-size: 0.82rem;
+    font-weight: bold;
+    color: var(--green);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .stage-tab:hover, .stage-tab:focus {
+    background: var(--green-light);
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .stage-tab[aria-pressed="true"] {
+    background: var(--green);
+    color: var(--white);
+  }
+
+  /* MAIN VISUAL AREA */
+  .visual-area {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-top: 5px solid var(--green);
+    border-radius: 6px;
+    padding: 28px 20px 24px;
+    margin-bottom: 20px;
+  }
+
+  /* NETWORK DIAGRAM */
+  .network-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .network-svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  /* SVG node styles */
+  .neuron {
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .neuron circle {
+    stroke-width: 2.5;
+    transition: fill 0.25s, stroke 0.25s, r 0.2s;
+  }
+  .neuron:hover circle, .neuron:focus circle {
+    stroke-width: 4;
+  }
+  .neuron text {
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    fill: white;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    font-weight: bold;
+  }
+
+  .conn-line {
+    stroke: #d0ccc4;
+    stroke-width: 1.5;
+    transition: stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
+    opacity: 0.5;
+  }
+  .conn-line.active {
+    stroke: var(--gold);
+    stroke-width: 3;
+    opacity: 1;
+  }
+  .conn-line.highlight {
+    stroke: var(--green);
+    stroke-width: 2.5;
+    opacity: 0.8;
+  }
+
+  .layer-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    fill: var(--green);
+    text-anchor: middle;
+  }
+  .layer-sublabel {
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    fill: var(--mid);
+    text-anchor: middle;
+  }
+
+  /* EXPLANATION PANEL */
+  .explain-panel {
+    background: var(--gold-light);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 16px 18px;
+    margin-top: 20px;
+    min-height: 80px;
+  }
+  .explain-panel h3 {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .explain-panel p {
+    font-family: Arial, sans-serif;
+    font-size: 0.87rem;
+    color: var(--ink);
+    line-height: 1.65;
+  }
+
+  /* WEIGHT LEGEND */
+  .weight-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    color: var(--mid);
+  }
+  .legend-swatch {
+    width: 28px;
+    height: 4px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* STEP NAV */
+  .step-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .step-btn {
+    padding: 9px 22px;
+    border-radius: 4px;
+    border: 2px solid var(--green);
+    font-family: Arial, sans-serif;
+    font-size: 0.88rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .step-btn:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .step-btn.prev { background: var(--white); color: var(--green); }
+  .step-btn.prev:hover:not(:disabled) { background: var(--green-light); }
+  .step-btn.next { background: var(--green); color: var(--white); }
+  .step-btn.next:hover:not(:disabled) { background: #0f3326; }
+  .step-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .step-counter {
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    color: var(--mid);
+  }
+
+  /* KEY CONCEPTS */
+  .concepts { margin-top: 36px; }
+  .concepts h2 {
+    font-family: Georgia, serif;
+    font-size: 1.15rem;
+    color: var(--green);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .concepts-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .concept-box {
+    flex: 1 1 180px;
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-top: 4px solid var(--gold);
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+  }
+  .concept-box .icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+  .concept-box h3 {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .concept-box p {
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    color: var(--mid);
+    line-height: 1.55;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    font-family: Arial, sans-serif;
+    font-size: 0.73rem;
+    color: var(--mid);
+  }
+
+  @media (max-width: 560px) {
+    .concepts-row { flex-direction: column; }
+    .stage-tabs { gap: 6px; }
+    .stage-tab { font-size: 0.75rem; padding: 7px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div class="page" id="main-content">
+
+  <header class="header">
+    <h1>Neural Networks: Layers and Weights</h1>
+    <p>How your prompt travels through a neural network to produce a response</p>
+  </header>
+
+  <p class="hint">Select a stage to highlight that part of the network, or step through the process in order below.</p>
+
+  <!-- STAGE TABS -->
+  <div class="stage-tabs" role="group" aria-label="Select a network stage to highlight">
+    <button class="stage-tab" aria-pressed="false" onclick="setStage(0)" id="tab-0">All Layers</button>
+    <button class="stage-tab" aria-pressed="false" onclick="setStage(1)" id="tab-1">1. Input Layer</button>
+    <button class="stage-tab" aria-pressed="false" onclick="setStage(2)" id="tab-2">2. Hidden Layers</button>
+    <button class="stage-tab" aria-pressed="false" onclick="setStage(3)" id="tab-3">3. Weights</button>
+    <button class="stage-tab" aria-pressed="false" onclick="setStage(4)" id="tab-4">4. Output Layer</button>
+  </div>
+
+  <!-- VISUAL AREA -->
+  <div class="visual-area" role="region" aria-label="Neural network diagram">
+
+    <div class="network-wrap">
+      <svg class="network-svg" viewBox="0 0 700 320" width="700" height="320" aria-label="Neural network diagram showing input, hidden, and output layers connected by weighted lines" role="img">
+
+        <!-- CONNECTION LINES — weight encoded via stroke-width and opacity -->
+        <!-- data-weight: 0.0-1.0; rendered by JS on load -->
+
+        <!-- Input to Hidden1 -->
+        <line class="conn-line" data-from="i0" data-to="h10" data-weight="0.82" x1="110" y1="80"  x2="270" y2="60"  id="c-i0-h10"/>
+        <line class="conn-line" data-from="i0" data-to="h11" data-weight="0.21" x1="110" y1="80"  x2="270" y2="120" id="c-i0-h11"/>
+        <line class="conn-line" data-from="i0" data-to="h12" data-weight="0.55" x1="110" y1="80"  x2="270" y2="180" id="c-i0-h12"/>
+        <line class="conn-line" data-from="i0" data-to="h13" data-weight="0.09" x1="110" y1="80"  x2="270" y2="240" id="c-i0-h13"/>
+        <line class="conn-line" data-from="i1" data-to="h10" data-weight="0.33" x1="110" y1="150" x2="270" y2="60"  id="c-i1-h10"/>
+        <line class="conn-line" data-from="i1" data-to="h11" data-weight="0.91" x1="110" y1="150" x2="270" y2="120" id="c-i1-h11"/>
+        <line class="conn-line" data-from="i1" data-to="h12" data-weight="0.14" x1="110" y1="150" x2="270" y2="180" id="c-i1-h12"/>
+        <line class="conn-line" data-from="i1" data-to="h13" data-weight="0.67" x1="110" y1="150" x2="270" y2="240" id="c-i1-h13"/>
+        <line class="conn-line" data-from="i2" data-to="h10" data-weight="0.44" x1="110" y1="220" x2="270" y2="60"  id="c-i2-h10"/>
+        <line class="conn-line" data-from="i2" data-to="h11" data-weight="0.18" x1="110" y1="220" x2="270" y2="120" id="c-i2-h11"/>
+        <line class="conn-line" data-from="i2" data-to="h12" data-weight="0.76" x1="110" y1="220" x2="270" y2="180" id="c-i2-h12"/>
+        <line class="conn-line" data-from="i2" data-to="h13" data-weight="0.38" x1="110" y1="220" x2="270" y2="240" id="c-i2-h13"/>
+
+        <!-- Hidden1 to Hidden2 -->
+        <line class="conn-line" data-from="h10" data-to="h20" data-weight="0.88" x1="270" y1="60"  x2="430" y2="60"  id="c-h10-h20"/>
+        <line class="conn-line" data-from="h10" data-to="h21" data-weight="0.12" x1="270" y1="60"  x2="430" y2="120" id="c-h10-h21"/>
+        <line class="conn-line" data-from="h10" data-to="h22" data-weight="0.47" x1="270" y1="60"  x2="430" y2="180" id="c-h10-h22"/>
+        <line class="conn-line" data-from="h10" data-to="h23" data-weight="0.06" x1="270" y1="60"  x2="430" y2="240" id="c-h10-h23"/>
+        <line class="conn-line" data-from="h11" data-to="h20" data-weight="0.29" x1="270" y1="120" x2="430" y2="60"  id="c-h11-h20"/>
+        <line class="conn-line" data-from="h11" data-to="h21" data-weight="0.94" x1="270" y1="120" x2="430" y2="120" id="c-h11-h21"/>
+        <line class="conn-line" data-from="h11" data-to="h22" data-weight="0.11" x1="270" y1="120" x2="430" y2="180" id="c-h11-h22"/>
+        <line class="conn-line" data-from="h11" data-to="h23" data-weight="0.61" x1="270" y1="120" x2="430" y2="240" id="c-h11-h23"/>
+        <line class="conn-line" data-from="h12" data-to="h20" data-weight="0.52" x1="270" y1="180" x2="430" y2="60"  id="c-h12-h20"/>
+        <line class="conn-line" data-from="h12" data-to="h21" data-weight="0.08" x1="270" y1="180" x2="430" y2="120" id="c-h12-h21"/>
+        <line class="conn-line" data-from="h12" data-to="h22" data-weight="0.79" x1="270" y1="180" x2="430" y2="180" id="c-h12-h22"/>
+        <line class="conn-line" data-from="h12" data-to="h23" data-weight="0.35" x1="270" y1="180" x2="430" y2="240" id="c-h12-h23"/>
+        <line class="conn-line" data-from="h13" data-to="h20" data-weight="0.16" x1="270" y1="240" x2="430" y2="60"  id="c-h13-h20"/>
+        <line class="conn-line" data-from="h13" data-to="h21" data-weight="0.73" x1="270" y1="240" x2="430" y2="120" id="c-h13-h21"/>
+        <line class="conn-line" data-from="h13" data-to="h22" data-weight="0.42" x1="270" y1="240" x2="430" y2="180" id="c-h13-h22"/>
+        <line class="conn-line" data-from="h13" data-to="h23" data-weight="0.85" x1="270" y1="240" x2="430" y2="240" id="c-h13-h23"/>
+
+        <!-- Hidden2 to Output -->
+        <line class="conn-line" data-from="h20" data-to="o0" data-weight="0.93" x1="430" y1="60"  x2="590" y2="100" id="c-h20-o0"/>
+        <line class="conn-line" data-from="h20" data-to="o1" data-weight="0.24" x1="430" y1="60"  x2="590" y2="160" id="c-h20-o1"/>
+        <line class="conn-line" data-from="h20" data-to="o2" data-weight="0.07" x1="430" y1="60"  x2="590" y2="220" id="c-h20-o2"/>
+        <line class="conn-line" data-from="h21" data-to="o0" data-weight="0.31" x1="430" y1="120" x2="590" y2="100" id="c-h21-o0"/>
+        <line class="conn-line" data-from="h21" data-to="o1" data-weight="0.86" x1="430" y1="120" x2="590" y2="160" id="c-h21-o1"/>
+        <line class="conn-line" data-from="h21" data-to="o2" data-weight="0.19" x1="430" y1="120" x2="590" y2="220" id="c-h21-o2"/>
+        <line class="conn-line" data-from="h22" data-to="o0" data-weight="0.57" x1="430" y1="180" x2="590" y2="100" id="c-h22-o0"/>
+        <line class="conn-line" data-from="h22" data-to="o1" data-weight="0.13" x1="430" y1="180" x2="590" y2="160" id="c-h22-o1"/>
+        <line class="conn-line" data-from="h22" data-to="o2" data-weight="0.71" x1="430" y1="180" x2="590" y2="220" id="c-h22-o2"/>
+        <line class="conn-line" data-from="h23" data-to="o0" data-weight="0.22" x1="430" y1="240" x2="590" y2="100" id="c-h23-o0"/>
+        <line class="conn-line" data-from="h23" data-to="o1" data-weight="0.48" x1="430" y1="240" x2="590" y2="160" id="c-h23-o1"/>
+        <line class="conn-line" data-from="h23" data-to="o2" data-weight="0.89" x1="430" y1="240" x2="590" y2="220" id="c-h23-o2"/>
+
+        <!-- INPUT LAYER -->
+        <text class="layer-label" x="110" y="22">Input Layer</text>
+        <text class="layer-sublabel" x="110" y="36">Your tokens</text>
+
+        <g class="neuron" id="n-i0" tabindex="0" role="button" aria-label="Input neuron: Token 1" onclick="highlightNode('i0')" onkeydown="if(event.key==='Enter')highlightNode('i0')">
+          <circle cx="110" cy="80" r="22" fill="#154734" stroke="#154734"/>
+          <text x="110" y="80">T1</text>
+        </g>
+        <g class="neuron" id="n-i1" tabindex="0" role="button" aria-label="Input neuron: Token 2" onclick="highlightNode('i1')" onkeydown="if(event.key==='Enter')highlightNode('i1')">
+          <circle cx="110" cy="150" r="22" fill="#154734" stroke="#154734"/>
+          <text x="110" y="150">T2</text>
+        </g>
+        <g class="neuron" id="n-i2" tabindex="0" role="button" aria-label="Input neuron: Token 3" onclick="highlightNode('i2')" onkeydown="if(event.key==='Enter')highlightNode('i2')">
+          <circle cx="110" cy="220" r="22" fill="#154734" stroke="#154734"/>
+          <text x="110" y="220">T3</text>
+        </g>
+
+        <!-- HIDDEN LAYER 1 -->
+        <text class="layer-label" x="270" y="22">Hidden Layer 1</text>
+        <text class="layer-sublabel" x="270" y="36">Pattern detection</text>
+
+        <g class="neuron" id="n-h10" tabindex="0" role="button" aria-label="Hidden layer 1, neuron 1" onclick="highlightNode('h10')" onkeydown="if(event.key==='Enter')highlightNode('h10')">
+          <circle cx="270" cy="60" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="270" y="60">H1</text>
+        </g>
+        <g class="neuron" id="n-h11" tabindex="0" role="button" aria-label="Hidden layer 1, neuron 2" onclick="highlightNode('h11')" onkeydown="if(event.key==='Enter')highlightNode('h11')">
+          <circle cx="270" cy="120" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="270" y="120">H2</text>
+        </g>
+        <g class="neuron" id="n-h12" tabindex="0" role="button" aria-label="Hidden layer 1, neuron 3" onclick="highlightNode('h12')" onkeydown="if(event.key==='Enter')highlightNode('h12')">
+          <circle cx="270" cy="180" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="270" y="180">H3</text>
+        </g>
+        <g class="neuron" id="n-h13" tabindex="0" role="button" aria-label="Hidden layer 1, neuron 4" onclick="highlightNode('h13')" onkeydown="if(event.key==='Enter')highlightNode('h13')">
+          <circle cx="270" cy="240" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="270" y="240">H4</text>
+        </g>
+
+        <!-- HIDDEN LAYER 2 -->
+        <text class="layer-label" x="430" y="22">Hidden Layer 2</text>
+        <text class="layer-sublabel" x="430" y="36">Deeper relationships</text>
+
+        <g class="neuron" id="n-h20" tabindex="0" role="button" aria-label="Hidden layer 2, neuron 1" onclick="highlightNode('h20')" onkeydown="if(event.key==='Enter')highlightNode('h20')">
+          <circle cx="430" cy="60" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="430" y="60">H5</text>
+        </g>
+        <g class="neuron" id="n-h21" tabindex="0" role="button" aria-label="Hidden layer 2, neuron 2" onclick="highlightNode('h21')" onkeydown="if(event.key==='Enter')highlightNode('h21')">
+          <circle cx="430" cy="120" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="430" y="120">H6</text>
+        </g>
+        <g class="neuron" id="n-h22" tabindex="0" role="button" aria-label="Hidden layer 2, neuron 3" onclick="highlightNode('h22')" onkeydown="if(event.key==='Enter')highlightNode('h22')">
+          <circle cx="430" cy="180" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="430" y="180">H7</text>
+        </g>
+        <g class="neuron" id="n-h23" tabindex="0" role="button" aria-label="Hidden layer 2, neuron 4" onclick="highlightNode('h23')" onkeydown="if(event.key==='Enter')highlightNode('h23')">
+          <circle cx="430" cy="240" r="20" fill="#2a6049" stroke="#2a6049"/>
+          <text x="430" y="240">H8</text>
+        </g>
+
+        <!-- OUTPUT LAYER -->
+        <text class="layer-label" x="590" y="22">Output Layer</text>
+        <text class="layer-sublabel" x="590" y="36">Next word options</text>
+
+        <g class="neuron" id="n-o0" tabindex="0" role="button" aria-label="Output neuron: most likely next word" onclick="highlightNode('o0')" onkeydown="if(event.key==='Enter')highlightNode('o0')">
+          <circle cx="590" cy="100" r="22" fill="#FFB81C" stroke="#c48f00"/>
+          <text x="590" y="100" fill="#154734">W1</text>
+        </g>
+        <g class="neuron" id="n-o1" tabindex="0" role="button" aria-label="Output neuron: second likely next word" onclick="highlightNode('o1')" onkeydown="if(event.key==='Enter')highlightNode('o1')">
+          <circle cx="590" cy="160" r="22" fill="#FFB81C" stroke="#c48f00"/>
+          <text x="590" y="160" fill="#154734">W2</text>
+        </g>
+        <g class="neuron" id="n-o2" tabindex="0" role="button" aria-label="Output neuron: third likely next word" onclick="highlightNode('o2')" onkeydown="if(event.key==='Enter')highlightNode('o2')">
+          <circle cx="590" cy="220" r="22" fill="#FFB81C" stroke="#c48f00"/>
+          <text x="590" y="220" fill="#154734">W3</text>
+        </g>
+
+
+
+      </svg>
+    </div>
+
+    <!-- EXPLANATION PANEL -->
+    <div class="explain-panel" aria-live="polite" id="explain-panel">
+      <h3 id="explain-title">Select a stage or click a neuron to learn more</h3>
+      <p id="explain-text">This diagram shows a simplified neural network. Real LLMs have billions of neurons across hundreds of layers. Select a tab above or click any neuron to explore how information flows through the network.</p>
+    </div>
+
+    <!-- WEIGHT LEGEND -->
+    <div class="weight-legend" aria-label="Legend">
+      <div class="legend-item">
+        <svg width="36" height="10" aria-hidden="true"><line x1="0" y1="5" x2="36" y2="5" stroke="#e0dbd2" stroke-width="1.5"/></svg>
+        <span>Low weight (e.g. 0.06) — thin, faint line</span>
+      </div>
+      <div class="legend-item">
+        <svg width="36" height="10" aria-hidden="true"><line x1="0" y1="5" x2="36" y2="5" stroke="#FFB81C" stroke-width="4"/></svg>
+        <span>High weight (e.g. 0.94) — thick, gold line</span>
+      </div>
+      <div class="legend-item">
+        <svg width="36" height="10" aria-hidden="true"><line x1="0" y1="5" x2="36" y2="5" stroke="#154734" stroke-width="2.5" stroke-dasharray="4,3"/></svg>
+        <span>Selected node connections highlighted</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STEP NAV -->
+  <div class="step-nav">
+    <button class="step-btn prev" id="prevBtn" onclick="changeStep(-1)" disabled aria-label="Previous step">← Previous</button>
+    <span class="step-counter" aria-live="polite" id="stepCounter">Use tabs above to explore</span>
+    <button class="step-btn next" id="nextBtn" onclick="changeStep(1)" aria-label="Next step">Next Step →</button>
+  </div>
+
+  <!-- KEY CONCEPTS -->
+  <section class="concepts" aria-labelledby="concepts-heading">
+    <h2 id="concepts-heading">Key Concepts</h2>
+    <div class="concepts-row">
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">🔢</span>
+        <h3>Tokens</h3>
+        <p>Your input is broken into tokens before entering the network. Each token becomes a starting signal for the input layer.</p>
+      </div>
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">🧠</span>
+        <h3>Hidden Layers</h3>
+        <p>Where pattern recognition happens. Each layer detects increasingly complex relationships between ideas in your prompt.</p>
+      </div>
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">⚖️</span>
+        <h3>Weights</h3>
+        <p>Numbers on each connection that determine how strongly one neuron influences another. High weights = strong influence. These are learned during training.</p>
+      </div>
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">📤</span>
+        <h3>Output Layer</h3>
+        <p>Produces a probability for each possible next word. The model samples from these probabilities to generate a response.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Developed with Claude &nbsp;·&nbsp; Baylor University Academy for Teaching &amp; Learning &nbsp;·&nbsp; Simplified diagram</p>
+  </footer>
+
+</div>
+
+<script>
+  /* ── RENDER WEIGHTS VISUALLY ──
+     Each line has data-weight 0.0–1.0
+     Low weight  → thin (1px), light gray, low opacity
+     High weight → thick (5px), gold, full opacity          */
+  function applyWeights() {
+    document.querySelectorAll('.conn-line').forEach(function(l) {
+      var w = parseFloat(l.dataset.weight) || 0;
+      l._weight = w;
+      renderWeight(l, w, false);
+    });
+  }
+
+  function renderWeight(line, w, dimmed) {
+    if (dimmed) {
+      line.setAttribute('stroke', '#e0dbd2');
+      line.setAttribute('stroke-width', '1');
+      line.setAttribute('opacity', '0.3');
+      return;
+    }
+    // interpolate gray (#d0ccc4) → gold (#FFB81C) based on weight
+    var r = Math.round(208 + (255 - 208) * w);
+    var g = Math.round(204 + (184 - 204) * w);
+    var b = Math.round(196 + (28  - 196) * w);
+    var color = 'rgb(' + r + ',' + g + ',' + b + ')';
+    var width  = 1 + w * 4;        // 1px → 5px
+    var opacity = 0.25 + w * 0.75; // 0.25 → 1.0
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', width.toFixed(2));
+    line.setAttribute('opacity', opacity.toFixed(2));
+  }
+
+  function resetAllWeights() {
+    document.querySelectorAll('.conn-line').forEach(function(l) {
+      renderWeight(l, l._weight, false);
+    });
+  }
+
+  /* ── STAGE EXPLANATIONS ── */
+  var stages = [
+    {
+      title: "The Full Network at a Glance",
+      text: "This is a simplified neural network. Your prompt enters on the left as tokens, passes through hidden layers where patterns are detected, and exits on the right as probable next words. Real LLMs have billions of neurons across hundreds of layers — but the same principle applies.",
+      highlight: "all"
+    },
+    {
+      title: "Input Layer: Your Tokens Arrive",
+      text: "Before your prompt enters the network, it is broken into tokens — small units of text. Each token becomes a signal in the input layer (T1, T2, T3). These signals are passed forward to the first hidden layer, carrying information about each part of your prompt.",
+      highlight: "input"
+    },
+    {
+      title: "Hidden Layers: Finding Patterns",
+      text: "The hidden layers are where the real work happens. Each neuron receives signals from the previous layer, processes them, and passes results forward. Early layers detect simple patterns (word relationships); deeper layers detect complex ones (meaning, context, intent). Real LLMs have hundreds of these layers.",
+      highlight: "hidden"
+    },
+    {
+      title: "Weights: What the Model Has Learned",
+      text: "Every connection between neurons has a weight — a number between 0 and 1 that determines how strongly one neuron influences another. In this diagram, line thickness and color directly encode the weight value: thin gray lines are low-weight connections (e.g. 0.06), while thick gold lines are high-weight connections (e.g. 0.94). These weights are what the model learned during training across billions of examples.",
+      highlight: "weights"
+    },
+    {
+      title: "Output Layer: Choosing the Next Word",
+      text: "The output layer produces a probability score for each possible next word (W1, W2, W3 represent different candidates). The model does not always pick the single highest-scoring word — it samples from these probabilities, which is why responses can vary even to the same question.",
+      highlight: "output"
+    }
+  ];
+
+  var currentStep = -1;
+
+  /* ── SET STAGE FROM TABS ── */
+  function setStage(idx) {
+    currentStep = idx;
+    updateTabs(idx);
+    updateExplanation(idx);
+    updateConnections(stages[idx].highlight);
+    updateStepNav();
+  }
+
+  function updateTabs(idx) {
+    for (var i = 0; i < stages.length; i++) {
+      var tab = document.getElementById('tab-' + i);
+      if (tab) tab.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+    }
+  }
+
+  function updateExplanation(idx) {
+    document.getElementById('explain-title').textContent = stages[idx].title;
+    document.getElementById('explain-text').textContent = stages[idx].text;
+  }
+
+  function updateStepNav() {
+    var prev = document.getElementById('prevBtn');
+    var next = document.getElementById('nextBtn');
+    var counter = document.getElementById('stepCounter');
+    prev.disabled = currentStep <= 0;
+    next.disabled = currentStep >= stages.length - 1;
+    if (currentStep < 0) {
+      counter.textContent = 'Use tabs above to explore';
+    } else {
+      counter.textContent = 'Step ' + (currentStep + 1) + ' of ' + stages.length;
+      next.textContent = currentStep >= stages.length - 1 ? 'Done ✓' : 'Next Step →';
+    }
+  }
+
+  function changeStep(dir) {
+    var next = currentStep + dir;
+    if (next < 0 || next >= stages.length) return;
+    setStage(next);
+  }
+
+  /* ── CONNECTION HIGHLIGHTING ── */
+  function updateConnections(mode) {
+    var lines = document.querySelectorAll('.conn-line');
+    resetNeurons();
+
+    if (mode === 'all') {
+      lines.forEach(function(l) { renderWeight(l, l._weight, false); });
+    } else if (mode === 'input') {
+      lines.forEach(function(l) {
+        var from = l.dataset.from || '';
+        renderWeight(l, l._weight, from.indexOf('i') !== 0);
+      });
+      highlightLayerNodes(['i0','i1','i2']);
+    } else if (mode === 'hidden') {
+      lines.forEach(function(l) {
+        var from = l.dataset.from || '';
+        var isHidden = from.indexOf('i') === 0 || from.indexOf('h') === 0;
+        renderWeight(l, l._weight, !isHidden);
+      });
+      highlightLayerNodes(['h10','h11','h12','h13','h20','h21','h22','h23']);
+    } else if (mode === 'weights') {
+      // Show all lines with full weight encoding — this IS the weights stage
+      lines.forEach(function(l) { renderWeight(l, l._weight, false); });
+      // Add weight value tooltips on high-weight lines
+      lines.forEach(function(l) {
+        if (l._weight >= 0.75) {
+          l.setAttribute('stroke-width', (1 + l._weight * 4 + 1).toFixed(2));
+        }
+      });
+    } else if (mode === 'output') {
+      lines.forEach(function(l) {
+        var to = l.dataset.to || '';
+        renderWeight(l, l._weight, to.indexOf('o') !== 0);
+      });
+      highlightLayerNodes(['o0','o1','o2']);
+    }
+  }
+
+  function highlightLayerNodes(ids) {
+    ids.forEach(function(id) {
+      var node = document.getElementById('n-' + id);
+      if (node) {
+        var circle = node.querySelector('circle');
+        if (circle) {
+          circle.setAttribute('stroke', '#FFB81C');
+          circle.setAttribute('stroke-width', '4');
+        }
+      }
+    });
+  }
+
+  function resetNeurons() {
+    document.querySelectorAll('.neuron circle').forEach(function(c) {
+      c.setAttribute('stroke-width', '2.5');
+      var id = c.parentElement.id;
+      if (id.indexOf('n-o') === 0) {
+        c.setAttribute('stroke', '#c48f00');
+      } else {
+        c.setAttribute('stroke', c.getAttribute('fill'));
+      }
+    });
+  }
+
+  /* ── NODE CLICK ── */
+  var nodeInfo = {
+    'i0': { title: 'Token 1 (T1)', text: 'The first token from your input. It sends signals to every neuron in the first hidden layer, weighted by how relevant it is to each pattern that layer is looking for.' },
+    'i1': { title: 'Token 2 (T2)', text: 'The second token. Each input neuron passes its signal forward independently, but the hidden layers combine all incoming signals to build a fuller picture of your prompt.' },
+    'i2': { title: 'Token 3 (T3)', text: 'The third token. Together, T1, T2, and T3 represent your full input. Real models process hundreds or thousands of tokens at once.' },
+    'h10': { title: 'Hidden Neuron H1', text: 'This neuron receives signals from all input tokens and looks for a specific pattern — perhaps the relationship between certain words. It passes its finding forward to the next layer.' },
+    'h11': { title: 'Hidden Neuron H2', text: 'A different neuron detecting a different pattern. Hidden layer neurons each specialize in recognizing certain features of the input.' },
+    'h12': { title: 'Hidden Neuron H3', text: 'Another pattern detector. The more neurons a layer has, the more nuanced patterns it can recognize simultaneously.' },
+    'h13': { title: 'Hidden Neuron H4', text: 'Each neuron fires more or less strongly depending on how well its specific pattern matches the input. Strong matches produce stronger signals going forward.' },
+    'h20': { title: 'Hidden Neuron H5', text: 'This neuron in the second hidden layer receives processed signals from the first layer. It detects higher-level patterns — relationships between patterns, not just between words.' },
+    'h21': { title: 'Hidden Neuron H6', text: 'Deeper layers detect more abstract concepts — tone, intent, context. This is how the model understands that "bank" means something different in "river bank" vs. "bank account."' },
+    'h22': { title: 'Hidden Neuron H7', text: 'By this layer, the model has already processed much of the basic meaning of your input and is working on higher-level interpretation.' },
+    'h23': { title: 'Hidden Neuron H8', text: 'Every neuron in every layer contributes to the final output. No single neuron "knows" the answer — it emerges from all of them together.' },
+    'o0': { title: 'Output Word Candidate W1', text: 'This output neuron represents one possible next word — the one the model considers most probable given your input and everything it learned in training. It may or may not be selected.' },
+    'o1': { title: 'Output Word Candidate W2', text: 'A second possible next word with a different probability score. The model samples from all output probabilities, which is why responses can vary even to identical prompts.' },
+    'o2': { title: 'Output Word Candidate W3', text: 'A third candidate. In reality, the output layer covers the entire vocabulary — tens of thousands of words, each with its own probability. The most likely options rise to the top.' }
+  };
+
+  function highlightNode(id) {
+    var info = nodeInfo[id];
+    if (!info) return;
+    document.getElementById('explain-title').textContent = info.title;
+    document.getElementById('explain-text').textContent = info.text;
+
+    // Show connected lines at full weight, dim others
+    document.querySelectorAll('.conn-line').forEach(function(l) {
+      var connected = (l.dataset.from === id || l.dataset.to === id);
+      renderWeight(l, l._weight, !connected);
+    });
+
+    resetNeurons();
+    highlightLayerNodes([id]);
+  }
+
+  // Init
+  applyWeights();
+  setStage(0);
+</script>
+
+</body>
+</html>
