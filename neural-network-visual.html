@@ -146,20 +146,7 @@
   }
 
   .conn-line {
-    stroke: #d0ccc4;
-    stroke-width: 1.5;
-    transition: stroke 0.25s, stroke-width 0.25s, opacity 0.25s;
-    opacity: 0.5;
-  }
-  .conn-line.active {
-    stroke: var(--gold);
-    stroke-width: 3;
-    opacity: 1;
-  }
-  .conn-line.highlight {
-    stroke: var(--green);
-    stroke-width: 2.5;
-    opacity: 0.8;
+    transition: stroke 0.3s, stroke-width 0.3s, opacity 0.3s;
   }
 
   .layer-label {
@@ -473,16 +460,16 @@
     <!-- WEIGHT LEGEND -->
     <div class="weight-legend" aria-label="Legend">
       <div class="legend-item">
-        <svg width="36" height="10" aria-hidden="true"><line x1="0" y1="5" x2="36" y2="5" stroke="#e0dbd2" stroke-width="1.5"/></svg>
+        <div style="width:36px; height:2px; background:#e0dbd2; border-radius:1px; flex-shrink:0;"></div>
         <span>Low weight (e.g. 0.06) — thin, faint line</span>
       </div>
       <div class="legend-item">
-        <svg width="36" height="10" aria-hidden="true"><line x1="0" y1="5" x2="36" y2="5" stroke="#FFB81C" stroke-width="4"/></svg>
+        <div style="width:36px; height:6px; background:#FFB81C; border-radius:2px; flex-shrink:0;"></div>
         <span>High weight (e.g. 0.94) — thick, gold line</span>
       </div>
       <div class="legend-item">
-        <svg width="36" height="10" aria-hidden="true"><line x1="0" y1="5" x2="36" y2="5" stroke="#154734" stroke-width="2.5" stroke-dasharray="4,3"/></svg>
-        <span>Selected node connections highlighted</span>
+        <div style="width:36px; height:2px; background:#e0dbd2; opacity:0.3; border-radius:1px; flex-shrink:0;"></div>
+        <span>Dimmed — not part of the selected stage</span>
       </div>
     </div>
 
