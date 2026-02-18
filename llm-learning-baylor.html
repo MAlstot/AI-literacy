@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Do LLMs Learn?</title>
+<style>
+  /* ── BAYLOR BRAND COLORS ── */
+  :root {
+    --green: #154734;
+    --gold: #FFB81C;
+    --gold-dark: #c48f00;   /* darker gold for text on white — passes AA */
+    --green-light: #e8f0ec;
+    --gold-light: #fff5d6;
+    --ink: #1a1a1a;
+    --mid: #595959;         /* 7:1 on white — AAA */
+    --paper: #f8f6f0;
+    --white: #ffffff;
+    --border: #d0ccc4;
+  }
+
+  /* ── RESET ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 32px 16px 48px;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  /* ── SKIP LINK (WCAG) ── */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--green);
+    color: white;
+    padding: 8px 16px;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    z-index: 9999;
+    text-decoration: none;
+    border-radius: 0 0 4px 0;
+  }
+  .skip-link:focus { left: 0; }
+
+  /* ── TYPOGRAPHY ── */
+  h1 { font-family: Georgia, serif; font-size: 2rem; line-height: 1.2; color: var(--green); }
+  h2 { font-family: Georgia, serif; font-size: 1.25rem; line-height: 1.3; color: var(--green); margin-bottom: 8px; }
+  h3 { font-family: Georgia, serif; font-size: 1.1rem; color: var(--green); margin-bottom: 10px; }
+  p  { font-family: Arial, Helvetica, sans-serif; font-size: 0.92rem; line-height: 1.7; color: var(--ink); }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 3px solid var(--gold);
+  }
+  .header h1 { margin-bottom: 8px; }
+  .header p  { color: var(--mid); max-width: 500px; margin: 0 auto; font-size: 0.95rem; }
+
+  /* ── MODE TOGGLE ── */
+  .mode-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .mode-btn {
+    padding: 10px 24px;
+    border-radius: 4px;
+    border: 2px solid var(--green);
+    background: var(--white);
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--green);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .mode-btn:hover, .mode-btn:focus {
+    background: var(--green-light);
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .mode-btn[aria-pressed="true"] {
+    background: var(--green);
+    color: var(--white);
+    border-color: var(--green);
+  }
+  .mode-btn[aria-pressed="true"]:hover,
+  .mode-btn[aria-pressed="true"]:focus {
+    background: #0f3326;
+  }
+
+  /* ── HINT TEXT ── */
+  .hint {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 0.82rem;
+    color: var(--mid);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+
+  /* ════════════════════════════════
+     EXPLORE MODE — STACKED CARDS
+     No floats, no tables, no grid
+     ════════════════════════════════ */
+  #explore-mode { display: block; }
+  #walkthrough-mode { display: none; }
+
+  /* Timeline wrapper — just a left border stripe */
+  .timeline {
+    border-left: 3px solid var(--gold);
+    margin-left: 18px;
+    padding-left: 0;
+  }
+
+  /* Each stage block */
+  .stage-block {
+    position: relative;
+    margin-bottom: 24px;
+    padding-left: 32px;
+  }
+
+  /* The numbered bullet on the left */
+  .stage-block::before {
+    content: attr(data-num);
+    position: absolute;
+    left: -22px;
+    top: 16px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--white);
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--green);
+    /* fallback for browsers where ::before can't flex: use text-align */
+    text-align: center;
+    padding-top: 2px;
+  }
+
+  /* The clickable card */
+  .stage-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-left: 5px solid var(--green);
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Card header — always visible, acts as button */
+  .stage-header {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: Georgia, serif;
+  }
+  .stage-header:focus {
+    outline: 3px solid var(--gold);
+    outline-offset: -3px;
+  }
+  .stage-header:hover { background: var(--green-light); }
+
+  .stage-header-text { flex: 1; }
+  .stage-tag {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    background: var(--gold-light);
+    color: var(--green);
+    border: 1px solid var(--gold);
+  }
+  .stage-title {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: var(--green);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stage-summary {
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    color: var(--mid);
+    display: block;
+  }
+
+  /* Expand toggle indicator */
+  .expand-indicator {
+    font-family: Arial, sans-serif;
+    font-size: 0.78rem;
+    color: var(--mid);
+    white-space: nowrap;
+    margin-top: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    background: var(--paper);
+  }
+  .stage-header[aria-expanded="true"] .expand-indicator {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  /* Collapsible detail panel */
+  .stage-detail {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .stage-detail.open { display: block; }
+
+  .detail-body {
+    padding-top: 16px;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    line-height: 1.75;
+  }
+
+  .detail-insight {
+    margin-top: 16px;
+    background: var(--gold-light);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+  .detail-insight strong {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .detail-insight p {
+    font-size: 0.87rem;
+    color: var(--ink);
+  }
+
+  /* ════════════════════════════════
+     WALKTHROUGH MODE
+     ════════════════════════════════ */
+  .wt-progress {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 28px;
+    flex-wrap: nowrap;
+  }
+
+  .wt-dot-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    max-width: 140px;
+    position: relative;
+    cursor: pointer;
+  }
+  /* connector line between dots */
+  .wt-dot-wrap:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 17px;
+    left: calc(50% + 19px);
+    right: calc(-50% + 19px);
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .wt-dot-wrap.done:not(:last-child)::after { background: var(--green); }
+
+  .wt-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--border);
+    color: var(--mid);
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1;
+    border: 2px solid var(--border);
+    transition: background 0.25s, border-color 0.25s;
+    cursor: pointer;
+  }
+  .wt-dot:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .wt-dot-wrap.active .wt-dot {
+    background: var(--green); color: var(--white); border-color: var(--green);
+  }
+  .wt-dot-wrap.done .wt-dot {
+    background: var(--green); color: var(--white); border-color: var(--green);
+  }
+
+  .wt-dot-label {
+    font-family: Arial, sans-serif;
+    font-size: 0.68rem;
+    color: var(--mid);
+    text-align: center;
+    max-width: 90px;
+    line-height: 1.3;
+  }
+  .wt-dot-wrap.active .wt-dot-label { color: var(--green); font-weight: bold; }
+
+  /* Slide card */
+  .wt-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-top: 5px solid var(--green);
+    border-radius: 6px;
+    padding: 32px 36px;
+    min-height: 280px;
+  }
+
+  .wt-slide { display: none; }
+  .wt-slide.active { display: block; }
+
+  .wt-tag {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 14px;
+    background: var(--gold-light);
+    color: var(--green);
+    border: 1px solid var(--gold);
+  }
+
+  .wt-slide h2 {
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+  }
+
+  .wt-slide .slide-body {
+    font-family: Arial, sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .wt-insight {
+    background: var(--gold-light);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .wt-insight strong {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .wt-insight p {
+    font-size: 0.87rem;
+    color: var(--ink);
+  }
+
+  /* Walkthrough nav */
+  .wt-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .wt-btn {
+    padding: 10px 26px;
+    border-radius: 4px;
+    border: 2px solid var(--green);
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .wt-btn:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .wt-btn.prev { background: var(--white); color: var(--green); }
+  .wt-btn.prev:hover:not(:disabled) { background: var(--green-light); }
+  .wt-btn.next { background: var(--green); color: var(--white); }
+  .wt-btn.next:hover:not(:disabled) { background: #0f3326; }
+  .wt-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .wt-counter {
+    font-family: Arial, sans-serif;
+    font-size: 0.85rem;
+    color: var(--mid);
+  }
+
+  /* ── KEY CONCEPTS ── */
+  .concepts { margin-top: 48px; }
+  .concepts h3 { text-align: center; margin-bottom: 20px; font-size: 1.2rem; }
+
+  /* Three concept boxes using inline-block for Canvas compatibility */
+  .concepts-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .concept-box {
+    flex: 1 1 200px;
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-top: 4px solid var(--gold);
+    border-radius: 6px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .concept-box .icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+  .concept-box h4 {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .concept-box p {
+    font-size: 0.82rem;
+    color: var(--mid);
+    line-height: 1.55;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    margin-top: 36px;
+    background: var(--green);
+    color: var(--white);
+    border-radius: 6px;
+    padding: 26px 28px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .callout h3 {
+    font-family: Georgia, serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .callout p {
+    font-size: 0.9rem;
+    color: #e0e8e4;
+    line-height: 1.65;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    font-family: Arial, sans-serif;
+    font-size: 0.75rem;
+    color: var(--mid);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 580px) {
+    .wt-card { padding: 20px 16px; }
+    .wt-dot-label { display: none; }
+    .concepts-row { flex-direction: column; }
+    .callout { flex-direction: column; gap: 10px; }
+    .stage-block { padding-left: 24px; }
+    .mode-bar { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div class="page" id="main-content">
+
+  <!-- HEADER -->
+  <header class="header" role="banner">
+    <h1>How Do LLMs Learn?</h1>
+    <p>From raw text to intelligent assistant — the training process in four stages</p>
+  </header>
+
+  <!-- MODE TOGGLE -->
+  <nav aria-label="View mode selection" style="margin-bottom:8px;">
+    <div class="mode-bar" role="group" aria-label="Choose a viewing mode">
+      <button class="mode-btn" aria-pressed="true" id="btn-explore" onclick="setMode('explore')">
+        🗺 Explore All Stages
+      </button>
+      <button class="mode-btn" aria-pressed="false" id="btn-walkthrough" onclick="setMode('walkthrough')">
+        ▶ Guided Walkthrough
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════ EXPLORE MODE ══════════════ -->
+  <section id="explore-mode" aria-label="Explore all stages">
+    <p class="hint">Select any stage to expand the full explanation.</p>
+
+    <div class="timeline" role="list">
+
+      <!-- Stage 1 -->
+      <div class="stage-block" data-num="1" role="listitem">
+        <div class="stage-card">
+          <button class="stage-header"
+                  aria-expanded="false"
+                  aria-controls="detail-1"
+                  id="hdr-1"
+                  onclick="toggleStage(this, 'detail-1')">
+            <div class="stage-header-text">
+              <span class="stage-tag">Stage 1 · Data</span>
+              <span class="stage-title">Massive Text Exposure</span>
+              <span class="stage-summary">The model is fed enormous amounts of text — books, articles, websites, and conversations.</span>
+            </div>
+            <span class="expand-indicator" aria-hidden="true">▾ Expand</span>
+          </button>
+          <div class="stage-detail" id="detail-1" role="region" aria-labelledby="hdr-1">
+            <div class="detail-body">
+              <p>Before a model can learn anything, it needs something to learn <em>from</em>. The model is exposed to enormous amounts of text — books, articles, websites, conversations, and more. This raw material becomes the foundation of everything the model will eventually know. The quality and diversity of this data directly shapes what the model knows and where its blind spots are.</p>
+              <div class="detail-insight">
+                <strong>🎓 Why This Matters for AI Literacy</strong>
+                <p>The humans who select and quality-check this training data make consequential decisions. If they include biased, outdated, or low-quality sources, those problems don't disappear — they become part of the model and can surface in every response it generates.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="stage-block" data-num="2" role="listitem">
+        <div class="stage-card">
+          <button class="stage-header"
+                  aria-expanded="false"
+                  aria-controls="detail-2"
+                  id="hdr-2"
+                  onclick="toggleStage(this, 'detail-2')">
+            <div class="stage-header-text">
+              <span class="stage-tag">Stage 2 · Automated Feedback</span>
+              <span class="stage-title">Predict, Check, Adjust</span>
+              <span class="stage-summary">The model predicts the next word, checks its guess, and adjusts — billions of times, automatically.</span>
+            </div>
+            <span class="expand-indicator" aria-hidden="true">▾ Expand</span>
+          </button>
+          <div class="stage-detail" id="detail-2" role="region" aria-labelledby="hdr-2">
+            <div class="detail-body">
+              <p>The model predicts: <em>what word comes next?</em> It checks its guess against what actually appeared in the text, measures how wrong it was — this gap is called the "loss" — and adjusts its internal <strong>parameters</strong> accordingly. Parameters are the billions of tiny numerical settings that store what the model has learned. This cycle repeats billions of times, automatically, with no human involved.</p>
+              <div class="detail-insight">
+                <strong>⚙️ Key Term: Parameters</strong>
+                <p>Parameters are the model's internal settings — numerical values that shift with each training adjustment. A "large" language model has billions of them. They aren't hand-coded by anyone; they emerge entirely from this automated training process.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="stage-block" data-num="3" role="listitem">
+        <div class="stage-card">
+          <button class="stage-header"
+                  aria-expanded="false"
+                  aria-controls="detail-3"
+                  id="hdr-3"
+                  onclick="toggleStage(this, 'detail-3')">
+            <div class="stage-header-text">
+              <span class="stage-tag">Stage 3 · Human Feedback (RLHF)</span>
+              <span class="stage-title">Human Raters Shape Behavior</span>
+              <span class="stage-summary">Real people evaluate outputs and teach the model what "good" looks like.</span>
+            </div>
+            <span class="expand-indicator" aria-hidden="true">▾ Expand</span>
+          </button>
+          <div class="stage-detail" id="detail-3" role="region" aria-labelledby="hdr-3">
+            <div class="detail-body">
+              <p>After automated training, the model is good at predicting text — but it isn't yet a helpful assistant. Human evaluators review sample model outputs and rate them for helpfulness, accuracy, and appropriateness. The model then learns to produce more responses like the ones humans preferred. This process — called <strong>Reinforcement Learning from Human Feedback (RLHF)</strong> — is what transforms a raw text predictor into the polished assistant people interact with today.</p>
+              <div class="detail-insight">
+                <strong>⚠️ The Double-Edged Sword</strong>
+                <p>RLHF is why models feel confident and coherent. But it also means the model has learned to <em>seem</em> helpful — which isn't always the same as being accurate. The raters' own biases, blind spots, and judgment calls become embedded in the model's behavior.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="stage-block" data-num="4" role="listitem">
+        <div class="stage-card">
+          <button class="stage-header"
+                  aria-expanded="false"
+                  aria-controls="detail-4"
+                  id="hdr-4"
+                  onclick="toggleStage(this, 'detail-4')">
+            <div class="stage-header-text">
+              <span class="stage-tag">Stage 4 · Deployment</span>
+              <span class="stage-title">Polished — But Imperfect</span>
+              <span class="stage-summary">The model is released for use. Fluency is impressive, but fluency is not the same as accuracy.</span>
+            </div>
+            <span class="expand-indicator" aria-hidden="true">▾ Expand</span>
+          </button>
+          <div class="stage-detail" id="detail-4" role="region" aria-labelledby="hdr-4">
+            <div class="detail-body">
+              <p>The trained model is released for use. It can generate fluent, confident, and often impressive responses across an enormous range of topics. But here is what matters most for responsible use: <strong>fluency is not the same as accuracy.</strong> The model reflects the data it was trained on and the judgments of those who rated its outputs. Errors and biases from either source can surface — often in language that sounds completely authoritative.</p>
+              <div class="detail-insight">
+                <strong>👥 Your Role as a User</strong>
+                <p>You are the final checkpoint in this process. Responsible use of AI means reading outputs critically, verifying important claims, and applying your own knowledge and judgment. A confident answer from an AI is a starting point — not a conclusion.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .timeline -->
+  </section>
+
+  <!-- ══════════════ WALKTHROUGH MODE ══════════════ -->
+  <section id="walkthrough-mode" aria-label="Guided walkthrough" aria-live="polite">
+
+    <!-- Progress dots -->
+    <nav aria-label="Walkthrough progress" class="wt-progress">
+      <div class="wt-dot-wrap active" id="dot-1">
+        <button class="wt-dot" aria-label="Go to Stage 1: Data Exposure" aria-current="step" onclick="goToSlide(1)">1</button>
+        <span class="wt-dot-label" aria-hidden="true">Data Exposure</span>
+      </div>
+      <div class="wt-dot-wrap" id="dot-2">
+        <button class="wt-dot" aria-label="Go to Stage 2: Auto Feedback" onclick="goToSlide(2)">2</button>
+        <span class="wt-dot-label" aria-hidden="true">Auto Feedback</span>
+      </div>
+      <div class="wt-dot-wrap" id="dot-3">
+        <button class="wt-dot" aria-label="Go to Stage 3: Human Feedback" onclick="goToSlide(3)">3</button>
+        <span class="wt-dot-label" aria-hidden="true">Human Feedback</span>
+      </div>
+      <div class="wt-dot-wrap" id="dot-4">
+        <button class="wt-dot" aria-label="Go to Stage 4: Deployment" onclick="goToSlide(4)">4</button>
+        <span class="wt-dot-label" aria-hidden="true">Deployment</span>
+      </div>
+    </nav>
+
+    <!-- Slide card -->
+    <div class="wt-card" role="region" aria-label="Current stage content" id="wt-slide-area">
+
+      <div class="wt-slide active" id="slide-1" role="group" aria-label="Stage 1 of 4">
+        <span class="wt-tag">Stage 1 · Data</span>
+        <h2>Massive Text Exposure</h2>
+        <div class="slide-body">
+          <p>Before a model can learn anything, it needs something to learn <em>from</em>. The model is exposed to enormous amounts of text — books, articles, websites, conversations, and more. This raw material becomes the foundation of everything the model will eventually know.</p>
+          <p style="margin-top:12px;">Think of it like a student reading millions of books before taking any tests. The more diverse and high-quality the reading, the better prepared they'll be. The opposite is also true: garbage in, garbage out.</p>
+        </div>
+        <div class="wt-insight">
+          <strong>🎓 For AI Literacy</strong>
+          <p>The humans who select and quality-check this training data make consequential decisions. If they include biased, outdated, or low-quality sources, those problems don't disappear — they become part of the model.</p>
+        </div>
+      </div>
+
+      <div class="wt-slide" id="slide-2" role="group" aria-label="Stage 2 of 4">
+        <span class="wt-tag">Stage 2 · Automated Feedback</span>
+        <h2>Predict, Check, Adjust</h2>
+        <div class="slide-body">
+          <p>Now the model starts learning — automatically. It reads text and tries to predict: <em>what word comes next?</em> Then it checks its guess against what actually appeared, measures how wrong it was (this gap is called the "loss"), and adjusts its internal parameters to do a little better next time.</p>
+          <p style="margin-top:12px;">This loop repeats billions of times. No human is involved. The model is essentially teaching itself by making mistakes and correcting them at massive scale.</p>
+        </div>
+        <div class="wt-insight">
+          <strong>⚙️ Key Term: Parameters</strong>
+          <p>Parameters are the model's internal settings — billions of numerical values that shift with each training adjustment. They aren't hand-coded; they emerge entirely from this automated process.</p>
+        </div>
+      </div>
+
+      <div class="wt-slide" id="slide-3" role="group" aria-label="Stage 3 of 4">
+        <span class="wt-tag">Stage 3 · Human Feedback (RLHF)</span>
+        <h2>Human Raters Shape Behavior</h2>
+        <div class="slide-body">
+          <p>After automated training, the model is good at predicting text — but it isn't yet a helpful assistant. Human evaluators review sample model outputs and rate them for helpfulness, accuracy, and appropriateness. The model then learns to produce more responses like the ones humans preferred.</p>
+          <p style="margin-top:12px;">This process — called Reinforcement Learning from Human Feedback, or RLHF — is what turns a raw text predictor into the polished assistant people interact with today.</p>
+        </div>
+        <div class="wt-insight">
+          <strong>⚠️ The Double-Edged Sword</strong>
+          <p>RLHF is why models feel confident and coherent. But the raters' own biases and blind spots get baked into the model's behavior — which is why human critical evaluation remains essential even after this stage.</p>
+        </div>
+      </div>
+
+      <div class="wt-slide" id="slide-4" role="group" aria-label="Stage 4 of 4">
+        <span class="wt-tag">Stage 4 · Deployment</span>
+        <h2>Polished — But Imperfect</h2>
+        <div class="slide-body">
+          <p>The trained model is released for use. It can produce fluent, confident, and often impressive responses. But fluency is not the same as accuracy. The model reflects the data it learned from and the judgments of those who rated its outputs — which means human critical evaluation remains essential at every stage of use.</p>
+          <p style="margin-top:12px;">A confident-sounding answer is not necessarily a correct one. You are the final checkpoint.</p>
+        </div>
+        <div class="wt-insight">
+          <strong>👥 Your Role as a User</strong>
+          <p>Responsible AI use means reading outputs critically, verifying important claims, and applying your own expertise. A confident answer from an AI is a starting point — not a conclusion.</p>
+        </div>
+      </div>
+
+    </div><!-- .wt-card -->
+
+    <!-- Nav buttons -->
+    <div class="wt-nav">
+      <button class="wt-btn prev" id="prevBtn" onclick="changeSlide(-1)" disabled aria-label="Previous stage">← Previous</button>
+      <span class="wt-counter" aria-live="polite" id="slideCounter">Stage 1 of 4</span>
+      <button class="wt-btn next" id="nextBtn" onclick="changeSlide(1)" aria-label="Next stage">Next →</button>
+    </div>
+
+  </section>
+
+  <!-- KEY CONCEPTS -->
+  <section class="concepts" aria-labelledby="concepts-heading">
+    <h3 id="concepts-heading">Key Concepts</h3>
+    <div class="concepts-row">
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">⚙️</span>
+        <h4>Parameters</h4>
+        <p>Billions of numerical values the model adjusts during training — its internal settings, refined through billions of predictions.</p>
+      </div>
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">📉</span>
+        <h4>Loss &amp; Feedback</h4>
+        <p>The "loss" measures how wrong a prediction was. Reducing loss across billions of examples is how the model improves, automatically.</p>
+      </div>
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">🧑‍⚖️</span>
+        <h4>RLHF</h4>
+        <p>Reinforcement Learning from Human Feedback — where real people's judgments shape model behavior, and introduce human values and limitations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALLOUT -->
+  <section class="callout" aria-labelledby="callout-heading">
+    <span class="callout-icon" aria-hidden="true">👥</span>
+    <div>
+      <h3 id="callout-heading">Humans Are in the Loop at Every Stage</h3>
+      <p>People decide what data goes in. People rate outputs during RLHF. And you — the end user — are the final checkpoint. Because a confident-sounding answer is not always a correct one, critical evaluation of AI outputs is not optional. It is part of responsible use.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Developed for AI Literacy Course &nbsp;·&nbsp; Baylor University &nbsp;·&nbsp; Illustrates general LLM training principles</p>
+  </footer>
+
+</div><!-- .page -->
+
+<script>
+  /* ── MODE SWITCHING ── */
+  function setMode(mode) {
+    var explore = document.getElementById('explore-mode');
+    var walkthrough = document.getElementById('walkthrough-mode');
+    var btnExplore = document.getElementById('btn-explore');
+    var btnWalk = document.getElementById('btn-walkthrough');
+
+    if (mode === 'explore') {
+      explore.style.display = 'block';
+      walkthrough.style.display = 'none';
+      btnExplore.setAttribute('aria-pressed', 'true');
+      btnWalk.setAttribute('aria-pressed', 'false');
+    } else {
+      explore.style.display = 'none';
+      walkthrough.style.display = 'block';
+      btnExplore.setAttribute('aria-pressed', 'false');
+      btnWalk.setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  /* ── EXPLORE: TOGGLE EXPAND ── */
+  function toggleStage(btn, detailId) {
+    var detail = document.getElementById(detailId);
+    var isOpen = btn.getAttribute('aria-expanded') === 'true';
+    var indicator = btn.querySelector('.expand-indicator');
+
+    btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    detail.classList.toggle('open', !isOpen);
+    if (indicator) indicator.textContent = isOpen ? '▾ Expand' : '▴ Collapse';
+  }
+
+  /* ── WALKTHROUGH ── */
+  var currentSlide = 1;
+  var totalSlides = 4;
+
+  function goToSlide(n) {
+    currentSlide = n;
+    updateWalkthrough();
+  }
+
+  function changeSlide(dir) {
+    var next = currentSlide + dir;
+    if (next < 1 || next > totalSlides) return;
+    currentSlide = next;
+    updateWalkthrough();
+  }
+
+  function updateWalkthrough() {
+    /* slides */
+    for (var i = 1; i <= totalSlides; i++) {
+      var slide = document.getElementById('slide-' + i);
+      if (slide) slide.classList.toggle('active', i === currentSlide);
+    }
+
+    /* dots */
+    for (var j = 1; j <= totalSlides; j++) {
+      var dot = document.getElementById('dot-' + j);
+      var dotBtn = dot ? dot.querySelector('.wt-dot') : null;
+      if (dot) {
+        dot.classList.toggle('active', j === currentSlide);
+        dot.classList.toggle('done', j < currentSlide);
+      }
+      if (dotBtn) {
+        if (j === currentSlide) {
+          dotBtn.setAttribute('aria-current', 'step');
+        } else {
+          dotBtn.removeAttribute('aria-current');
+        }
+      }
+    }
+
+    /* buttons */
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
+    var counter = document.getElementById('slideCounter');
+
+    prevBtn.disabled = currentSlide === 1;
+    nextBtn.disabled = currentSlide === totalSlides;
+    nextBtn.textContent = currentSlide === totalSlides ? 'Done ✓' : 'Next →';
+    nextBtn.setAttribute('aria-label', currentSlide === totalSlides ? 'Finished' : 'Next stage');
+    counter.textContent = 'Stage ' + currentSlide + ' of ' + totalSlides;
+  }
+</script>
+
+</body>
+</html>
