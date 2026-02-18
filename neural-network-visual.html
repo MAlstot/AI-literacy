@@ -557,7 +557,7 @@
   var stages = [
     {
       title: "The Full Network at a Glance",
-      text: "This is a simplified neural network. Your prompt enters on the left as tokens, passes through hidden layers where patterns are detected, and exits on the right as probable next words. Real LLMs have billions of neurons across hundreds of layers — but the same principle applies.",
+      text: "This is a simplified neural network. Your prompt enters on the left as tokens, passes through hidden layers where patterns are detected, and exits on the right as probable next words. Real LLMs have billions of neurons across hundreds of layers, but the same principle applies.",
       highlight: "all"
     },
     {
@@ -567,7 +567,7 @@
     },
     {
       title: "Hidden Layers: Finding Patterns",
-      text: "The hidden layers are where the real work happens. Each neuron receives signals from the previous layer, processes them, and passes results forward. Early layers detect simple patterns (word relationships); deeper layers detect complex ones (meaning, context, intent). Real LLMs have hundreds of these layers.",
+      text: "The hidden layers are where the real work happens. Each neuron receives signals from the previous layer, processes them, and passes results forward to the next. This diagram highlights the connections between the two hidden layers specifically. Early layers detect simple patterns like word relationships; deeper layers detect complex ones like meaning, context, and intent. Real LLMs have hundreds of these layers.",
       highlight: "hidden"
     },
     {
@@ -635,25 +635,25 @@
     } else if (mode === 'input') {
       lines.forEach(function(l) {
         var from = l.dataset.from || '';
-        renderWeight(l, l._weight, from.indexOf('i') !== 0);
+        var to = l.dataset.to || '';
+        var isInputToHidden1 = from.indexOf('i') === 0 && to.indexOf('h1') === 0;
+        renderWeight(l, l._weight, !isInputToHidden1);
       });
-      highlightLayerNodes(['i0','i1','i2']);
+      highlightLayerNodes(['i0','i1','i2','h10','h11','h12','h13']);
     } else if (mode === 'hidden') {
+      var h1toh2ids = [
+        'c-h10-h20','c-h10-h21','c-h10-h22','c-h10-h23',
+        'c-h11-h20','c-h11-h21','c-h11-h22','c-h11-h23',
+        'c-h12-h20','c-h12-h21','c-h12-h22','c-h12-h23',
+        'c-h13-h20','c-h13-h21','c-h13-h22','c-h13-h23'
+      ];
       lines.forEach(function(l) {
-        var from = l.dataset.from || '';
-        var isHiddenToHidden = from.indexOf('h') === 0;
-        renderWeight(l, l._weight, !isHiddenToHidden);
+        var isH1toH2 = h1toh2ids.indexOf(l.id) !== -1;
+        renderWeight(l, l._weight, !isH1toH2);
       });
       highlightLayerNodes(['h10','h11','h12','h13','h20','h21','h22','h23']);
     } else if (mode === 'weights') {
-      // Show all lines with full weight encoding — this IS the weights stage
       lines.forEach(function(l) { renderWeight(l, l._weight, false); });
-      // Add weight value tooltips on high-weight lines
-      lines.forEach(function(l) {
-        if (l._weight >= 0.75) {
-          l.setAttribute('stroke-width', (1 + l._weight * 4 + 1).toFixed(2));
-        }
-      });
     } else if (mode === 'output') {
       lines.forEach(function(l) {
         var to = l.dataset.to || '';
@@ -693,17 +693,17 @@
     'i0': { title: 'Token 1 (T1)', text: 'The first token from your input. It sends signals to every neuron in the first hidden layer, weighted by how relevant it is to each pattern that layer is looking for.' },
     'i1': { title: 'Token 2 (T2)', text: 'The second token. Each input neuron passes its signal forward independently, but the hidden layers combine all incoming signals to build a fuller picture of your prompt.' },
     'i2': { title: 'Token 3 (T3)', text: 'The third token. Together, T1, T2, and T3 represent your full input. Real models process hundreds or thousands of tokens at once.' },
-    'h10': { title: 'Hidden Neuron H1', text: 'This neuron receives signals from all input tokens and looks for a specific pattern — perhaps the relationship between certain words. It passes its finding forward to the next layer.' },
+    'h10': { title: 'Hidden Neuron H1', text: 'This neuron receives signals from all input tokens and looks for a specific pattern, perhaps the relationship between certain words. It passes its finding forward to the next layer.' },
     'h11': { title: 'Hidden Neuron H2', text: 'A different neuron detecting a different pattern. Hidden layer neurons each specialize in recognizing certain features of the input.' },
     'h12': { title: 'Hidden Neuron H3', text: 'Another pattern detector. The more neurons a layer has, the more nuanced patterns it can recognize simultaneously.' },
     'h13': { title: 'Hidden Neuron H4', text: 'Each neuron fires more or less strongly depending on how well its specific pattern matches the input. Strong matches produce stronger signals going forward.' },
-    'h20': { title: 'Hidden Neuron H5', text: 'This neuron in the second hidden layer receives processed signals from the first layer. It detects higher-level patterns — relationships between patterns, not just between words.' },
-    'h21': { title: 'Hidden Neuron H6', text: 'Deeper layers detect more abstract concepts — tone, intent, context. This is how the model understands that "bank" means something different in "river bank" vs. "bank account."' },
+    'h20': { title: 'Hidden Neuron H5', text: 'This neuron in the second hidden layer receives processed signals from the first layer. It detects higher-level patterns, including relationships between patterns, not just between words.' },
+    'h21': { title: 'Hidden Neuron H6', text: 'Deeper layers detect more abstract concepts like tone, intent, and context. This is how the model understands that "bank" means something different in "river bank" vs. "bank account."' },
     'h22': { title: 'Hidden Neuron H7', text: 'By this layer, the model has already processed much of the basic meaning of your input and is working on higher-level interpretation.' },
-    'h23': { title: 'Hidden Neuron H8', text: 'Every neuron in every layer contributes to the final output. No single neuron "knows" the answer — it emerges from all of them together.' },
-    'o0': { title: 'Output Word Candidate W1', text: 'This output neuron represents one possible next word — the one the model considers most probable given your input and everything it learned in training. It may or may not be selected.' },
+    'h23': { title: 'Hidden Neuron H8', text: 'Every neuron in every layer contributes to the final output. No single neuron knows the answer. It emerges from all of them together.' },
+    'o0': { title: 'Output Word Candidate W1', text: 'This output neuron represents one possible next word. The model considers it most probable given your input and everything it learned in training, but it may or may not be selected.' },
     'o1': { title: 'Output Word Candidate W2', text: 'A second possible next word with a different probability score. The model samples from all output probabilities, which is why responses can vary even to identical prompts.' },
-    'o2': { title: 'Output Word Candidate W3', text: 'A third candidate. In reality, the output layer covers the entire vocabulary — tens of thousands of words, each with its own probability. The most likely options rise to the top.' }
+    'o2': { title: 'Output Word Candidate W3', text: 'A third candidate. In reality, the output layer covers the entire vocabulary, tens of thousands of words, each with its own probability. The most likely options rise to the top.' }
   };
 
   function highlightNode(id) {
