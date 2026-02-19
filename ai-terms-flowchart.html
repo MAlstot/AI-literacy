@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How AI works: Putting It Together</title>
+<title>AI Key Terms: How They Fit Together</title>
 <style>
   :root {
     --green: #154734;
@@ -375,7 +375,7 @@
 <div class="page" id="main-content">
 
   <header class="header">
-    <h1>How AI Works: Putting it Together</h1>
+    <h1>AI Key Terms: How They Fit Together</h1>
     <p>From building a model to getting a response — where each term lives in the process</p>
   </header>
 
@@ -434,6 +434,10 @@
         <button class="term-pill build" id="pill-parameters" onclick="selectTerm('parameters')" aria-pressed="false">
           <span class="pill-phase">Learned from data</span>
           Parameters
+        </button>
+        <button class="term-pill build" id="pill-fine-tuning" onclick="selectTerm('fine-tuning')" aria-pressed="false">
+          <span class="pill-phase">Specialization</span>
+          Fine-Tuning
         </button>
       </div>
 
@@ -558,7 +562,13 @@
       definition: 'The billions of numerical values inside a neural network that store what the model has learned. Think of them as the model\'s internal settings. They are not programmed by hand — they emerge from training, adjusted billions of times as the model processes training data and refines its predictions. The more parameters, the more the model can learn.',
       connections: ['Neural Network (parameters are the weights in the network)', 'Training Data (parameters are shaped by training data)', 'Large Language Model (the "large" in LLM partly refers to the number of parameters)', 'Hallucination (parameters encode patterns, not facts, which is why errors occur)']
     },
-    'prompt': {
+    'fine-tuning': {
+      label: 'Fine-Tuning',
+      phase: 'build',
+      phaseLabel: 'Phase 1: Build the Model',
+      definition: 'Additional targeted training given to a pre-trained model using a smaller, more specific dataset. Fine-tuning adapts a general-purpose LLM for a particular task, domain, or audience — such as medical, legal, or customer service contexts. It is faster and less expensive than training from scratch because the model already has a strong foundation.',
+      connections: ['Large Language Model (fine-tuning adapts a pre-trained LLM)', 'Training Data (fine-tuning uses a smaller, targeted version of training data)', 'Parameters (fine-tuning adjusts parameters for a specific purpose)', 'Human-in-the-Loop (humans design the fine-tuning data and process)']
+    },
       label: 'Prompt',
       phase: 'run',
       phaseLabel: 'Phase 2: Run the Model',
