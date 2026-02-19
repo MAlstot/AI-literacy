@@ -630,13 +630,40 @@
                   id="hdr-4"
                   onclick="toggleStage(this, 'detail-4')">
             <div class="stage-header-text">
-              <span class="stage-tag">Stage 4 · Deployment</span>
+              <span class="stage-tag">Stage 4 · Fine-Tuning</span>
+              <span class="stage-title">Specialized for Purpose</span>
+              <span class="stage-summary">The pre-trained model gets additional targeted training to excel at a specific task, domain, or audience.</span>
+            </div>
+            <span class="expand-indicator" aria-hidden="true">▾ Expand</span>
+          </button>
+          <div class="stage-detail" id="detail-4" role="region" aria-labelledby="hdr-4">
+            <div class="detail-body">
+              <p>After general training, a model knows a lot — but it isn't yet specialized. Fine-tuning exposes the model to a smaller, more targeted dataset to adapt it for a particular task, domain, or audience. A general-purpose LLM might be fine-tuned to work specifically in medical, legal, or customer service contexts. It is faster and far less expensive than training from scratch because the model already has a strong foundation to build on.</p>
+              <div class="detail-insight">
+                <strong>🎓 The Internship Analogy</strong>
+                <p>Think of pre-training as a broad university education and fine-tuning as a focused internship. The model already has wide-ranging knowledge — fine-tuning sharpens that into practical expertise for a specific purpose. The humans who design the fine-tuning data and process make consequential decisions about what the model will prioritize and how it will behave.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 5 -->
+      <div class="stage-block" data-num="5" role="listitem">
+        <div class="stage-card">
+          <button class="stage-header"
+                  aria-expanded="false"
+                  aria-controls="detail-5"
+                  id="hdr-5"
+                  onclick="toggleStage(this, 'detail-5')">
+            <div class="stage-header-text">
+              <span class="stage-tag">Stage 5 · Deployment</span>
               <span class="stage-title">Polished — But Imperfect</span>
               <span class="stage-summary">The model is released for use. Fluency is impressive, but fluency is not the same as accuracy.</span>
             </div>
             <span class="expand-indicator" aria-hidden="true">▾ Expand</span>
           </button>
-          <div class="stage-detail" id="detail-4" role="region" aria-labelledby="hdr-4">
+          <div class="stage-detail" id="detail-5" role="region" aria-labelledby="hdr-5">
             <div class="detail-body">
               <p>The trained model is released for use. It can generate fluent, confident, and often impressive responses across an enormous range of topics. But here is what matters most for responsible use: <strong>fluency is not the same as accuracy.</strong> The model reflects the data it was trained on and the judgments of those who rated its outputs. Errors and biases from either source can surface — often in language that sounds completely authoritative.</p>
               <div class="detail-insight">
@@ -669,7 +696,11 @@
         <span class="wt-dot-label" aria-hidden="true">Human Feedback</span>
       </div>
       <div class="wt-dot-wrap" id="dot-4">
-        <button class="wt-dot" aria-label="Go to Stage 4: Deployment" onclick="goToSlide(4)">4</button>
+        <button class="wt-dot" aria-label="Go to Stage 4: Fine-Tuning" onclick="goToSlide(4)">4</button>
+        <span class="wt-dot-label" aria-hidden="true">Fine-Tuning</span>
+      </div>
+      <div class="wt-dot-wrap" id="dot-5">
+        <button class="wt-dot" aria-label="Go to Stage 5: Deployment" onclick="goToSlide(5)">5</button>
         <span class="wt-dot-label" aria-hidden="true">Deployment</span>
       </div>
     </nav>
@@ -716,8 +747,21 @@
         </div>
       </div>
 
-      <div class="wt-slide" id="slide-4" role="group" aria-label="Stage 4 of 4">
-        <span class="wt-tag">Stage 4 · Deployment</span>
+      <div class="wt-slide" id="slide-4" role="group" aria-label="Stage 4 of 5">
+        <span class="wt-tag">Stage 4 · Fine-Tuning</span>
+        <h2>Specialized for Purpose</h2>
+        <div class="slide-body">
+          <p>After general training, the model knows a lot — but it isn't yet specialized. Fine-tuning exposes the model to a smaller, more targeted dataset to adapt it for a particular task, domain, or audience.</p>
+          <p style="margin-top:12px;">A general-purpose LLM might be fine-tuned to work specifically in medical, legal, or customer service contexts. It is faster and far less expensive than training from scratch because the model already has a strong foundation to build on.</p>
+        </div>
+        <div class="wt-insight">
+          <strong>🎓 The Internship Analogy</strong>
+          <p>Think of pre-training as a broad university education and fine-tuning as a focused internship. The humans who design the fine-tuning data make consequential decisions about what the model will prioritize and how it will behave.</p>
+        </div>
+      </div>
+
+      <div class="wt-slide" id="slide-5" role="group" aria-label="Stage 5 of 5">
+        <span class="wt-tag">Stage 5 · Deployment</span>
         <h2>Polished — But Imperfect</h2>
         <div class="slide-body">
           <p>The trained model is released for use. It can produce fluent, confident, and often impressive responses. But fluency is not the same as accuracy. The model reflects the data it learned from and the judgments of those who rated its outputs — which means human critical evaluation remains essential at every stage of use.</p>
@@ -734,7 +778,7 @@
     <!-- Nav buttons -->
     <div class="wt-nav">
       <button class="wt-btn prev" id="prevBtn" onclick="changeSlide(-1)" disabled aria-label="Previous stage">← Previous</button>
-      <span class="wt-counter" aria-live="polite" id="slideCounter">Stage 1 of 4</span>
+      <span class="wt-counter" aria-live="polite" id="slideCounter">Stage 1 of 5</span>
       <button class="wt-btn next" id="nextBtn" onclick="changeSlide(1)" aria-label="Next stage">Next →</button>
     </div>
 
@@ -811,7 +855,7 @@
 
   /* ── WALKTHROUGH ── */
   var currentSlide = 1;
-  var totalSlides = 4;
+  var totalSlides = 5;
 
   function goToSlide(n) {
     currentSlide = n;
