@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Energy Comparison | TRAIL M3 — The Hidden Cost of a Prompt</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;color:#222;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+header{background:#1a1a2e;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0}
+header h1{font-size:1.2rem}header p{font-size:.8rem;opacity:.75;margin-top:3px}
+.body-card{background:#fff;border-radius:0 0 8px 8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.tip{background:#f0f9ff;border-left:4px solid #0ea5e9;padding:10px 14px;border-radius:4px;margin-bottom:18px;font-size:.87rem;line-height:1.5}
+.toggle-group{display:flex;gap:0;margin-bottom:22px;border:1.5px solid #d1d5db;border-radius:7px;overflow:hidden;width:fit-content}
+.toggle-btn{padding:8px 20px;border:0;background:#fff;font-size:.87rem;cursor:pointer;font-weight:600;color:#374151;transition:.15s;border-right:1.5px solid #d1d5db}
+.toggle-btn:last-child{border-right:0}
+.toggle-btn.active{background:#1a1a2e;color:#fff}
+.chart-view{display:none}.chart-view.active{display:block}
+.chart-container{width:100%;overflow-x:auto;margin-bottom:16px}
+.bar-chart{min-width:480px;padding:0 0 10px}
+.chart-title{font-weight:700;font-size:.95rem;color:#1a1a2e;margin-bottom:4px}
+.chart-subtitle{font-size:.78rem;color:#6b7280;margin-bottom:16px}
+.bar-row{display:flex;align-items:center;margin-bottom:10px;gap:10px}
+.bar-label{width:220px;min-width:220px;font-size:.82rem;color:#374151;text-align:right;line-height:1.3}
+.bar-label .sub{font-size:.72rem;color:#9ca3af;display:block}
+.bar-wrap{flex:1;position:relative}
+.bar{height:32px;border-radius:3px;display:flex;align-items:center;padding-left:8px;min-width:4px;transition:width .4s ease;cursor:pointer;position:relative}
+.bar .val{font-size:.78rem;color:#fff;font-weight:700;white-space:nowrap;position:absolute;left:8px}
+.bar .val.outside{color:#374151;left:calc(100% + 6px)}
+.bar-group-ai{background:#e86c3a}
+.bar-group-compare{background:#2563eb}
+.bar-group-training{background:#7c3aed}
+.bar-group-ev{background:#059669}
+.contested{font-size:.7rem;font-style:italic;color:#f59e0b;margin-left:4px}
+.tooltip{display:none;position:absolute;bottom:38px;left:0;background:#1a1a2e;color:#fff;padding:8px 12px;border-radius:6px;font-size:.78rem;line-height:1.5;width:240px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.bar:hover .tooltip{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#374151}
+.legend-dot{width:12px;height:12px;border-radius:2px}
+.insight-box{background:#fefce8;border:1px solid #fde047;border-radius:6px;padding:12px 14px;margin-top:16px;font-size:.86rem;line-height:1.6}
+.insight-box strong{display:block;margin-bottom:4px;color:#92400e}
+.caveat{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:.8rem;color:#6b7280;line-height:1.5}
+.caveat strong{color:#374151}
+.src{margin-top:18px;font-size:.72rem;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>M3.3 &#8212; The Hidden Cost of a Prompt: AI Energy Comparison</h1><p>TRAIL &#8226; Module 3: AI and Ethics &#8226; Baylor University</p></header>
+<div class="body-card">
+<div class="tip"><strong>Key framing:</strong> The environmental story of AI is neither simple reassurance nor simple alarm. Per-query AI consumption is modest; at the scale of billions of daily queries and the training of frontier models, it becomes significant. Toggle between views to see the honest picture.</div>
+
+<div class="toggle-group">
+  <button class="toggle-btn active" onclick="switchView('per-use')">Per-Use View</button>
+  <button class="toggle-btn" onclick="switchView('scale')">Scale / Training View</button>
+</div>
+
+<div class="chart-view active" id="view-per-use">
+  <div class="bar-chart">
+    <div class="chart-title">Energy per Single Use/Event (Wh)</div>
+    <div class="chart-subtitle">Comparing individual AI queries to everyday energy consumption activities</div>
+    <div id="chart-per-use"></div>
+  </div>
+  <div class="insight-box">
+    <strong>&#x1F4A1; What this shows</strong>
+    A single ChatGPT query (&#126;0.001&#8211;0.01 kWh) consumes more energy than a Google search but less than leaving a ceiling fan on for 20 minutes. Per-use, AI is not catastrophic &#8212; but scale changes the picture dramatically.
+  </div>
+</div>
+
+<div class="chart-view" id="view-scale">
+  <div class="bar-chart">
+    <div class="chart-title">Large-Scale &amp; Lifecycle Energy Comparison (MWh or equivalent)</div>
+    <div class="chart-subtitle">Training runs, annual AI data center demand, and lifecycle comparisons</div>
+    <div id="chart-scale"></div>
+  </div>
+  <div class="insight-box">
+    <strong>&#x1F4A1; What this shows</strong>
+    Training a large language model can emit as much CO&#8202;2 as five transatlantic flights. Total AI electricity demand is projected to double by 2026 (IEA, 2024). The Jevons Paradox warning: efficiency gains may simply enable more use at greater aggregate scale.
+  </div>
+</div>
+
+<div class="caveat">
+  <strong>&#9888;&#xFE0F; Data note:</strong> Energy figures for AI vary significantly across sources, model sizes, hardware, and data center efficiency. Values shown are best available estimates from cited sources; ranges reflect genuine uncertainty. Some comparisons (e.g., EV lifecycle vs. AI training) involve contested methodological assumptions. Treat as illustrative of <em>order of magnitude</em>, not exact equivalents.
+</div>
+</div>
+<p class="src">
+  Sources: Luccioni, A. S., et al. (2023). Estimating the carbon footprint of BLOOM. <em>JMLR, 24</em>(253). arXiv:2211.02001. |
+  Strubell, E., et al. (2019). Energy and policy considerations for deep learning in NLP. <em>ACL 2019.</em> |
+  Goldman Sachs Global Investment Research (2023). AI infrastructure: Power demand. |
+  IEA (2024). <em>Electricity 2024: Analysis and forecast to 2026.</em> International Energy Agency. |
+  Mytton, D. (2021). Hiding greenhouse gas emissions in the cloud. <em>Nature Climate Change, 11.</em> |
+  ICCT (2021, 2024). <em>Lifecycle greenhouse gas emissions of battery electric vehicles.</em>
+</p>
+</div>
+
+<script>
+// Per-use data (Wh per single event)
+const perUseData = [
+  {label:'Google Search',sub:'1 query',val:0.3,group:'compare',source:'Lannelongue et al. 2021; IEA estimates',unit:'Wh',contested:false},
+  {label:'ChatGPT Query (simple)',sub:'1 text query',val:1.0,group:'ai',source:'Luccioni et al. 2023 (arXiv:2211.02001); Goldman Sachs 2023 — range: 0.1-3 Wh',unit:'Wh',contested:true},
+  {label:'ChatGPT Query (complex)',sub:'long reasoning task',val:10.0,group:'ai',source:'Estimated upper range; figures vary by model and task length',unit:'Wh',contested:true},
+  {label:'Streaming Video (1 min)',sub:'Netflix, typical',val:0.8,group:'compare',source:'Carbon Trust / IEA estimates',unit:'Wh',contested:false},
+  {label:'LED Bulb (1 hour)',sub:'10W bulb',val:10.0,group:'compare',source:'Standard electrical calculation',unit:'Wh',contested:false},
+  {label:'Ceiling Fan (1 hour)',sub:'60W fan',val:60.0,group:'compare',source:'Standard electrical calculation',unit:'Wh',contested:false},
+  {label:'Electric Kettle (1 boil)',sub:'full kettle ~3 min',val:90.0,group:'compare',source:'UK Energy Saving Trust',unit:'Wh',contested:false},
+  {label:'Laptop (1 hour)',sub:'charging/use',val:50.0,group:'compare',source:'EPA estimates',unit:'Wh',contested:false}
+];
+
+// Scale/training data (MWh or CO2-equivalent)
+const scaleData = [
+  {label:'Training GPT-3 (est.)',sub:'one full training run',val:1287,group:'training',source:'Patterson et al. 2021; Brown et al. 2020 — 1,287 MWh electricity estimated',unit:'MWh',contested:true},
+  {label:'Training BLOOM (measured)',sub:'176B parameter model',val:433,group:'training',source:'Luccioni et al. 2023 arXiv:2211.02001 — 433 MWh measured (Jean Zay cluster, France)',unit:'MWh',contested:false},
+  {label:'AI Data Center Electricity (2024)',sub:'global annual estimate',val:200000,group:'ai',source:'IEA Electricity 2024: &#126;200 TWh = 200,000,000 MWh for data centers; AI-specific portion contested',unit:'TWh x 1000 (in MWh)',contested:true},
+  {label:'Transatlantic Flight (one way)',sub:'NYC-London, one passenger',val:0.5,group:'compare',source:'ICAO carbon calculator &#126;0.5 tCO2 = &#126;0.5 MWh equivalent (for chart scale)',unit:'MWh equiv.',contested:false},
+  {label:'EV Battery Lifecycle (mfg. only)',sub:'per vehicle produced',val:8.8,group:'ev',source:'ICCT 2021 lifecycle report: 8.8 tCO2 for battery manufacturing = &#126;8.8 MWh equiv. (rough)',unit:'MWh equiv.',contested:true},
+  {label:'US Home (1 year)',sub:'avg. household electricity',val:10.5,group:'compare',source:'EIA 2023: avg US home uses 10,500 kWh = 10.5 MWh/year',unit:'MWh',contested:false}
+];
+
+function buildChart(containerId, data, maxVal) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  const total = maxVal || Math.max(...data.map(d => d.val));
+  
+  data.forEach(item => {
+    const pct = Math.max(2, (item.val / total) * 100);
+    const colorMap = {ai:'#e86c3a',compare:'#2563eb',training:'#7c3aed',ev:'#059669'};
+    const color = colorMap[item.group] || '#6b7280';
+    const valDisplay = item.val >= 1000 ? (item.val >= 100000 ? (item.val/1000).toFixed(0)+'K' : item.val.toLocaleString()) : item.val + ' ' + item.unit;
+    const isOutside = pct < 15;
+    
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML =
+      '<div class="bar-label">' + item.label + '<span class="sub">' + item.sub + '</span></div>' +
+      '<div class="bar-wrap">' +
+        '<div class="bar bar-group-' + item.group + '" style="width:' + pct + '%;background:' + color + '">' +
+          '<span class="val' + (isOutside ? ' outside' : '') + '">' + valDisplay + (item.contested ? ' *' : '') + '</span>' +
+          '<div class="tooltip">' + item.source + (item.contested ? '<br><em>* Figures vary significantly across sources; treat as estimate.</em>' : '') + '</div>' +
+        '</div>' +
+      '</div>';
+    container.appendChild(row);
+  });
+}
+
+function switchView(viewId) {
+  document.querySelectorAll('.chart-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + viewId).classList.add('active');
+  document.querySelectorAll('.toggle-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(viewId === 'per-use' ? 'per-use' : 'scale')) b.classList.add('active');
+  });
+}
+
+// Build both charts
+buildChart('chart-per-use', perUseData);
+buildChart('chart-scale', scaleData);
+
+// Fix toggle button active logic
+document.querySelectorAll('.toggle-btn').forEach((btn, i) => {
+  btn.onclick = () => {
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.chart-view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.chart-view')[i].classList.add('active');
+  };
+});
+</script>
+</body>
+</html>
