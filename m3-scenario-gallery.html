@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P3.2 Spot the Risk: Scenario Gallery | TRAIL M3 AI Ethics</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;color:#222}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+header{background:#1a1a2e;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0}
+header h1{font-size:1.25rem}header p{font-size:.82rem;opacity:.8;margin-top:3px}
+.body-card{background:#fff;border-radius:0 0 8px 8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.tip{background:#fff8e1;border-left:4px solid #f59e0b;padding:10px 14px;border-radius:4px;margin-bottom:20px;font-size:.88rem}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.nav-btn{background:#e5e7eb;border:0;padding:7px 14px;border-radius:6px;font-size:.85rem;cursor:pointer;transition:.15s}
+.nav-btn:hover{background:#d1d5db}.nav-btn.active{background:#1a1a2e;color:#fff}
+.counter{font-size:.85rem;color:#6b7280;margin-left:auto}
+.scenario{display:none}.scenario.active{display:block}
+.scenario-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.scenario-icon{font-size:2.2rem;min-width:50px;text-align:center}
+.scenario-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.tag-privacy{background:#dbeafe;color:#1d4ed8}
+.tag-bias{background:#fce7f3;color:#9d174d}
+.tag-env{background:#d1fae5;color:#065f46}
+.tag-justice{background:#fef3c7;color:#92400e}
+.tag-economic{background:#ede9fe;color:#5b21b6}
+.scenario h2{font-size:1.1rem;font-weight:700;color:#1a1a2e;margin-bottom:6px}
+.scenario-body{font-size:.9rem;line-height:1.6;color:#374151;margin-bottom:16px}
+.risks-section{margin-bottom:16px}
+.risks-section h3{font-size:.88rem;font-weight:700;color:#374151;margin-bottom:8px}
+.risk-choices{display:flex;flex-direction:column;gap:8px}
+.risk-choice{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:7px;cursor:pointer;transition:.15s;font-size:.87rem;line-height:1.4}
+.risk-choice:hover{border-color:#6366f1;background:#f5f3ff}
+.risk-choice.selected{border-color:#6366f1;background:#eef2ff}
+.risk-choice.correct{border-color:#10b981;background:#f0fdf4}
+.risk-choice.incorrect{border-color:#ef4444;background:#fef2f2}
+.risk-choice input{margin-top:2px;accent-color:#6366f1;flex-shrink:0}
+.btn-reveal{background:#1a1a2e;color:#fff;border:0;padding:9px 20px;border-radius:6px;font-size:.88rem;cursor:pointer;margin-top:4px;font-weight:600}
+.btn-reveal:hover{background:#2d2d5e}
+.reflection{display:none;margin-top:16px;padding:14px 16px;background:#f0f9ff;border-left:4px solid #0ea5e9;border-radius:4px;font-size:.88rem;line-height:1.6}
+.reflection.show{display:block}
+.reflection strong{display:block;margin-bottom:6px}
+.reflection .teachable{margin-top:10px;padding:10px 12px;background:#fefce8;border:1px dashed #ca8a04;border-radius:4px;font-size:.85rem}
+.reflection .teachable::before{content:'&#x1F4A1; Teachable moment: ';font-weight:700}
+.nav-arrows{display:flex;gap:8px;margin-top:18px;justify-content:space-between}
+.arrow-btn{background:#e5e7eb;border:0;padding:8px 18px;border-radius:6px;font-size:.88rem;cursor:pointer;font-weight:600}
+.arrow-btn:hover{background:#d1d5db}.arrow-btn:disabled{opacity:.4;cursor:not-allowed}
+.progress-bar{height:4px;background:#e5e7eb;border-radius:2px;margin-bottom:18px;overflow:hidden}
+.progress-fill{height:100%;background:#1a1a2e;border-radius:2px;transition:.3s}
+.src{margin-top:18px;font-size:.73rem;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>P3.2 &#8212; Spot the Risk: Scenario Gallery</h1><p>TRAIL &#8226; Module 3: AI and Ethics &#8226; Baylor University</p></header>
+<div class="body-card">
+<div class="tip"><strong>Instructions:</strong> Read each scenario and identify the primary ethical risk. Select all risks you can spot, then click <em>Reveal Analysis</em> to see the full breakdown and a teachable moment for your discipline.</div>
+<div class="nav" id="nav-tabs"></div>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+<div id="scenarios"></div>
+</div>
+<p class="src">Scenarios grounded in: Obermeyer et al. (2019). <em>Science, 366</em>(6464), 447-453. | Angwin et al. (2016). ProPublica COMPAS investigation. | Crawford, K. (2021). <em>Atlas of AI.</em> Yale UP. | IEA (2024). <em>Electricity 2024.</em> | Gray &amp; Suri (2019). <em>Ghost Work.</em> HMH. | TRAIL Course 1, Module 3.</p>
+</div>
+<script>
+const SCENARIOS=[
+  {
+    id:'s1',tag:'privacy',tagLabel:'Privacy &amp; FERPA',icon:'&#x1F512;',
+    title:'Scenario 1 &#8212; The Grading Assistant',
+    body:'A professor of a 200-student sociology course subscribes to an AI-powered grading assistant. To use it, they upload a CSV containing student names, student IDs, draft essay texts, and previous assignment grades. The platform's terms of service state that submitted content may be used to improve model performance. The professor did not disclose this tool in the syllabus.',
+    risks:[
+      {id:'r1a',text:'Student educational records were shared with a third-party vendor without consent, potentially violating FERPA.',correct:true},
+      {id:'r1b',text:'The AI might grade unfairly based on writing style.',correct:true},
+      {id:'r1c',text:'The professor saved time, reducing the value of human feedback.',correct:false},
+      {id:'r1d',text:'Student data may be used to train future models without authorization.',correct:true}
+    ],
+    analysis:'This scenario raises serious FERPA concerns. Uploading student records (names, IDs, grades, coursework) to a third-party platform without institutional approval and individual consent may violate FERPA, which requires educational institutions to protect personally identifiable information in student records. The key questions are: Does the platform have a valid FERPA agreement with the institution? Was use disclosed to students? Is this an approved institutional tool?',
+    teachable:'Before using any AI tool with student data, ask: (1) Is this tool on our institution's approved list? (2) Does it have a FERPA-compliant data processing agreement? (3) Have I disclosed this use to students? This is not a reason to avoid AI grading tools — it is a reason to use them with appropriate institutional safeguards.'
+  },
+  {
+    id:'s2',tag:'bias',tagLabel:'Algorithmic Bias',icon:'&#x2696;&#xFE0F;',
+    title:'Scenario 2 &#8212; The Risk Score',
+    body:'A criminal justice professor demonstrates how a county probation department uses an AI risk-scoring tool to inform sentencing recommendations. A Black student asks whether the tool has been validated for use across different racial groups. The professor says the vendor claims it has been "tested for accuracy." The student points out a ProPublica investigation found the tool flagged Black defendants as higher risk at nearly twice the rate of white defendants with similar criminal histories.',
+    risks:[
+      {id:'r2a',text:'The tool may embed racial bias that perpetuates systemic inequities in criminal justice.',correct:true},
+      {id:'r2b',text:'Vendor claims of "accuracy" may obscure disparate impact across demographic groups.',correct:true},
+      {id:'r2c',text:'The student is undermining the professor's authority by questioning the tool.',correct:false},
+      {id:'r2d',text:'High-stakes decisions (liberty, sentencing) require higher standards of validation than other uses.',correct:true}
+    ],
+    analysis:'The COMPAS recidivism algorithm, studied by ProPublica in 2016, is a landmark case in AI bias. "Accuracy" as a single metric can mask significant disparate impact. A tool can be statistically accurate overall while systematically disadvantaging specific demographic groups. Importantly, this is not just a technical problem — it reflects the data it was trained on, which itself reflects historical inequities in the justice system.',
+    teachable:'When AI tools are used in high-stakes decisions (healthcare, law, employment, education), "it works" is not sufficient validation. Ask: For whom does it work? What were the demographics of the training data? Has independent auditing occurred? This case &#8212; Obermeyer et al. (2019) in <em>Science</em> found similar patterns in a widely used healthcare algorithm &#8212; can anchor discussion in almost any discipline.'
+  },
+  {
+    id:'s3',tag:'env',tagLabel:'Environmental Impact',icon:'&#x1F331;',
+    title:'Scenario 3 &#8212; The Sustainability Tension',
+    body:'A university sustainability committee invites faculty to consider the environmental footprint of requiring AI tool use in coursework. A digital humanities professor realizes their AI-intensive course generates approximately 3,000 queries per week across 30 students. Meanwhile, a campus environmental science professor is integrating AI tools into their curriculum while simultaneously teaching about the climate impacts of data centers.',
+    risks:[
+      {id:'r3a',text:'Aggregate course-level AI use can have a non-trivial cumulative carbon and water footprint.',correct:true},
+      {id:'r3b',text:'Faculty requiring AI tools bear some responsibility for the environmental impact of that requirement.',correct:true},
+      {id:'r3c',text:'AI tools should never be used in sustainability-focused courses because of the contradiction.',correct:false},
+      {id:'r3d',text:'The environmental costs of AI are distributed unequally, often falling on communities near data centers.',correct:true}
+    ],
+    analysis:'A single ChatGPT query consumes roughly 10x the energy of a Google search (Goldman Sachs, 2023; IEA, 2024). While per-query impact is modest, scale matters: billions of queries aggregate into significant energy demand. Data centers also require substantial water for cooling. Critically, these costs are not evenly distributed &#8212; data center corridors are frequently sited in communities with less political power to resist them.',
+    teachable:'The environmental science faculty member's situation illustrates a genuine ethical tension, not a contradiction to resolve by avoiding AI. Several faculty have begun including "AI footprint" as a discussion item in sustainability courses, using the course's own AI use as primary data. This makes abstract environmental accounting concrete and disciplinarily relevant.'
+  },
+  {
+    id:'s4',tag:'justice',tagLabel:'Marginalized Communities',icon:'&#x1F465;',
+    title:'Scenario 4 &#8212; The Content Moderator's Burden',
+    body:'A social work faculty member assigns students to research AI labor practices. Students discover that the content moderation workforce &#8212; the people who review harmful content to train AI safety filters &#8212; is predominantly sourced from low-income countries, paid below living wages, and suffers documented psychological harm from repeated trauma exposure. One major AI company pays these workers $1-2 per hour to review graphic violence, child exploitation material, and hate speech.',
+    risks:[
+      {id:'r4a',text:'The "clean" AI outputs users experience are built on concealed, traumatizing labor.',correct:true},
+      {id:'r4b',text:'Economic and geographic disparities determine who bears the harm costs of AI development.',correct:true},
+      {id:'r4c',text:'This is a supply chain ethics problem that faculty have no leverage over.',correct:false},
+      {id:'r4d',text:'Using AI tools makes faculty and students complicit in this labor model.',correct:true}
+    ],
+    analysis:'Mary Gray and Siddharth Suri's <em>Ghost Work</em> (2019) documented the hidden human labor that powers AI systems. More recent investigations (TIME, 2023) found that Kenyan workers processing trauma content for OpenAI were paid $1.32-$2/hour. This is not a minor footnote to AI development &#8212; it is structural. AI systems require human judgment to filter their outputs, and that judgment is purchased cheaply from workers who bear significant psychological costs.',
+    teachable:'This scenario has direct disciplinary relevance for social work, public health, labor studies, theology, business ethics, and global studies. The question of complicity &#8212; whether using AI implicates users in its labor practices &#8212; is a genuine ethical question, not a rhetorical one. It parallels questions about fast fashion, supply chain ethics, and consumer responsibility familiar in many disciplines.'
+  },
+  {
+    id:'s5',tag:'economic',tagLabel:'Economic Disruption',icon:'&#x1F4BC;',
+    title:'Scenario 5 &#8212; The Displacement Question',
+    body:'A business school professor who teaches workforce strategy asks students to analyze AI's labor market impacts. A student whose parent was recently displaced from a data entry job by an automated system challenges the professor: "You say AI creates more jobs than it destroys. But my family is living that 'disruption' right now. Who gets the new jobs, and who absorbs the transition costs?" The professor refers to a McKinsey report showing net job creation by AI over 10 years.',
+    risks:[
+      {id:'r5a',text:'Aggregate net job creation statistics can obscure highly unequal distribution of displacement and gain.',correct:true},
+      {id:'r5b',text:'The student's emotional response is irrelevant to the economic analysis.',correct:false},
+      {id:'r5c',text:'The transition period (displacement before new jobs materialize) creates real harm for specific workers.',correct:true},
+      {id:'r5d',text:'Workers who are displaced may lack the skills or resources to access newly created AI-adjacent jobs.',correct:true}
+    ],
+    analysis:'The "net job creation" framing, while statistically defensible, elides several ethical concerns: (1) transition time &#8212; the gap between displacement and new job creation can be years for affected individuals; (2) skills mismatch &#8212; workers in routine cognitive or manual tasks may not be positioned to access the new AI-economy jobs; (3) geographic concentration &#8212; AI job growth concentrates in specific regions and industries. The student's question is analytically precise, not merely emotional.',
+    teachable:'This scenario models the difference between macro-level economic analysis and micro-level lived experience. For faculty in economics, business, social work, and policy disciplines, it raises the question: whose data counts in our analysis? How do we teach economic disruption in a way that honors both the aggregate picture and the individual stories of transition?'
+  }
+];
+
+let current=0;
+
+function renderNav(){
+  const nav=document.getElementById('nav-tabs');
+  nav.innerHTML='';
+  SCENARIOS.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nav-btn'+(i===current?' active':'');
+    btn.textContent='Scenario '+(i+1);
+    btn.onclick=()=>goTo(i);
+    nav.appendChild(btn);
+  });
+  const ctr=document.createElement('span');
+  ctr.className='counter';
+  ctr.textContent=(current+1)+' of '+SCENARIOS.length;
+  nav.appendChild(ctr);
+}
+
+function renderScenarios(){
+  const container=document.getElementById('scenarios');
+  container.innerHTML='';
+  SCENARIOS.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='scenario'+(i===current?' active':'');
+    div.id='scenario-'+i;
+    let risksHtml=s.risks.map(r=>'<label class="risk-choice" id="rc-'+r.id+'"><input type="checkbox" id="cb-'+r.id+'"> '+r.text+'</label>').join('');
+    div.innerHTML=
+      '<div class="scenario-header">'+
+        '<div class="scenario-icon">'+s.icon+'</div>'+
+        '<div><span class="scenario-tag tag-'+s.tag+'">'+s.tagLabel+'</span><h2>'+s.title+'</h2></div>'+
+      '</div>'+
+      '<div class="scenario-body">'+s.body+'</div>'+
+      '<div class="risks-section"><h3>Which risks do you identify in this scenario? (select all that apply)</h3>'+
+        '<div class="risk-choices">'+risksHtml+'</div>'+
+      '</div>'+
+      '<button class="btn-reveal" onclick="reveal('+i+')">Reveal Analysis</button>'+
+      '<div class="reflection" id="ref-'+i+'">'+
+        '<strong>Analysis</strong>'+
+        '<p>'+s.analysis+'</p>'+
+        '<div class="teachable">'+s.teachable+'</div>'+
+      '</div>'+
+      '<div class="nav-arrows">'+
+        '<button class="arrow-btn" onclick="goTo('+(i-1)+')" '+(i===0?'disabled':'')+'>&#8592; Previous</button>'+
+        '<button class="arrow-btn" onclick="goTo('+(i+1)+')" '+(i===SCENARIOS.length-1?'disabled':'')+'>Next &#8594;</button>'+
+      '</div>';
+    container.appendChild(div);
+  });
+}
+
+function reveal(idx){
+  const s=SCENARIOS[idx];
+  s.risks.forEach(r=>{
+    const label=document.getElementById('rc-'+r.id);
+    const cb=document.getElementById('cb-'+r.id);
+    if(cb && label){
+      if(r.correct){label.classList.add('correct')}
+      else if(cb.checked){label.classList.add('incorrect')}
+    }
+  });
+  const ref=document.getElementById('ref-'+idx);
+  if(ref) ref.className='reflection show';
+}
+
+function goTo(idx){
+  if(idx<0||idx>=SCENARIOS.length) return;
+  current=idx;
+  document.querySelectorAll('.scenario').forEach((el,i)=>el.className='scenario'+(i===idx?' active':''));
+  document.querySelectorAll('.nav-btn').forEach((btn,i)=>btn.className='nav-btn'+(i===idx?' active':''));
+  document.querySelector('.counter').textContent=(idx+1)+' of '+SCENARIOS.length;
+  const pct=Math.round((idx+1)/SCENARIOS.length*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+renderNav();
+renderScenarios();
+document.getElementById('progress-fill').style.width=(1/SCENARIOS.length*100)+'%';
+</script>
+</body>
+</html>
