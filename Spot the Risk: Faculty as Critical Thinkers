@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spot the Risk: Faculty as Critical Thinkers</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f5f0;
+    padding: 20px;
+    color: #222;
+  }
+  h1 {
+    text-align: center;
+    color: #1a3a5c;
+    font-size: 1.35em;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 0.88em;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .scenario-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .nav-btn {
+    background: #fff;
+    border: 2px solid #c0b283;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.82em;
+    cursor: pointer;
+    color: #1a3a5c;
+    transition: all 0.2s;
+  }
+  .nav-btn.active, .nav-btn:hover {
+    background: #1a3a5c;
+    color: #fff;
+    border-color: #1a3a5c;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: none;
+    max-width: 740px;
+    margin: 0 auto;
+  }
+  .card.active { display: block; }
+  .scenario-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .scenario-icon {
+    font-size: 2em;
+    flex-shrink: 0;
+  }
+  .scenario-title {
+    font-size: 1.05em;
+    font-weight: bold;
+    color: #1a3a5c;
+    margin-bottom: 4px;
+  }
+  .scenario-discipline {
+    font-size: 0.78em;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .scenario-story {
+    font-size: 0.92em;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 20px;
+    background: #fafaf7;
+    padding: 14px;
+    border-radius: 8px;
+    border-left: 4px solid #c0b283;
+  }
+  .reveal-section { margin-bottom: 16px; }
+  .reveal-btn {
+    background: #1a3a5c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 20px;
+    font-size: 0.88em;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reveal-btn:hover { background: #2c5f8a; }
+  .reveal-btn .arrow { transition: transform 0.2s; }
+  .reveal-btn.open .arrow { transform: rotate(90deg); }
+  .reveal-content {
+    display: none;
+    background: #f0f4f8;
+    border-radius: 0 0 8px 8px;
+    padding: 14px;
+    font-size: 0.88em;
+    line-height: 1.6;
+    color: #333;
+  }
+  .reveal-content.show { display: block; }
+  .tag {
+    display: inline-block;
+    background: #e8eef8;
+    color: #1a3a5c;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 0.76em;
+    font-weight: bold;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .teachable {
+    background: #e8f4e8;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 14px;
+    font-size: 0.88em;
+    line-height: 1.6;
+    border-left: 4px solid #4a7c59;
+  }
+  .teachable strong { color: #2d5a3d; }
+  .nav-arrows {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 22px;
+    max-width: 740px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .arrow-btn {
+    background: #fff;
+    border: 2px solid #1a3a5c;
+    border-radius: 8px;
+    padding: 8px 18px;
+    color: #1a3a5c;
+    font-size: 0.88em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .arrow-btn:hover { background: #1a3a5c; color: #fff; }
+  .arrow-btn:disabled { opacity: 0.3; cursor: default; }
+  .progress {
+    text-align: center;
+    color: #888;
+    font-size: 0.82em;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🔍 Spot the Risk</h1>
+<p class="subtitle">Six scenarios. Real patterns. Faculty who noticed — and what they did next.</p>
+
+<div class="scenario-nav">
+  <button class="nav-btn active" onclick="showCard(0)">1</button>
+  <button class="nav-btn" onclick="showCard(1)">2</button>
+  <button class="nav-btn" onclick="showCard(2)">3</button>
+  <button class="nav-btn" onclick="showCard(3)">4</button>
+  <button class="nav-btn" onclick="showCard(4)">5</button>
+  <button class="nav-btn" onclick="showCard(5)">6</button>
+</div>
+
+<!-- SCENARIO 1 -->
+<div class="card active" id="card-0">
+  <div class="scenario-header">
+    <div class="scenario-icon">🏥</div>
+    <div>
+      <div class="scenario-title">The Nursing Professor's Shortcut</div>
+      <div class="scenario-discipline">Nursing / Health Sciences</div>
+    </div>
+  </div>
+  <div class="scenario-story">
+    A nursing faculty member is designing a case-based discussion and pastes a detailed patient scenario — including the patient's age, diagnosis, medication history, and room number — into ChatGPT to generate discussion questions. She's used the tool before for lesson planning and it's saved her hours. She doesn't think of herself as "sharing patient data" because it's a teaching scenario, not a real patient... except it is. The case was adapted from an actual de-identified record from her clinical site.
+  </div>
+  <div class="reveal-section">
+    <button class="reveal-btn" onclick="toggle(this)">
+      🎯 What's the ethical concern? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <span class="tag">FERPA-adjacent</span><span class="tag">Data Privacy</span><span class="tag">Consumer Tool Risk</span>
+      <p style="margin-top:8px">Even when records are "de-identified," combinations of clinical details can re-identify a patient. Consumer AI tools like ChatGPT (personal account) are not covered by institutional data processing agreements, are not HIPAA-compliant, and may retain or train on submitted content. Faculty using these tools with clinical or student data — even adapted — carry full legal and ethical responsibility.</p>
+    </div>
+  </div>
+  <div class="reveal-section" style="margin-top:10px">
+    <button class="reveal-btn" onclick="toggle(this)">
+      💡 What did a critical-thinking faculty member do? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <p>A nursing faculty member at a mid-sized university noticed the same risk before using the tool. She contacted her institution's IT office and discovered her university had a licensed version of a clinical AI tool with a signed Business Associate Agreement (BAA) — HIPAA-compliant and approved. She switched to that tool and then brought the scenario to her class: <em>"Here's a situation I almost created. What are the ethical issues? Who would be harmed? What would you do?"</em> Her students — future nurses — had an unforgettable lesson in data ethics that no textbook could replicate.</p>
+      <div class="teachable"><strong>🍎 Teachable Moment:</strong> Your field-specific expertise is your greatest asset for teaching AI ethics. You know which data is sensitive, which regulations apply, and what professional responsibility looks like in your discipline. Students need to hear that from you — not from a generic module.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO 2 -->
+<div class="card" id="card-1">
+  <div class="scenario-header">
+    <div class="scenario-icon">📜</div>
+    <div>
+      <div class="scenario-title">The History Professor's Images</div>
+      <div class="scenario-discipline">History / Humanities</div>
+    </div>
+  </div>
+  <div class="scenario-story">
+    A history professor uses an AI image generator to create visuals of historical figures and scenes for his lecture slides. The images are vivid and engaging — students love them. But a student points out something he hadn't noticed: every single scientist generated by the tool is depicted as a white Western man, even when asked to depict diverse historical contexts. The images of medieval African kingdoms look stylistically like European fantasy art.
+  </div>
+  <div class="reveal-section">
+    <button class="reveal-btn" onclick="toggle(this)">
+      🎯 What's the ethical concern? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <span class="tag">Representation Bias</span><span class="tag">Cultural Bias</span><span class="tag">Historical Accuracy</span>
+      <p style="margin-top:8px">AI image generators encode the biases of their training data. Images of non-Western history, people of color, and women in professional roles are systematically distorted — reflecting whose images dominated the internet data used to train the model. Using these images uncritically in an educational setting can reinforce false historical narratives and harm students whose communities are misrepresented.</p>
+    </div>
+  </div>
+  <div class="reveal-section" style="margin-top:10px">
+    <button class="reveal-btn" onclick="toggle(this)">
+      💡 What did a critical-thinking faculty member do? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <p>A history faculty member in medieval African history encountered the same issue and made it the centerpiece of a class discussion. She showed students three AI-generated images of the Mali Empire, then showed archival illustrations from primary sources. She asked: <em>"What did the AI get wrong? Why? Whose knowledge got left out of the training data? What does that mean for how we should use AI in historical research?"</em> The students' analysis was rich, critical, and disciplinarily grounded — exactly the kind of thinking historians need.</p>
+      <div class="teachable"><strong>🍎 Teachable Moment:</strong> AI bias isn't abstract to your students when it's their history being distorted. You don't need to abandon AI tools — you can use their limitations as evidence to teach critical source evaluation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO 3 -->
+<div class="card" id="card-2">
+  <div class="scenario-header">
+    <div class="scenario-icon">💼</div>
+    <div>
+      <div class="scenario-title">The Business Professor's Undisclosed Assistant</div>
+      <div class="scenario-discipline">Business / Any Discipline</div>
+    </div>
+  </div>
+  <div class="scenario-story">
+    A business professor uses AI to generate the first draft of his exam questions, his course announcements, and feedback comments on student work. He edits and reviews everything before it goes out. He doesn't tell students. He reasons: "I'm responsible for the content — it doesn't matter how I generated it." A student asks him directly: "Did you use AI to write our feedback?" He says no.
+  </div>
+  <div class="reveal-section">
+    <button class="reveal-btn" onclick="toggle(this)">
+      🎯 What's the ethical concern? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <span class="tag">Transparency</span><span class="tag">Consent</span><span class="tag">Trust</span>
+      <p style="margin-top:8px">Faculty who require transparency from students about AI use — and then use AI themselves without disclosure — model a double standard that erodes trust. When students receive AI-generated feedback presented as the professor's own assessment, they are denied the ability to evaluate the source of that feedback. The lie to the student crosses from an ethical gray area into a clear breach of academic integrity — from the faculty member.</p>
+    </div>
+  </div>
+  <div class="reveal-section" style="margin-top:10px">
+    <button class="reveal-btn" onclick="toggle(this)">
+      💡 What did a critical-thinking faculty member do? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <p>A writing faculty member made her AI use explicit from the start: she included a statement in her syllabus disclosing that she used AI as a drafting assistant for some course materials, that she reviewed all content before distribution, and that she expected the same transparency from students. She then taught a class session on "AI disclosure norms" — using her own practice as the case study. Students reported that her transparency made them more, not less, trusting of her feedback.</p>
+      <div class="teachable"><strong>🍎 Teachable Moment:</strong> Disclosure norms for AI are still being established across every profession — law, medicine, journalism, science. Walking students through <em>your</em> thinking about disclosure is modeling exactly the kind of professional ethical reasoning they'll need in their careers.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO 4 -->
+<div class="card" id="card-3">
+  <div class="scenario-header">
+    <div class="scenario-icon">⚖️</div>
+    <div>
+      <div class="scenario-title">The Law Student's Research Tool</div>
+      <div class="scenario-discipline">Law / Pre-Law / Any Research-Intensive Field</div>
+    </div>
+  </div>
+  <div class="scenario-story">
+    A pre-law student submits a research memo citing six cases. Her professor checks the citations — two of the cases don't exist. They are plausible-sounding but fabricated. The student used an AI tool to help research and didn't verify the outputs. She's mortified. The professor's first instinct is to refer the case to the academic integrity office for plagiarism.
+  </div>
+  <div class="reveal-section">
+    <button class="reveal-btn" onclick="toggle(this)">
+      🎯 What's the ethical concern? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <span class="tag">AI Hallucination</span><span class="tag">Academic Integrity</span><span class="tag">Information Literacy</span>
+      <p style="margin-top:8px">AI "hallucination" — generating confident, plausible-sounding but false information — is one of GenAI's most serious known limitations. This is not academic dishonesty in the traditional sense; the student didn't fabricate citations intentionally. But it reveals a critical gap in AI literacy: students must understand that AI outputs require verification, and that AI is not a reliable research database. The ethical issue is also faculty-facing: if students haven't been taught this, referring to academic integrity proceedings is unjust.</p>
+    </div>
+  </div>
+  <div class="reveal-section" style="margin-top:10px">
+    <button class="reveal-btn" onclick="toggle(this)">
+      💡 What did a critical-thinking faculty member do? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <p>The professor paused before referring the case and instead held a one-on-one conversation with the student. It became clear the student had used AI in good faith without understanding hallucination. The professor turned it into a class-wide teaching moment — without identifying the student — showing the class the fabricated citations and asking: <em>"How would you catch this? What would a lawyer's professional liability be if they submitted this to a court?"</em> The American Bar Association's 2023 guidance on AI use in legal practice became the course reading for that week.</p>
+      <div class="teachable"><strong>🍎 Teachable Moment:</strong> AI hallucination is a professional liability issue in law, medicine, engineering, and research. Your discipline almost certainly has an emerging professional standard on AI verification — finding and teaching that standard is one of the most future-relevant things you can do right now.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO 5 -->
+<div class="card" id="card-4">
+  <div class="scenario-header">
+    <div class="scenario-icon">🌍</div>
+    <div>
+      <div class="scenario-title">The Political Science Professor's Hesitation</div>
+      <div class="scenario-discipline">Political Science / Social Sciences / Any Discipline</div>
+    </div>
+  </div>
+  <div class="scenario-story">
+    A political science professor wants to teach a unit on technology policy. She's been reading about how AI data centers are being sited in rural communities with disproportionate impacts on water supplies and predominantly Black and brown neighborhoods. She thinks it's important but hesitates: "My course is about electoral politics. Is data center siting really relevant to what I teach?"
+  </div>
+  <div class="reveal-section">
+    <button class="reveal-btn" onclick="toggle(this)">
+      🎯 What's the ethical concern? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <span class="tag">Environmental Justice</span><span class="tag">Civic Literacy</span><span class="tag">Disciplinary Relevance</span>
+      <p style="margin-top:8px">The question of who bears the environmental and resource costs of AI infrastructure — and who decides — is fundamentally a political question. Zoning decisions, utility regulations, environmental impact assessments, and corporate accountability are all within the domain of political science. The concern isn't whether it's relevant — it clearly is. The concern is faculty confidence in connecting "AI ethics" to their discipline.</p>
+    </div>
+  </div>
+  <div class="reveal-section" style="margin-top:10px">
+    <button class="reveal-btn" onclick="toggle(this)">
+      💡 What did a critical-thinking faculty member do? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <p>She taught it. She assigned her students to analyze a real proposed data center siting decision in a rural county — looking at the public comment record, the zoning board vote, the demographics of the affected community, and the corporate lobbying disclosures. Students had to apply the same political analysis frameworks they'd use for any other policy case. One student said it was the first time a "technology issue" felt like something she could actually vote on and advocate about. That's exactly the goal.</p>
+      <div class="teachable"><strong>🍎 Teachable Moment:</strong> Every discipline has a door into AI ethics. The question is never <em>whether</em> it's relevant — it's <em>which angle</em> makes sense for your students. Your disciplinary lens is not a limitation. It's what makes the lesson stick.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO 6 -->
+<div class="card" id="card-5">
+  <div class="scenario-header">
+    <div class="scenario-icon">📧</div>
+    <div>
+      <div class="scenario-title">The Accommodation Request</div>
+      <div class="scenario-discipline">Any Discipline</div>
+    </div>
+  </div>
+  <div class="scenario-story">
+    A student emails a faculty member asking if they can use a personal AI note-taking app to help manage their ADHD during lectures. The app records audio, transcribes it, and generates summaries. The student mentions it's been "life-changing" for them. The faculty member isn't sure: the app wasn't on the institution's approved tools list, and she's not sure if allowing it would create privacy issues for other students in the room.
+  </div>
+  <div class="reveal-section">
+    <button class="reveal-btn" onclick="toggle(this)">
+      🎯 What's the ethical concern? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <span class="tag">FERPA</span><span class="tag">Disability Access</span><span class="tag">Student Privacy</span><span class="tag">Consumer Tool Risk</span>
+      <p style="margin-top:8px">This scenario involves competing ethical obligations: the student's right to accessible educational tools and the privacy rights of other students whose voices may be recorded and processed by an unapproved third-party AI platform. Consumer AI tools are not subject to FERPA protections — meaning other students' classroom participation could be retained and used to train AI models without their consent. This is not a simple accommodation question — it's a data governance question with real legal stakes.</p>
+    </div>
+  </div>
+  <div class="reveal-section" style="margin-top:10px">
+    <button class="reveal-btn" onclick="toggle(this)">
+      💡 What did a critical-thinking faculty member do? <span class="arrow">▶</span>
+    </button>
+    <div class="reveal-content">
+      <p>The faculty member didn't say yes or no. She contacted her institution's disability services office and IT security team together — a conversation that revealed her university was in the process of evaluating several AI note-taking tools for institutional licensing. The student was connected to disability services, who helped identify an approved alternative. The faculty member then brought the general scenario (not the specific student's situation) to a faculty development session to help colleagues understand that "accessibility via AI" is an emerging space that needs institutional infrastructure — not just individual improvisation.</p>
+      <div class="teachable"><strong>🍎 Teachable Moment:</strong> The intersection of AI, accessibility, and privacy is one of the most ethically complex areas faculty will face. You don't have to solve it alone — but you do need to know who to call. Your institution's disability services and IT security offices are your partners in this.</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-arrows">
+  <button class="arrow-btn" id="prev-btn" onclick="navigate(-1)" disabled>← Previous</button>
+  <button class="arrow-btn" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+<p class="progress" id="progress-text">Scenario 1 of 6</p>
+
+<script>
+  let current = 0;
+  const total = 6;
+
+  function showCard(n) {
+    document.querySelectorAll('.card').forEach((c, i) => c.classList.toggle('active', i === n));
+    document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === n));
+    document.getElementById('prev-btn').disabled = n === 0;
+    document.getElementById('next-btn').disabled = n === total - 1;
+    document.getElementById('progress-text').textContent = `Scenario ${n + 1} of ${total}`;
+    current = n;
+  }
+
+  function navigate(dir) {
+    const next = current + dir;
+    if (next >= 0 && next < total) showCard(next);
+  }
+
+  function toggle(btn) {
+    btn.classList.toggle('open');
+    const content = btn.nextElementSibling;
+    content.classList.toggle('show');
+  }
+</script>
+</body>
+</html>
