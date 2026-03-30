@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Environmental Benefits Map — M3.3 TRAIL</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #222222;
+      padding: 1.25rem;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .widget-header {
+      margin-bottom: 0.75rem;
+    }
+
+    .widget-header p {
+      font-size: 13px;
+      color: #555555;
+      line-height: 1.5;
+    }
+
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .tab-btn {
+      padding: 7px 16px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .tab-btn:focus {
+      outline: 3px solid #FFD700;
+      outline-offset: 2px;
+    }
+
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .benefit-card {
+      background: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 10px;
+      padding: 1rem;
+      border-top-width: 3px;
+    }
+
+    .benefit-card h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #222222;
+    }
+
+    .benefit-card p {
+      font-size: 12px;
+      color: #555555;
+      line-height: 1.5;
+    }
+
+    .key-finding {
+      margin-top: 0.5rem;
+      padding: 0.875rem 1rem;
+      background: #f0f7f0;
+      border-radius: 8px;
+      border-left: 4px solid #1B4332;
+    }
+
+    .key-finding p {
+      font-size: 12px;
+      color: #333333;
+      line-height: 1.6;
+    }
+
+    .key-finding strong {
+      color: #1B4332;
+    }
+
+    .source-note {
+      margin-top: 0.75rem;
+      font-size: 11px;
+      color: #888888;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .tab-btn { transition: none; }
+    }
+
+    /* High contrast */
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1a1a; color: #eeeeee; }
+      .benefit-card { background: #2a2a2a; border-color: #444444; }
+      .benefit-card h3 { color: #eeeeee; }
+      .benefit-card p { color: #bbbbbb; }
+      .key-finding { background: #1e3a2a; }
+      .key-finding p { color: #cccccc; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="widget-header">
+    <p>Select a category to explore documented AI applications in environmental protection and sustainability. Sources: Microsoft AI for Good Lab (2019–2025); BCG &amp; Google / Dannouni et al. (2023); NREL (2024); IEA (2025).</p>
+  </div>
+
+  <div class="tab-bar" id="tab-bar" role="tablist" aria-label="AI environmental benefit categories"></div>
+
+  <div class="benefit-grid" id="benefit-grid" role="region" aria-live="polite" aria-label="Benefits for selected category"></div>
+
+  <div class="key-finding">
+    <p><strong>Key finding:</strong> BCG &amp; Google (Dannouni et al., 2023) estimate that applying proven AI techniques to energy, transport, food, and industry could reduce global greenhouse gas emissions by <strong>5–10% by 2030</strong> — equivalent to eliminating the annual emissions of the entire European Union. This is based on documented applications already underway, not speculative projections.</p>
+  </div>
+
+  <p class="source-note">
+    Sources: Dannouni, A. et al. (2023). <em>Accelerating Climate Action with AI.</em> BCG &amp; Google. | Microsoft AI for Good Research Lab. (2019–2025). Advance Sustainability Publications. | NREL. (2024). AI Work Reveals Benefits to Wind Industry. | IEA. (2025). <em>Energy and AI.</em> | Greenhill et al. (2024). <em>Science, 383</em>, 406. | Kiesecker et al. (2024). <em>Frontiers in Environmental Science.</em>
+  </p>
+
+<script>
+  const categories = {
+    'Energy grid': {
+      color: '#185FA5',
+      items: [
+        {
+          title: 'Wildfire prevention',
+          desc: 'AI sensors and cameras can reduce utility-caused wildfire ignition risk by up to 72% using sensors already installed at many utilities (Payne & Eisen, 2025). AI cameras have reportedly prevented at least one large wildfire in documented utility cases.'
+        },
+        {
+          title: 'Grid cooling optimization',
+          desc: "Google's DeepMind AI reduced data center cooling energy consumption by 40%, demonstrating that AI can meaningfully reduce its own infrastructure's footprint when deliberately applied."
+        },
+        {
+          title: 'Renewable dispatch',
+          desc: 'AI systems match available renewable generation with flexible loads in real time, reducing reliance on fossil fuel backup plants and improving integration of intermittent wind and solar resources.'
+        },
+        {
+          title: 'Weather & storm forecasting',
+          desc: 'AI improves storm prediction accuracy, enabling solar panels to reposition before hail damage and grid operators to pre-position resources before extreme weather events (Payne & Eisen, 2025).'
+        }
+      ]
+    },
+    'Climate science': {
+      color: '#0F6E56',
+      items: [
+        {
+          title: 'Climate modeling resolution',
+          desc: "NVIDIA's Earth-2 generative AI foundation model simulates global climate at kilometer-scale resolution — a dramatic improvement over prior capabilities that enables more accurate regional climate projections."
+        },
+        {
+          title: 'Methane leak detection',
+          desc: 'AI-powered satellite monitoring identifies methane releases across oil, gas, and agricultural infrastructure at scale — enabling targeted intervention that would be impossible through manual inspection.'
+        },
+        {
+          title: 'Wetlands & watershed mapping',
+          desc: 'Machine learning predicts which rivers, streams, and wetlands are regulated under the Clean Water Act, helping identify protected ecosystems at risk following regulatory changes (Greenhill et al., 2024, Science).'
+        },
+        {
+          title: 'Environmental impact assessment',
+          desc: 'AI tools assist in developing better environmental impact statements for infrastructure projects, improving the quality and speed of regulatory review processes (Payne & Eisen, 2025).'
+        }
+      ]
+    },
+    'Biodiversity': {
+      color: '#3B6D11',
+      items: [
+        {
+          title: 'Marine mammal monitoring',
+          desc: "Microsoft's AI for Good Lab uses AI and very high-resolution satellite imagery to monitor whales, dolphins, and other marine mammals from space — enabling population assessments at scales previously impossible (Khan et al., 2023)."
+        },
+        {
+          title: 'Bioacoustics & species ID',
+          desc: 'Deep learning models identify endangered species including Cook Inlet beluga whales and rare bird species from passive acoustic recordings, enabling continuous monitoring without human observers (Zhong et al., 2021).'
+        },
+        {
+          title: 'Glacier & climate change tracking',
+          desc: 'Machine learning tracks glacial lake changes in the Hindu Kush Himalaya, providing early warning data for downstream flood risk and long-term climate change monitoring (Baraka et al., 2020).'
+        },
+        {
+          title: 'Agricultural & land use mapping',
+          desc: "Microsoft's AI for Good Lab maps agricultural field boundaries across Africa to support sustainable land use planning, food security analysis, and conservation priority-setting (Kerner et al., 2025)."
+        }
+      ]
+    },
+    'Renewable energy': {
+      color: '#BA7517',
+      items: [
+        {
+          title: 'Solar & wind siting',
+          desc: 'AI identifies low-conflict areas for solar and wind development in Europe and India, reducing land-use disputes and accelerating renewable energy siting decisions while protecting ecologically sensitive areas (Kiesecker et al., 2024).'
+        },
+        {
+          title: 'Wind farm optimization',
+          desc: "NREL's AI research reveals significant efficiency gains in wind farm design, turbine placement, and wake management — improving energy yield from existing and planned wind installations (NREL, 2024)."
+        },
+        {
+          title: 'Solar panel lifespan extension',
+          desc: "Microsoft Research's DeepDeg system uses AI to predict photovoltaic panel degradation, enabling proactive maintenance that extends panel lifespan — directly addressing the end-of-life waste challenge in solar energy (Oviedo et al., 2023)."
+        },
+        {
+          title: 'Community solar retention',
+          desc: 'Machine learning models reduce participant dropout rates in community solar programs, expanding clean energy access to lower-income households that cannot install their own solar systems (Allsup, 2024).'
+        }
+      ]
+    }
+  };
+
+  const colors = {
+    'Energy grid': '#185FA5',
+    'Climate science': '#0F6E56',
+    'Biodiversity': '#3B6D11',
+    'Renewable energy': '#BA7517'
+  };
+
+  let activeCategory = 'Energy grid';
+
+  function renderTabs() {
+    const bar = document.getElementById('tab-bar');
+    bar.innerHTML = Object.keys(categories).map(cat => {
+      const isActive = cat === activeCategory;
+      const c = colors[cat];
+      return `<button
+        class="tab-btn"
+        role="tab"
+        aria-selected="${isActive}"
+        aria-controls="benefit-grid"
+        id="tab-${cat.replace(/\s/g, '-')}"
+        onclick="setCategory('${cat}')"
+        style="
+          background: ${isActive ? c : 'transparent'};
+          color: ${isActive ? '#ffffff' : '#222222'};
+          border-color: ${c};
+        "
+      >${cat}</button>`;
+    }).join('');
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('benefit-grid');
+    const data = categories[activeCategory];
+    const c = colors[activeCategory];
+    grid.innerHTML = data.items.map(item => `
+      <div class="benefit-card" style="border-top-color: ${c};" role="article">
+        <h3>${item.title}</h3>
+        <p>${item.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  window.setCategory = function(cat) {
+    activeCategory = cat;
+    renderTabs();
+    renderGrid();
+    // Move focus to grid for screen readers
+    document.getElementById('benefit-grid').focus();
+  };
+
+  // Initialize
+  renderTabs();
+  renderGrid();
+</script>
+
+</body>
+</html>
