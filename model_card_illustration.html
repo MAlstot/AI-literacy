@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is a Model Card? — Illustrative Example</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --green-dark: #1a3d2b;
+    --green-mid: #2d6a4f;
+    --green-light: #52b788;
+    --gold: #e9a820;
+    --cream: #faf8f3;
+    --warm-gray: #f0ede6;
+    --text-dark: #1c1c1c;
+    --text-mid: #4a4a4a;
+    --text-light: #717171;
+    --border: #ddd8ce;
+    --red-soft: #c0392b;
+    --amber-soft: #d4850a;
+    --blue-soft: #2471a3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  /* FICTIONAL BANNER */
+  .fictional-banner {
+    background: var(--gold);
+    color: var(--green-dark);
+    text-align: center;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid #c58b10;
+  }
+  .fictional-banner span {
+    font-weight: 400;
+    margin-left: 6px;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+
+  /* INTRO */
+  .intro-block {
+    margin-bottom: 32px;
+  }
+  .intro-block h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .intro-block p {
+    font-size: 14.5px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    max-width: 640px;
+  }
+
+  /* MODEL CARD */
+  .model-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  /* Card Header */
+  .card-header {
+    background: var(--green-dark);
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .card-header-icon {
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .card-header-text h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    color: white;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+  .card-header-text .model-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-header-text .model-meta span {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* Tag row */
+  .tag-row {
+    background: var(--warm-gray);
+    padding: 10px 24px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .tag {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+  .tag-task { background: #e8f4ec; color: var(--green-mid); border: 1px solid #b7ddc4; }
+  .tag-lang { background: #e8f0fb; color: var(--blue-soft); border: 1px solid #b8cef0; }
+  .tag-license { background: #fef3e2; color: var(--amber-soft); border: 1px solid #f0d49a; }
+
+  /* Card Body */
+  .card-body {
+    padding: 0;
+  }
+
+  /* Section */
+  .card-section {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-section:last-child {
+    border-bottom: none;
+  }
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-content {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-dark);
+  }
+  .section-content p { margin-bottom: 8px; }
+  .section-content p:last-child { margin-bottom: 0; }
+
+  /* Two-col layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 560px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  /* Use box */
+  .use-box {
+    background: var(--warm-gray);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .use-box-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .use-box-label.intended { color: var(--green-mid); }
+  .use-box-label.out-of-scope { color: var(--red-soft); }
+  .use-box ul {
+    list-style: none;
+    font-size: 13.5px;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+  .use-box ul li {
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .use-box ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--text-light);
+    font-weight: 600;
+  }
+  .use-box.intended-box { border-left: 3px solid var(--green-light); }
+  .use-box.oos-box { border-left: 3px solid #e57373; }
+
+  /* Training data */
+  .data-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--warm-gray);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-mid);
+    margin: 3px 4px 3px 0;
+  }
+
+  /* Bias table */
+  .bias-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-top: 4px;
+  }
+  .bias-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--warm-gray);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .bias-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .bias-table tr:last-child td { border-bottom: none; }
+  .bias-table tr:hover td { background: var(--warm-gray); }
+
+  .flag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+  .flag-warn { background: #fef3e2; color: var(--amber-soft); }
+  .flag-caution { background: #fdecea; color: var(--red-soft); }
+  .flag-ok { background: #e8f4ec; color: var(--green-mid); }
+
+  /* Limitations */
+  .limitation-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-mid);
+  }
+  .limitation-item:last-child { border-bottom: none; }
+  .limitation-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fef3e2;
+    color: var(--amber-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-weight: 700;
+  }
+
+  /* Footer */
+  .card-footer {
+    background: var(--warm-gray);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .card-footer-text {
+    font-size: 12px;
+    color: var(--text-light);
+    font-family: 'DM Mono', monospace;
+  }
+  .card-footer-text strong {
+    color: var(--text-mid);
+    font-weight: 500;
+  }
+
+  /* Bottom note */
+  .bottom-note {
+    margin-top: 24px;
+    background: var(--green-dark);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+  }
+  .bottom-note strong {
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .bottom-note a {
+    color: var(--green-light);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .bottom-note a:hover { color: white; }
+
+  .annotation-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green-dark);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-family: 'DM Sans', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="fictional-banner">
+  ⚠ ILLUSTRATIVE EXAMPLE — FICTIONAL MODEL
+  <span>This is not a real AI system. Created to demonstrate model card structure for educational purposes.</span>
+</div>
+
+<div class="container">
+
+  <div class="intro-block">
+    <h1>What Is a Model Card?</h1>
+    <p>A model card is a brief document published alongside an AI model that discloses how it was built, what it's intended for, where it may fall short, and how it performs across different demographic groups. The example below illustrates the key sections of a model card — using a fictional model called <strong>EquityScore-3</strong>.</p>
+  </div>
+
+  <div class="model-card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="card-header-icon">🤖</div>
+      <div class="card-header-text">
+        <h2>EquityScore-3 / hiring-assessment-v3</h2>
+        <div class="model-meta">
+          <span>Released: March 2025</span>
+          <span>Version: 3.1.2</span>
+          <span>Developer: FictionalAI Research Lab</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="tag-row">
+      <span class="tag tag-task">text-classification</span>
+      <span class="tag tag-task">resume-screening</span>
+      <span class="tag tag-lang">English</span>
+      <span class="tag tag-lang">Spanish</span>
+      <span class="tag tag-license">CC BY-NC 4.0</span>
+    </div>
+
+    <div class="card-body">
+
+      <!-- Model Summary -->
+      <div class="card-section">
+        <div class="section-label">Model Summary <span class="annotation-badge">What it is</span></div>
+        <div class="section-content">
+          <p>EquityScore-3 is a text classification model designed to assist human reviewers in screening job applications by flagging relevant qualifications for specific role types. It is not a standalone decision-making tool and is intended for use only as a first-pass filter under active human review.</p>
+          <p>This model was developed as part of a research initiative examining fairness-aware hiring tools and has not been validated for deployment in regulated hiring contexts without additional testing.</p>
+        </div>
+      </div>
+
+      <!-- Intended Use -->
+      <div class="card-section">
+        <div class="section-label">Uses <span class="annotation-badge">What it's for — and not for</span></div>
+        <div class="two-col">
+          <div class="use-box intended-box">
+            <div class="use-box-label intended">✓ Intended Use</div>
+            <ul>
+              <li>Assisting human reviewers with large applicant pools</li>
+              <li>Research on algorithmic fairness in hiring</li>
+              <li>Pilot programs with active oversight and auditing</li>
+            </ul>
+          </div>
+          <div class="use-box oos-box">
+            <div class="use-box-label out-of-scope">✗ Out-of-Scope Use</div>
+            <ul>
+              <li>Automated hiring decisions without human review</li>
+              <li>Screening for roles requiring specialized credentials</li>
+              <li>Any deployment without bias auditing</li>
+              <li>Use in legally protected employment contexts (EEOC)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Data -->
+      <div class="card-section">
+        <div class="section-label">Training Data <span class="annotation-badge">Where it learned from</span></div>
+        <div class="section-content">
+          <p>The model was trained on approximately 2.3 million anonymized job application records collected between 2015–2023 from three hiring platforms (details under NDA). Data was filtered to remove direct demographic identifiers.</p>
+          <div style="margin-top:10px;">
+            <div class="data-pill">📄 Resume corpus (1.8M)</div>
+            <div class="data-pill">📋 Job descriptions (420K)</div>
+            <div class="data-pill">✓ Outcome labels (human-verified)</div>
+          </div>
+          <p style="margin-top:12px; font-size:13px; color:var(--text-light);">⚠ Note: Historical hiring decisions used as outcome labels may reflect prior organizational biases. See Bias Evaluation below.</p>
+        </div>
+      </div>
+
+      <!-- Bias Evaluation -->
+      <div class="card-section">
+        <div class="section-label">Bias Evaluation <span class="annotation-badge">How it performs across groups</span></div>
+        <div class="section-content">
+          <p style="font-size:13.5px; color:var(--text-mid); margin-bottom:12px;">Performance was evaluated across demographic subgroups using applicant self-identification data from a held-out evaluation set (n=42,000). Demographic parity and false positive rates were measured.</p>
+          <table class="bias-table">
+            <thead>
+              <tr>
+                <th>Subgroup</th>
+                <th>False Positive Rate</th>
+                <th>False Negative Rate</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Men (overall)</td>
+                <td>4.2%</td>
+                <td>6.1%</td>
+                <td><span class="flag flag-ok">Baseline</span></td>
+              </tr>
+              <tr>
+                <td>Women (overall)</td>
+                <td>4.8%</td>
+                <td>9.3%</td>
+                <td><span class="flag flag-warn">Monitor</span></td>
+              </tr>
+              <tr>
+                <td>Non-binary / non-disclosed</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="flag flag-warn">Insufficient data</span></td>
+              </tr>
+              <tr>
+                <td>English as second language</td>
+                <td>5.1%</td>
+                <td>14.7%</td>
+                <td><span class="flag flag-caution">High risk</span></td>
+              </tr>
+              <tr>
+                <td>Career gaps (&gt;12 months)</td>
+                <td>3.9%</td>
+                <td>18.2%</td>
+                <td><span class="flag flag-caution">High risk</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Limitations -->
+      <div class="card-section">
+        <div class="section-label">Known Limitations <span class="annotation-badge">What it doesn't do well</span></div>
+        <div class="section-content">
+          <div class="limitation-item">
+            <div class="limitation-icon">!</div>
+            <div>The model shows higher false negative rates for applicants whose resumes include non-standard formatting, career gaps, or language patterns associated with non-dominant English dialects.</div>
+          </div>
+          <div class="limitation-item">
+            <div class="limitation-icon">!</div>
+            <div>Training data over-represents candidates from US and UK hiring contexts. Performance on applications from other regions has not been validated and may be unreliable.</div>
+          </div>
+          <div class="limitation-item">
+            <div class="limitation-icon">!</div>
+            <div>Outcome labels were derived from historical hiring decisions, which may encode prior organizational biases. Debiasing techniques were applied but cannot fully eliminate this risk.</div>
+          </div>
+          <div class="limitation-item">
+            <div class="limitation-icon">!</div>
+            <div>Model has not been evaluated for intersectional fairness (e.g., women of color, disabled applicants). Intersectional evaluation is recommended before any deployment.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card-section">
+        <div class="section-label">Recommendations for Deployers</div>
+        <div class="section-content">
+          <p>Organizations wishing to pilot this model should conduct an independent bias audit against their own applicant pool prior to deployment. Human review of all model-flagged decisions is required. The authors recommend quarterly performance monitoring disaggregated by available demographic subgroup data.</p>
+        </div>
+      </div>
+
+    </div><!-- /card-body -->
+
+    <!-- Footer -->
+    <div class="card-footer">
+      <div class="card-footer-text"><strong>Citation:</strong> FictionalAI Research Lab (2025). EquityScore-3 model card [Illustrative example].</div>
+      <div class="card-footer-text"><strong>Contact:</strong> modelcard@fictionalai.example</div>
+    </div>
+
+  </div><!-- /model-card -->
+
+  <!-- Bottom note -->
+  <div class="bottom-note">
+    <strong>This is a fictional model for educational purposes only.</strong> Real model cards for open-source AI models are publicly available on <a href="https://huggingface.co/meta-llama" target="_blank" rel="noopener">Hugging Face</a> — a platform notable for prioritizing transparency and open science as accountability mechanisms. Viewing full model cards on Hugging Face requires creating a free account. The structure and fields shown above reflect the model card standard developed by Mitchell et al. (2019).
+  </div>
+
+</div><!-- /container -->
+
+</body>
+</html>
