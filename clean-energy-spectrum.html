@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Energy Accountability Spectrum — M3.3 TRAIL</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #222222;
+      padding: 1.25rem;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .intro {
+      font-size: 13px;
+      color: #555555;
+      margin-bottom: 1.25rem;
+      line-height: 1.6;
+    }
+
+    /* Progress bar showing spectrum position */
+    .spectrum-bar {
+      display: flex;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .spectrum-bar div {
+      flex: 1;
+    }
+
+    /* Tier cards */
+    .tier {
+      border: 1px solid #dddddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .tier:focus {
+      outline: 3px solid #F1C500;
+      outline-offset: 2px;
+    }
+
+    .tier:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .tier-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.875rem 1rem;
+    }
+
+    .tier-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: 0.03em;
+    }
+
+    .tier-title {
+      font-size: 14px;
+      font-weight: 700;
+      flex: 1;
+      color: #222222;
+    }
+
+    .tier-toggle {
+      font-size: 18px;
+      color: #888888;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .tier-toggle.open {
+      transform: rotate(180deg);
+    }
+
+    .tier-body {
+      display: none;
+      padding: 0 1rem 1rem 1rem;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .tier-body.open {
+      display: block;
+    }
+
+    .tier-body p {
+      font-size: 13px;
+      color: #444444;
+      line-height: 1.65;
+      margin-top: 0.75rem;
+    }
+
+    .tier-body .stat {
+      display: inline-block;
+      margin-top: 0.625rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tier-body .example {
+      margin-top: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #444444;
+      line-height: 1.55;
+    }
+
+    .tier-body .example strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Key takeaway */
+    .takeaway {
+      margin-top: 1rem;
+      padding: 0.875rem 1rem;
+      background: #f0f7f0;
+      border-left: 4px solid #1B4332;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .takeaway p {
+      font-size: 12px;
+      color: #333333;
+      line-height: 1.65;
+    }
+
+    .takeaway strong {
+      color: #1B4332;
+    }
+
+    .source-note {
+      margin-top: 0.875rem;
+      font-size: 11px;
+      color: #888888;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1a1a; color: #eeeeee; }
+      .intro { color: #aaaaaa; }
+      .tier { border-color: #444444; background: #2a2a2a; }
+      .tier-title { color: #eeeeee; }
+      .tier-body { border-top-color: #444444; }
+      .tier-body p { color: #cccccc; }
+      .tier-toggle { color: #aaaaaa; }
+      .takeaway { background: #1e3a2a; }
+      .takeaway p { color: #cccccc; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tier, .tier-toggle { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <p class="intro">Not all "clean energy" claims are equal. This spectrum shows the difference between energy accountability approaches — from weakest to strongest. Click each tier to explore. Sources: Google Sustainability (2021); UN 24/7 CFE Compact; Uptime Institute (2023); Payne &amp; Eisen (2025).</p>
+
+  <div class="spectrum-bar" role="presentation" aria-hidden="true">
+    <div style="background: #C62828;"></div>
+    <div style="background: #E65100;"></div>
+    <div style="background: #1565C0;"></div>
+    <div style="background: #1B4332;"></div>
+  </div>
+
+  <!-- TIER 1 -->
+  <div class="tier" tabindex="0" role="button" aria-expanded="false" aria-controls="body-1" id="tier-1" onclick="toggleTier(1)" onkeydown="keyToggle(event,1)">
+    <div class="tier-header" style="background: #FFEBEE;">
+      <span class="tier-badge" style="background: #C62828; color: #ffffff;">Weakest</span>
+      <span class="tier-title">Annual renewable energy certificates (RECs)</span>
+      <span class="tier-toggle" id="toggle-1">▾</span>
+    </div>
+    <div class="tier-body" id="body-1" role="region" aria-labelledby="tier-1">
+      <p>A company purchases credits for renewable energy generated somewhere on the grid during the year. Their servers may still run entirely on fossil fuels at 2am when solar generation is unavailable. The renewable energy and the actual consumption are matched annually on paper — not in real time on the same grid.</p>
+      <span class="stat" style="background: #FFEBEE; color: #C62828;">Google example: Reported "net zero" Scope 2 emissions via RECs</span>
+      <div class="example" style="background: #FFF8F8;">
+        <strong>What the data actually showed</strong>
+        Hourly analysis of Google's data center operations found that actual carbon-free energy match ranged from 3% to 96% depending on time of day and location — averaging just 61%. The remaining 39% was supplied by fossil fuels. Annual REC matching and real-time clean energy are not the same thing (Google Sustainability, 2021).
+      </div>
+      <p>This is currently the most common form of corporate "100% renewable" or "carbon neutral" energy claim in the tech industry.</p>
+    </div>
+  </div>
+
+  <!-- TIER 2 -->
+  <div class="tier" tabindex="0" role="button" aria-expanded="false" aria-controls="body-2" id="tier-2" onclick="toggleTier(2)" onkeydown="keyToggle(event,2)">
+    <div class="tier-header" style="background: #FFF3E0;">
+      <span class="tier-badge" style="background: #E65100; color: #ffffff;">Intermediate</span>
+      <span class="tier-title">Power purchase agreements (PPAs)</span>
+      <span class="tier-toggle" id="toggle-2">▾</span>
+    </div>
+    <div class="tier-body" id="body-2" role="region" aria-labelledby="tier-2">
+      <p>Long-term contracts for renewable energy from specific projects, often in the same region as the data centers consuming the power. Stronger than generic RECs because they fund actual new renewable generation and create regional grid connections — but still use annual matching. When wind drops or the sun sets, fossil fuels fill the gap.</p>
+      <span class="stat" style="background: #FFF3E0; color: #E65100;">Stronger than RECs — but still annual, not hourly</span>
+      <div class="example" style="background: #FFFAF5;">
+        <strong>Why this matters</strong>
+        A data center with a PPA from a solar farm in the same state is meaningfully better than one buying generic RECs from a wind farm in another region. But if the data center runs 24/7 and the solar farm only generates during daylight hours, the gap is still filled by whatever else is on the grid — often natural gas peaker plants.
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 3 -->
+  <div class="tier" tabindex="0" role="button" aria-expanded="false" aria-controls="body-3" id="tier-3" onclick="toggleTier(3)" onkeydown="keyToggle(event,3)">
+    <div class="tier-header" style="background: #E3F2FD;">
+      <span class="tier-badge" style="background: #1565C0; color: #ffffff;">Stronger</span>
+      <span class="tier-title">24/7 carbon-free energy (CFE) matching</span>
+      <span class="tier-toggle" id="toggle-3">▾</span>
+    </div>
+    <div class="tier-body" id="body-3" role="region" aria-labelledby="tier-3">
+      <p>Every kilowatt-hour consumed is matched hourly with carbon-free generation on the same grid. This requires a mix of sources — solar, wind, hydropower, nuclear, long-duration storage — because no single source generates around the clock. Google has committed to achieving 24/7 CFE across all its data centers by 2030 and reached 64% globally in 2023.</p>
+      <span class="stat" style="background: #E3F2FD; color: #1565C0;">Google 2030 target — reached 64% globally in 2023</span>
+      <div class="example" style="background: #F5F9FF;">
+        <strong>The challenge</strong>
+        The Uptime Institute (2023) estimates that full 24/7 CFE will not be technically and economically viable in most grid regions until 2040–2050. It requires grid infrastructure investment, long-duration storage, and policy frameworks that most regions do not yet have in place. This is a demanding standard — which is exactly why it is meaningful.
+      </div>
+      <p>The UN-backed 24/7 CFE Compact, signed by major tech companies and governments, is designed to drive the market and policy changes needed to make this standard achievable at scale.</p>
+    </div>
+  </div>
+
+  <!-- TIER 4 -->
+  <div class="tier" tabindex="0" role="button" aria-expanded="false" aria-controls="body-4" id="tier-4" onclick="toggleTier(4)" onkeydown="keyToggle(event,4)">
+    <div class="tier-header" style="background: #E8F5E9;">
+      <span class="tier-badge" style="background: #1B4332; color: #ffffff;">Strongest</span>
+      <span class="tier-title">On-site generation + 24/7 CFE + grid advocacy</span>
+      <span class="tier-toggle" id="toggle-4">▾</span>
+    </div>
+    <div class="tier-body" id="body-4" role="region" aria-labelledby="tier-4">
+      <p>Data centers powered by co-located clean energy sources — on-site solar, dedicated nuclear, or direct renewable connections — combined with hourly 24/7 CFE matching and active participation in regulatory proceedings to accelerate grid decarbonization. Rare today, but this represents the direction the strongest accountability frameworks point.</p>
+      <span class="stat" style="background: #E8F5E9; color: #1B4332;">Rare today — the frontier standard</span>
+      <div class="example" style="background: #F4FBF4;">
+        <strong>Why advocacy matters alongside technology</strong>
+        Payne &amp; Eisen (2025) argue in the San Diego Law Review that the gap between annual REC matching and genuine 24/7 clean energy is fundamentally a regulatory and market design question — not a technology one. The tools exist. What is missing is the accountability infrastructure: hourly matching requirements, transparent public reporting, and data center siting policies that prioritize clean grid regions. These are decisions made in utility regulatory proceedings where informed citizens — including university faculty and their graduates — can participate as intervenors to shape outcomes.
+      </div>
+    </div>
+  </div>
+
+  <div class="takeaway" role="note">
+    <p><strong>The policy lever:</strong> The difference between "100% renewable" (annual RECs) and genuine 24/7 clean energy is largely a regulatory and market design question — not a technology one. Energy literacy and informed citizen participation in utility regulation are part of how that gap closes. This is what Payne &amp; Eisen (2025) mean by the "informed intervenor" — someone with enough knowledge to engage the regulatory process meaningfully.</p>
+  </div>
+
+  <p class="source-note">
+    Sources: Google Sustainability. (2021). <em>24x7 carbon-free energy: Powering a sustainable future.</em> | Uptime Institute. (2023). 24x7 carbon-free energy: Expectations and realities. | Payne, H. E., &amp; Eisen, J. B. (2025). Artificial intelligence and energy democracy. <em>San Diego Law Review, 62</em>(3), 471–532. | UN 24/7 CFE Compact. (2021). <em>24/7 Carbon-free energy compact.</em>
+  </p>
+
+<script>
+  function toggleTier(n) {
+    const body = document.getElementById('body-' + n);
+    const toggle = document.getElementById('toggle-' + n);
+    const tier = document.getElementById('tier-' + n);
+    const isOpen = body.classList.contains('open');
+
+    body.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+    tier.setAttribute('aria-expanded', !isOpen);
+  }
+
+  function keyToggle(event, n) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleTier(n);
+    }
+  }
+</script>
+
+</body>
+</html>
