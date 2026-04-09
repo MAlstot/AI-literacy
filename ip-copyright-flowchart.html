@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Copyright Status Flowchart | Course 1, Module 3 | Baylor AI Literacy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;color:#222;font-size:14px;line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+header{background:#154734;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0;border-bottom:4px solid #FFB81C}
+header h1{font-size:1.2rem;font-weight:700}
+header p{font-size:.8rem;opacity:.85;margin-top:3px}
+.body-card{background:#fff;border-radius:0 0 8px 8px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.tip{background:#FFF8E1;border-left:4px solid #FFB81C;padding:10px 14px;border-radius:4px;margin-bottom:20px;font-size:.86rem}
+.tip strong{color:#154734}
+
+/* Progress bar */
+.progress-wrap{margin-bottom:20px}
+.progress-label{font-size:.78rem;color:#555;margin-bottom:4px;display:flex;justify-content:space-between}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:#154734;border-radius:99px;transition:width .4s ease}
+
+/* Scenario selector */
+.scenario-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.scene-btn{padding:6px 14px;font-size:.8rem;font-family:'Segoe UI',Arial,sans-serif;border-radius:20px;cursor:pointer;border:2px solid #154734;background:transparent;color:#154734;font-weight:600;transition:all .2s}
+.scene-btn.active,.scene-btn:hover{background:#154734;color:#fff}
+.scene-btn:focus{outline:3px solid #FFB81C;outline-offset:2px}
+.scene-label{font-size:.82rem;font-weight:700;color:#154734;margin-bottom:12px;padding:8px 12px;background:#e8f4ed;border-radius:6px;border-left:3px solid #FFB81C}
+
+/* Question node */
+.node{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.q-card{background:#f8f9fa;border:1.5px solid #ddd;border-left:4px solid #154734;border-radius:8px;padding:16px 18px;margin-bottom:14px}
+.q-card .step-tag{font-size:.72rem;font-weight:700;color:#154734;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.q-card h2{font-size:1rem;font-weight:700;color:#222;line-height:1.45;margin-bottom:10px}
+.q-card .context{font-size:.82rem;color:#555;margin-bottom:14px;line-height:1.55}
+
+/* Breadcrumb trail */
+.trail{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;align-items:center;min-height:24px}
+.trail-item{font-size:.74rem;padding:2px 8px;background:#e8f4ed;border-radius:10px;color:#154734;font-weight:600}
+.trail-sep{font-size:.74rem;color:#aaa}
+
+/* Answer buttons */
+.ans-wrap{display:flex;gap:10px;flex-wrap:wrap}
+.ans-btn{padding:10px 22px;font-size:.86rem;font-family:'Segoe UI',Arial,sans-serif;border-radius:6px;cursor:pointer;font-weight:700;border:2px solid;transition:all .2s;flex:1;min-width:120px;max-width:200px;text-align:center}
+.ans-yes{background:#154734;color:#fff;border-color:#154734}
+.ans-yes:hover{background:#0d2e22;border-color:#0d2e22}
+.ans-no{background:#fff;color:#154734;border-color:#154734}
+.ans-no:hover{background:#e8f4ed}
+.ans-btn:focus{outline:3px solid #FFB81C;outline-offset:2px}
+
+/* Outcome cards */
+.outcome{border-radius:10px;padding:18px 20px;margin-bottom:14px;animation:fadeIn .35s ease}
+.outcome h2{font-size:1rem;font-weight:700;margin-bottom:8px}
+.outcome p{font-size:.84rem;line-height:1.6}
+.outcome ul{margin:8px 0 0 18px;font-size:.82rem;line-height:1.7}
+.out-protected{background:#e8f4ed;border:2px solid #154734;border-left:6px solid #154734}
+.out-protected h2{color:#154734}
+.out-none{background:#fdecea;border:2px solid #c0392b;border-left:6px solid #c0392b}
+.out-none h2{color:#c0392b}
+.out-partial{background:#fff8e1;border:2px solid #c07800;border-left:6px solid #c07800}
+.out-partial h2{color:#7B4F00}
+.out-open{background:#e8f0ff;border:2px solid #2c5282;border-left:6px solid #2c5282}
+.out-open h2{color:#2c5282}
+.out-gray{background:#f3f4f6;border:2px solid #6b7280;border-left:6px solid #6b7280}
+.out-gray h2{color:#374151}
+
+/* Action tip */
+.action-tip{background:#FFF8E1;border-left:4px solid #FFB81C;border-radius:4px;padding:10px 14px;font-size:.82rem;margin-top:10px;line-height:1.55}
+.action-tip strong{color:#154734}
+
+/* Buttons */
+.btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn-p{background:#154734;color:#fff;border:0;padding:9px 22px;border-radius:6px;font-size:.86rem;cursor:pointer;font-weight:600;transition:background .2s}
+.btn-p:hover{background:#0d2e22}
+.btn-p:focus{outline:3px solid #FFB81C;outline-offset:2px}
+.btn-s{background:#e5e7eb;color:#374151;border:0;padding:9px 16px;border-radius:6px;font-size:.86rem;cursor:pointer}
+.btn-s:hover{background:#d1d5db}
+.btn-s:focus{outline:3px solid #FFB81C;outline-offset:2px}
+
+.src{margin-top:20px;font-size:.72rem;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px;line-height:1.6}
+@media(max-width:560px){.ans-btn{max-width:100%;flex:100%}}
+@media(prefers-reduced-motion:reduce){.node,.outcome{animation:none}.ans-btn,.btn-p,.btn-s,.scene-btn,.progress-fill{transition:none}}
+@media(prefers-color-scheme:dark){body{background:#1a1a1a;color:#eee}.body-card{background:#2a2a2a}.q-card{background:#333;border-color:#555}.q-card h2{color:#eee}.q-card .context{color:#bbb}.ans-no{background:#333;color:#9dd4b5;border-color:#9dd4b5}.ans-no:hover{background:#3a4a3f}.scene-label{background:#1e3a2a;color:#9dd4b5}.trail-item{background:#1e3a2a;color:#9dd4b5}.progress-bar{background:#444}.src{color:#999;border-color:#444}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>&#x2696;&#xFE0F; Is It Protected? — AI Copyright Status Flowchart</h1>
+  <p>Course 1, Module 3: Intellectual Property &amp; AI &nbsp;&#8226;&nbsp; Baylor University AI Literacy Certificate</p>
+</header>
+<div class="body-card">
+  <div class="tip"><strong>Instructions:</strong> Choose a scenario below, then answer Yes or No at each step. The flowchart will guide you to a copyright status outcome with action guidance. Try all four scenarios!</div>
+
+  <div class="scenario-bar" role="group" aria-label="Choose a scenario">
+    <button class="scene-btn active" onclick="loadScene(0)" id="sb0">&#x1F4CB; Syllabus Draft</button>
+    <button class="scene-btn" onclick="loadScene(1)" id="sb1">&#x1F5BC;&#xFE0F; Course Image</button>
+    <button class="scene-btn" onclick="loadScene(2)" id="sb2">&#x1F4D6; OER Textbook</button>
+    <button class="scene-btn" onclick="loadScene(3)" id="sb3">&#x1F3A7; Lecture Recording</button>
+  </div>
+
+  <div id="scene-label" class="scene-label"></div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span id="prog-text">Step 1</span><span id="prog-pct"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+  <div class="trail" id="trail" aria-label="Your path so far"></div>
+  <div class="node" id="node"></div>
+  <div class="btns">
+    <button class="btn-s" onclick="back()" id="btn-back" style="display:none">&#x2190; Back</button>
+    <button class="btn-p" onclick="restart()" id="btn-restart" style="display:none">&#x21BA; Try Another Answer</button>
+  </div>
+</div>
+<p class="src">Sources: U.S. Copyright Office. (2024). <em>Copyright and Artificial Intelligence, Part 2: Copyrightability.</em> | U.S. Copyright Office. (2025). <em>Part 3: Generative AI Training.</em> | Creative Commons. (2025). <em>About CC Licenses.</em> | Azevedo et al. (2025). <em>New Directions for Adult and Continuing Education.</em> | Course 1, Module 3, Baylor University AI Literacy Certificate.</p>
+</div>
+
+<script>
+// ─── Scenario definitions ───────────────────────────────────────
+// Each scenario has a label and a tree of nodes.
+// Node shape: {type:'q'|'out', ...}
+// q node: {step, q, context, yes: nodeId, no: nodeId, yesLabel?, noLabel?}
+// out node: {cls, icon, title, body, bullets, tip}
+
+const SCENES = [
+  {
+    label: '📋 Scenario: You used ChatGPT to draft the learning outcomes section of your syllabus, then revised and expanded them substantially.',
+    nodes: {
+      start: {type:'q', step:'Step 1 of 3', q:'Did a human (you) make meaningful, original creative choices in this content?',
+        context:'You rewrote, restructured, and added ideas beyond what ChatGPT produced. Did your creative judgment shape the final outcome?',
+        yes:'human-creative', no:'no-human'},
+      'human-creative': {type:'q', step:'Step 2 of 3', q:'Is your creative contribution substantial enough to be considered original expression — not just minor edits?',
+        context:'Minor word swaps ("good" → "effective") generally don\'t qualify. Rewriting structure, adding original goals, and making pedagogical decisions likely do.',
+        yes:'protected', no:'thin'},
+      'no-human': {type:'q', step:'Step 2 of 3', q:'Did you at least select, arrange, or sequence the AI output in a creative way?',
+        context:'Even selecting which AI suggestions to keep and how to order them can be a creative act.',
+        yes:'thin', no:'none'},
+      protected: {type:'out', cls:'out-protected', icon:'✅', title:'Likely Copyrightable — Human-Authored Work',
+        body:'Your substantial creative revision qualifies as human authorship under US copyright law. The AI-generated portions remain unprotected, but the overall work — shaped by your original expression — can be copyrighted.',
+        bullets:['Add a copyright notice: © [Year] [Your Name]','Document your revision process in case ownership is challenged','Consider disclosing AI use in your syllabus header as a model of transparency'],
+        tip:'<strong>Faculty Action:</strong> Your course materials are your IP — as long as you make meaningful creative contributions. Disclose AI assistance and document your process.'},
+      thin: {type:'out', cls:'out-partial', icon:'⚠️', title:'Partial or Thin Copyright',
+        body:'You may hold a limited copyright, but only over the elements that reflect your own original expression. The AI-generated baseline receives no protection.',
+        bullets:['Increase your human contribution to strengthen your copyright claim','Document which sections are substantially yours vs. AI-generated','Do not rely on copyright protection for sections you didn\'t meaningfully revise'],
+        tip:'<strong>Faculty Action:</strong> The more original creative work you put in, the stronger your IP claim. Consider AI as a first draft — your revisions are what create protection.'},
+      none: {type:'out', cls:'out-none', icon:'❌', title:'Not Copyrightable — Insufficient Human Authorship',
+        body:'If you simply accepted AI output with minimal changes, the work likely cannot be copyrighted. The US Copyright Office has affirmed that prompts alone do not constitute sufficient creative contribution.',
+        bullets:['Revise substantially to create a copyrightable human-authored work','Be aware: this means others could use the content freely','Avoid uploading proprietary institutional materials to AI tools'],
+        tip:'<strong>Faculty Action:</strong> Return to the draft and make substantive creative revisions. Your professional expertise should shape every AI-assisted document you publish.'},
+    }
+  },
+  {
+    label: '🖼️ Scenario: You used DALL-E to generate a header image for your Canvas course page.',
+    nodes: {
+      start: {type:'q', step:'Step 1 of 4', q:'Did you make substantial creative choices beyond just writing a text prompt?',
+        context:'Selecting, cropping, color-correcting, layering with other elements, or significantly modifying the AI output counts. A prompt alone does not.',
+        yes:'creative-choices', no:'prompt-only'},
+      'creative-choices': {type:'q', step:'Step 2 of 4', q:'Did you modify, arrange, or combine the AI output with your own original creative work?',
+        context:'Example: using the AI image as one layer in a designed composite, or significantly post-processing it as an artist would.',
+        yes:'partial-image', no:'prompt-only'},
+      'prompt-only': {type:'q', step:'Step 2 of 4', q:'Does the image closely resemble the style of a specific living artist?',
+        context:'Prompts like "in the style of [Artist Name]" produce outputs modeled on that artist\'s creative choices. Copyright doesn\'t protect style — but training data liability is actively litigated.',
+        yes:'style-risk', no:'no-copy-image'},
+      'partial-image': {type:'out', cls:'out-partial', icon:'⚠️', title:'Partial Copyright — Your Creative Additions Only',
+        body:'You may hold copyright over the elements you added or arranged, but not the AI-generated image itself. The resulting composite could be protected as a human-authored work if your contribution is substantial.',
+        bullets:['Document the creative process: what was AI-generated vs. what you modified','Consider using ethically sourced AI image tools (e.g., Adobe Firefly) which train only on licensed content','Credit the AI tool in your course as a model of transparency'],
+        tip:'<strong>Faculty Action:</strong> Make this your standard practice — use AI images as raw material for your own creative work, not as finished products.'},
+      'style-risk': {type:'out', cls:'out-gray', icon:'🔍', title:'Legal Gray Zone — Style + Training Data Liability',
+        body:'Copyright does not protect artistic style, so stylistic similarity alone is not infringement. However, using prompts that target a living artist\'s style raises two concerns: (1) the output may be derived from training data using that artist\'s work without permission, and (2) active litigation is testing these boundaries.',
+        bullets:['Avoid prompts like "in the style of [living artist name]"','Switch to AI image tools trained on licensed content (Adobe Firefly, Shutterstock AI)','If you have concerns, use openly licensed images from Unsplash, Pexels, or Wikimedia Commons instead'],
+        tip:'<strong>Faculty Action:</strong> Use ethically sourced image tools for institutional content. The risk isn\'t just legal — it\'s modeling responsible AI use for your students.'},
+      'no-copy-image': {type:'out', cls:'out-none', icon:'❌', title:'Not Copyrightable — AI-Generated Image Without Human Authorship',
+        body:'A purely AI-generated image produced from a text prompt, without substantial human creative modification, cannot be copyrighted under current US law. This means anyone could use it freely — and you have no IP claim over it.',
+        bullets:['Attribute the AI tool in your course materials','Consider whether AI images are appropriate for formal institutional publications','Explore ethically licensed image databases for course content: Unsplash, Flickr Commons, Baylor Image Library'],
+        tip:'<strong>Faculty Action:</strong> For course headers and institutional materials, use images with clear, documented provenance. Document your AI tool use for transparency.'},
+    }
+  },
+  {
+    label: '📖 Scenario: You want to use a chapter from an OER textbook published under a Creative Commons CC BY 4.0 license.',
+    nodes: {
+      start: {type:'q', step:'Step 1 of 3', q:'Is the content published under an open license (Creative Commons or similar)?',
+        context:'CC BY 4.0 means the creator has granted broad permission to use, share, and adapt the work — with attribution.',
+        yes:'check-terms', no:'not-oer'},
+      'check-terms': {type:'q', step:'Step 2 of 3', q:'Are you following the license terms — specifically providing attribution to the original creator?',
+        context:'CC BY requires you to credit the author, title, source, and license. Even for free content, skipping attribution violates the license.',
+        yes:'oer-ok', no:'oer-noatt'},
+      'not-oer': {type:'out', cls:'out-none', icon:'❌', title:'Not Open Content — Standard Copyright Applies',
+        body:'If the content is not openly licensed, standard copyright applies. You would need permission from the rights holder, or your use must qualify as fair use (educational use alone does not automatically qualify).',
+        bullets:['Check if your institution has licensing through a library database','Consider requesting permission from the publisher','Look for an OER alternative on OpenStax, MIT OpenCourseWare, or OER Commons'],
+        tip:'<strong>Faculty Action:</strong> Pair with your library\'s copyright and OER support team. Many institutions have processes for licensing or identifying OER alternatives.'},
+      'oer-ok': {type:'out', cls:'out-open', icon:'📖', title:'Openly Licensed — Permitted Use with Attribution',
+        body:'CC BY 4.0 allows you to reproduce, adapt, and share this content — even for commercial purposes — as long as you attribute the original author.',
+        bullets:['Include: Author Name, Title, Source URL, "CC BY 4.0" license label','If you adapt the content, note what changes you made','You do NOT need to apply the same CC license to your overall course if you\'re only using a portion'],
+        tip:'<strong>Faculty Action:</strong> Model best practices for your students by including complete, formatted CC attribution. This is also an excellent opportunity to teach students about open licensing.'},
+      'oer-noatt': {type:'out', cls:'out-partial', icon:'⚠️', title:'License Violation — Attribution Required',
+        body:'Even though the content is free to use, failing to attribute the original creator violates the Creative Commons license. This means your use is technically unlicensed — the same as using traditionally copyrighted content without permission.',
+        bullets:['Add attribution immediately: Author, Title, Source, License (CC BY 4.0)','Make this a teachable moment for students about what open licensing actually requires','CC attribution templates: creativecommons.org/use-remix/attribution/'],
+        tip:'<strong>Faculty Action:</strong> Update your materials now and use this as a teaching example. Attribution is not optional in CC licensing — it\'s the one universal requirement.'},
+    }
+  },
+  {
+    label: '🎧 Scenario: You recorded a 20-minute lecture video for Canvas using your own original explanations and visuals you created.',
+    nodes: {
+      start: {type:'q', step:'Step 1 of 4', q:'Did you create the lecture content (explanations, examples, structure) yourself?',
+        context:'Your own original lecture recordings — including your voice, delivery choices, and creative explanations — are protected expression.',
+        yes:'check-third-party', no:'not-original'},
+      'check-third-party': {type:'q', step:'Step 2 of 4', q:'Does the recording include third-party content (music, video clips, images you didn\'t create)?',
+        context:'Even in educational contexts, including copyrighted music, clips, or images requires either a license, a documented fair use justification, or openly licensed alternatives.',
+        yes:'fair-use-check', no:'fully-protected'},
+      'not-original': {type:'q', step:'Step 2 of 4', q:'Is the lecture primarily AI-generated narration or script with minimal original contribution?',
+        context:'If you used AI to write the script and generate the voice, and your contribution was limited to providing a topic prompt, the result may not be copyrightable.',
+        yes:'ai-lecture', no:'partially-original'},
+      'fair-use-check': {type:'q', step:'Step 3 of 4', q:'Have you analyzed whether your use of third-party content qualifies as fair use?',
+        context:'Fair use analysis considers: (1) purpose — educational is favorable, (2) nature of the work, (3) amount used, (4) market impact — does it substitute for the original? All four factors matter.',
+        yes:'fair-use-ok', no:'fair-use-risk'},
+      'fully-protected': {type:'out', cls:'out-protected', icon:'✅', title:'Fully Protected — Original Human-Authored Work',
+        body:'Your original lecture recording is your intellectual property. Your creative decisions — how you explain concepts, your examples, your pacing, your visual choices — constitute copyrightable expression.',
+        bullets:['Add a copyright notice in the video description: © [Year] [Your Name/Baylor University]','Check your institution\'s IP policy regarding who owns faculty course recordings','Consider adding a CC license if you want to share the recording openly'],
+        tip:'<strong>Faculty Action:</strong> Your course recordings are valuable scholarly and pedagogical work. Know your institution\'s IP policy and document your creative choices.'},
+      'fair-use-ok': {type:'out', cls:'out-partial', icon:'⚠️', title:'Likely Fair Use — Document Your Reasoning',
+        body:'Your analysis suggests fair use may apply. However, fair use is a legal defense — not a guarantee. Educational purpose is one favorable factor, but all four factors must support your use.',
+        bullets:['Document your fair use analysis in writing and keep it on file','Use the minimum amount of third-party content necessary','Prefer openly licensed media (Creative Commons, Public Domain) to eliminate risk entirely','Consult your library\'s copyright office for a formal review'],
+        tip:'<strong>Faculty Action:</strong> A documented fair use analysis is your best protection. Your institution\'s library likely offers a fair use checklist or review service — use it.'},
+      'fair-use-risk': {type:'out', cls:'out-none', icon:'❌', title:'Copyright Risk — Third-Party Content Needs Review',
+        body:'Including unlicensed third-party content in a course video without a documented fair use analysis creates copyright risk. Educational use does not automatically equal fair use.',
+        bullets:['Remove or replace the third-party content with openly licensed alternatives','Or conduct and document a formal four-factor fair use analysis','Use your library\'s fair use checklist','Explore: Baylor Library resources, Creative Commons Search, Wikimedia Commons, Free Music Archive'],
+        tip:'<strong>Faculty Action:</strong> Replace unlicensed content before publishing. This is an opportunity to teach students the same lesson — content used in education must still be properly licensed.'},
+      'ai-lecture': {type:'out', cls:'out-none', icon:'❌', title:'Not Copyrightable — AI-Generated Lecture Without Sufficient Human Authorship',
+        body:'A lecture script generated by AI and narrated through a synthesized voice, with minimal human creative contribution, cannot be copyrighted. You would have no IP claim over the content.',
+        bullets:['Revise substantially — add your own examples, insights, and pedagogical framing','Replace AI-generated visuals with your own original slides','Use AI as a first-draft assistant, not a content creator'],
+        tip:'<strong>Faculty Action:</strong> Your disciplinary expertise is irreplaceable. Use AI to help organize or draft, but ensure your voice, examples, and professional judgment are the core of the work.'},
+      'partially-original': {type:'out', cls:'out-partial', icon:'⚠️', title:'Partial Copyright — Human Contributions Protected',
+        body:'Your original creative contributions to the lecture — your examples, your explanations, your delivery choices — are protected. AI-generated portions are not.',
+        bullets:['Document which sections reflect your original creative work','Strengthen your contribution by adding more original examples and insights','For AI-assisted scripts, revise substantially before recording'],
+        tip:'<strong>Faculty Action:</strong> The more of yourself you put into the lecture, the stronger your IP claim. Aim for AI-assisted, not AI-generated.'},
+    }
+  }
+];
+
+// ─── State ───────────────────────────────────────────────────────
+let sceneIdx = 0;
+let current = 'start';
+let history = []; // [{nodeId, answer}]
+
+// ─── Render ──────────────────────────────────────────────────────
+function scene(){return SCENES[sceneIdx]}
+
+function getNode(id){return scene().nodes[id]}
+
+function totalSteps(sid){
+  // count question nodes reachable (approximate for progress)
+  const ns = scene().nodes;
+  return Object.values(ns).filter(n=>n.type==='q').length;
+}
+
+function render(){
+  const n = getNode(current);
+  const nodeEl = document.getElementById('node');
+  const backBtn = document.getElementById('btn-back');
+  const restartBtn = document.getElementById('btn-restart');
+
+  // Trail
+  const trail = document.getElementById('trail');
+  if(history.length===0){
+    trail.innerHTML='';
+  } else {
+    trail.innerHTML = history.map((h,i)=>{
+      const hn = getNode(h.nodeId);
+      const label = h.answer==='yes'? '✅ Yes' : '❌ No';
+      return `<span class="trail-item">${label}</span>${i<history.length-1?'<span class="trail-sep">›</span>':''}`;
+    }).join('')+'<span class="trail-sep">›</span>';
+  }
+
+  // Progress
+  const allQ = Object.values(scene().nodes).filter(x=>x.type==='q').length;
+  const done = history.length;
+  const pct = n.type==='out' ? 100 : Math.round((done/allQ)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = n.type==='out' ? 'Complete!' : (n.step||'');
+  document.getElementById('prog-pct').textContent = pct+'%';
+
+  backBtn.style.display = history.length>0 ? 'inline-block':'none';
+  restartBtn.style.display = n.type==='out' ? 'inline-block':'none';
+
+  if(n.type==='q'){
+    const yLbl = n.yesLabel||'Yes';
+    const nLbl = n.noLabel||'No';
+    nodeEl.className='node';
+    nodeEl.innerHTML=`
+      <div class="q-card">
+        <div class="step-tag">${n.step||''}</div>
+        <h2>${n.q}</h2>
+        ${n.context?`<p class="context">${n.context}</p>`:''}
+        <div class="ans-wrap">
+          <button class="ans-btn ans-yes" onclick="answer('yes')" aria-label="${yLbl}: ${n.q}">👍 ${yLbl}</button>
+          <button class="ans-btn ans-no" onclick="answer('no')" aria-label="${nLbl}: ${n.q}">👎 ${nLbl}</button>
+        </div>
+      </div>`;
+  } else {
+    // outcome
+    const bullets = n.bullets ? '<ul>'+n.bullets.map(b=>`<li>${b}</li>`).join('')+'</ul>' : '';
+    const tip = n.tip ? `<div class="action-tip">${n.tip}</div>` : '';
+    nodeEl.className='node';
+    nodeEl.innerHTML=`
+      <div class="outcome ${n.cls}">
+        <h2>${n.icon} ${n.title}</h2>
+        <p>${n.body}</p>
+        ${bullets}
+        ${tip}
+      </div>`;
+    restartBtn.textContent='↺ Try a different answer';
+  }
+  nodeEl.querySelector('button')?.focus();
+}
+
+function answer(ans){
+  const n = getNode(current);
+  history.push({nodeId:current, answer:ans});
+  current = ans==='yes' ? n.yes : n.no;
+  render();
+}
+
+function back(){
+  if(history.length===0) return;
+  const prev = history.pop();
+  current = prev.nodeId;
+  render();
+}
+
+function restart(){
+  history=[];
+  current='start';
+  render();
+}
+
+function loadScene(idx){
+  sceneIdx=idx;
+  history=[];
+  current='start';
+  // Update scene buttons
+  document.querySelectorAll('.scene-btn').forEach((b,i)=>{
+    b.classList.toggle('active',i===idx);
+  });
+  document.getElementById('scene-label').textContent = SCENES[idx].label;
+  render();
+}
+
+// Init
+loadScene(0);
+</script>
+</body>
+</html>
