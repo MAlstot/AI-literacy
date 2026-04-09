@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Source Sorter | Course 1, Module 3 | Baylor AI Literacy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;color:#222;font-size:14px;line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
+header{background:#154734;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0;border-bottom:4px solid #FFB81C}
+header h1{font-size:1.2rem;font-weight:700}
+header p{font-size:.8rem;opacity:.85;margin-top:3px}
+.body-card{background:#fff;border-radius:0 0 8px 8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.tip{background:#FFF8E1;border-left:4px solid #FFB81C;padding:10px 14px;border-radius:4px;margin-bottom:18px;font-size:.86rem}
+.tip strong{color:#154734}
+.cols{display:flex;gap:12px;margin-bottom:18px}
+.col{flex:1;min-width:0}
+.col-h{padding:9px 12px;border-radius:6px 6px 0 0;font-weight:700;font-size:.82rem;color:#fff;display:flex;align-items:center;gap:6px}
+.h-trad{background:#154734}.h-oer{background:#1B6B3A}.h-ai{background:#7B4F00}
+.zone{min-height:220px;padding:8px;background:#f9fafb;border:2px dashed #ccc;border-top:0;border-radius:0 0 6px 6px;transition:.2s}
+.zone.over{background:#e8f4ed;border-color:#154734}
+.bank-wrap{margin-bottom:14px}
+.bank-wrap h3{font-size:.88rem;font-weight:700;color:#154734;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.grid{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;min-height:54px}
+.card{background:#fff;border:1.5px solid #ccc;border-radius:7px;padding:8px 11px;cursor:grab;font-size:.82rem;max-width:220px;box-shadow:0 1px 3px rgba(0,0,0,.06);user-select:none;line-height:1.4;transition:all .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.1);border-color:#154734}
+.card.dragging{opacity:.35}
+.card.ok{border-color:#154734;background:#e8f4ed}
+.card.ng{border-color:#c0392b;background:#fdecea}
+.btns{display:flex;gap:10px;margin:14px 0}
+.btn-p{background:#154734;color:#fff;border:0;padding:9px 22px;border-radius:6px;font-size:.88rem;cursor:pointer;font-weight:600;transition:background .2s}
+.btn-p:hover{background:#0d2e22}
+.btn-p:focus{outline:3px solid #FFB81C;outline-offset:2px}
+.btn-s{background:#e5e7eb;color:#374151;border:0;padding:9px 16px;border-radius:6px;font-size:.88rem;cursor:pointer;transition:background .2s}
+.btn-s:hover{background:#d1d5db}
+.btn-s:focus{outline:3px solid #FFB81C;outline-offset:2px}
+.fb{display:none;padding:14px 16px;border-radius:6px;font-size:.84rem;line-height:1.55;margin-top:10px}
+.fb.show{display:block}
+.fb.good{background:#e8f4ed;border-left:4px solid #154734}
+.fb.warn{background:#fff8e1;border-left:4px solid #FFB81C}
+.score{font-size:1rem;font-weight:700;color:#154734;margin-bottom:8px}
+ul.rat{margin:8px 0 0 18px}
+ul.rat li{margin-bottom:6px}
+ul.rat li span.ok-tag{color:#154734;font-weight:700}
+ul.rat li span.ng-tag{color:#c0392b;font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.78rem}
+.leg{display:flex;align-items:center;gap:5px}
+.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.src{margin-top:16px;font-size:.72rem;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:8px;line-height:1.6}
+@media(max-width:600px){.cols{flex-direction:column}.btns{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.card,.btn-p,.btn-s{transition:none}}
+@media(prefers-color-scheme:dark){body{background:#1a1a1a;color:#eee}.body-card{background:#2a2a2a}.zone{background:#222;border-color:#555}.grid{background:#222;border-color:#444}.card{background:#333;border-color:#555;color:#eee}.card:hover{border-color:#FFB81C}.fb.good{background:#1a2e22}.fb.warn{background:#2a2200}.src{color:#999;border-color:#444}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>&#x1F4C1; Who Owns What? — IP Source Sorter</h1>
+  <p>Course 1, Module 3: Intellectual Property &amp; AI &nbsp;&#8226;&nbsp; Baylor University AI Literacy Certificate</p>
+</header>
+<div class="body-card">
+  <div class="tip"><strong>Instructions:</strong> Drag each card to the column that best describes that IP characteristic. Some characteristics apply to more than one source type — place the card where you think it fits <em>most specifically</em>. Click <strong>Check My Sorting</strong> when done.</div>
+
+  <div class="legend">
+    <div class="leg"><div class="dot" style="background:#154734"></div> Baylor Green = Correct</div>
+    <div class="leg"><div class="dot" style="background:#c0392b"></div> Red = Needs review</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="col-h h-trad">&#x1F4C4; Traditional Digital</div>
+      <div class="zone" id="z-trad" role="region" aria-label="Traditional Digital drop zone"
+        ondragover="ev(event)" ondrop="drop(event,'trad')"
+        ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
+    </div>
+    <div class="col">
+      <div class="col-h h-oer">&#x1F513; Open / OER</div>
+      <div class="zone" id="z-oer" role="region" aria-label="Open and OER drop zone"
+        ondragover="ev(event)" ondrop="drop(event,'oer')"
+        ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
+    </div>
+    <div class="col">
+      <div class="col-h h-ai">&#x1F916; AI-Generated</div>
+      <div class="zone" id="z-ai" role="region" aria-label="AI-Generated drop zone"
+        ondragover="ev(event)" ondrop="drop(event,'ai')"
+        ondragenter="this.classList.add('over')" ondragleave="this.classList.remove('over')"></div>
+    </div>
+  </div>
+
+  <div class="bank-wrap">
+    <h3>Cards to Sort</h3>
+    <div class="grid" id="bank" role="region" aria-label="Card bank"
+      ondragover="ev(event)" ondrop="drop(event,'bank')"></div>
+  </div>
+
+  <div class="btns">
+    <button class="btn-p" onclick="check()">Check My Sorting</button>
+    <button class="btn-s" onclick="reset()">Reset</button>
+  </div>
+  <div class="fb" id="fb" role="status" aria-live="polite"></div>
+</div>
+
+<p class="src">Grounded in: U.S. Copyright Office. (2024–2025). <em>Copyright and Artificial Intelligence</em> (Parts 1–3). | Creative Commons. (2025). <em>About CC Licenses.</em> | APA. (2020). <em>Publication Manual</em> (7th ed.). | Course 1, Module 3, Baylor University AI Literacy Certificate.</p>
+</div>
+
+<script>
+const C=[
+  {id:'c01',e:'&#x1F4DD;',t:'Copyright attaches automatically to the creator upon creation',b:'trad',r:'Copyright is automatic for original human-authored works — no registration required. AI-generated works do not get this protection.'},
+  {id:'c02',e:'&#x26D4;',t:'Purely AI-generated outputs are NOT eligible for copyright in the US',b:'ai',r:'The US Copyright Office (2024–2025) has affirmed that works generated entirely by AI without meaningful human contribution cannot be copyrighted.'},
+  {id:'c03',e:'&#x1F510;',t:'Reuse is governed by Creative Commons license terms',b:'oer',r:'Creative Commons licenses define specific permissions and requirements (attribution, share-alike, non-commercial) for open and OER content.'},
+  {id:'c04',e:'&#x1F9E0;',t:'Training data may include copyrighted works scraped without permission',b:'ai',r:'A defining controversy of generative AI: models were trained on internet-scale data, much of it copyrighted, leading to 50+ active US federal lawsuits as of 2025–2026.'},
+  {id:'c05',e:'&#x1F4DC;',t:'Works eventually enter the Public Domain after copyright expires',b:'trad',r:'Under US law, copyright lasts for the life of the creator + 70 years. Traditional digital works will eventually enter the public domain; AI outputs without copyright cannot expire because they were never protected.'},
+  {id:'c06',e:'&#x270F;&#xFE0F;',t:'Must be cited using APA, MLA, or Chicago style (as author)',b:'trad',r:'Human-authored digital sources are cited as authored works. AI tools are cited as software (e.g., APA 7: OpenAI. (2025). ChatGPT [Large language model].) — not as authors.'},
+  {id:'c07',e:'&#x1F91D;',t:'Attribution is required even though the work is freely available',b:'oer',r:'Most Creative Commons licenses (CC BY, CC BY-SA, CC BY-NC) require attribution to the original creator even when the content is free to use.'},
+  {id:'c08',e:'&#x26A0;&#xFE0F;',t:'Outputs may closely resemble or reproduce protected works from training data',b:'ai',r:'Active litigation (Getty, NYT, Authors Guild) centers on whether AI outputs that closely mimic copyrighted source material constitute infringement. Courts have not yet fully resolved this.'},
+  {id:'c09',e:'&#x1F4A1;',t:'Fair use doctrine may permit limited use without permission',b:'trad',r:'Fair use (purpose, nature, amount, market effect) applies to traditionally copyrighted works. Whether it shields AI training from infringement liability is the central question in current US litigation.'},
+  {id:'c10',e:'&#x1F512;',t:'Uploading to a public AI tool may transfer your content to training data',b:'ai',r:'Most free-tier AI tools include Terms of Service granting them rights to use your inputs to improve their models. Enterprise/institutional versions typically prohibit this — always check the ToS.'},
+  {id:'c11',e:'&#x1F4D6;',t:'Public Domain content can be used freely with no restrictions',b:'oer',r:'Public Domain works (copyright expired, or never copyrighted) can be reproduced, adapted, and used commercially with no restrictions. This is distinct from CC-licensed works, which still have conditions.'},
+  {id:'c12',e:'&#x1F916;',t:'The AI company does NOT hold copyright to the outputs it generates for you',b:'ai',r:'AI companies generally disclaim copyright ownership of outputs in their ToS. Users may hold copyright over the portions they contributed — but purely AI-generated content remains unprotected.'},
+  {id:'c13',e:'&#x1F4CA;',t:'Your syllabus, slides, and course materials are automatically your IP',b:'trad',r:'Original faculty course materials are protected by copyright automatically as human-authored works. Using AI to generate portions may reduce or complicate your copyright claim on those sections.'},
+  {id:'c14',e:'&#x2696;&#xFE0F;',t:'Meaning of "human authorship" is actively being tested in courts',b:'ai',r:'The core legal debate: how much human creative contribution is needed to make AI-assisted work copyrightable? The US Copyright Office (Part 2, 2024) says prompts alone are insufficient — meaningful creative choices are required.'}
+];
+
+function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function mk(c){
+  const d=document.createElement('div');
+  d.className='card';d.id=c.id;d.draggable=true;
+  d.setAttribute('role','listitem');
+  d.setAttribute('aria-label',c.t);
+  d.innerHTML='<span aria-hidden="true">'+c.e+'</span> '+c.t;
+  d.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',c.id);d.classList.add('dragging')});
+  d.addEventListener('dragend',()=>d.classList.remove('dragging'));
+  return d;
+}
+
+function render(){
+  const b=document.getElementById('bank');b.innerHTML='';
+  sh([...C]).forEach(c=>{if(!document.getElementById(c.id))b.appendChild(mk(c))});
+}
+
+function ev(e){e.preventDefault()}
+
+function drop(e,z){
+  e.preventDefault();
+  const id=e.dataTransfer.getData('text');
+  const el=document.getElementById(id);
+  if(!el)return;
+  const t=z==='bank'?document.getElementById('bank'):document.getElementById('z-'+z);
+  t.appendChild(el);
+  e.currentTarget.classList.remove('over');
+}
+
+function check(){
+  let ok=0,tot=0;
+  ['trad','oer','ai'].forEach(z=>{
+    document.getElementById('z-'+z).querySelectorAll('.card').forEach(el=>{
+      const c=C.find(x=>x.id===el.id);
+      if(!c)return;
+      tot++;
+      if(c.b===z){ok++;el.className='card ok';}
+      else el.className='card ng';
+    });
+  });
+  const fb=document.getElementById('fb');
+  if(!tot){
+    fb.innerHTML='<strong>&#x26A0; Drag at least one card into a column first!</strong>';
+    fb.className='fb warn show';return;
+  }
+  const pct=Math.round(ok/tot*100);
+  const unsorted=document.getElementById('bank').querySelectorAll('.card').length;
+  let h=`<div class="score">&#x2705; ${ok} of ${tot} correctly sorted &mdash; ${pct}%</div>`;
+  if(unsorted>0)h+=`<p style="margin-bottom:8px;color:#7B4F00"><strong>&#x26A0; ${unsorted} card(s) still in the bank &mdash; try sorting all 14!</strong></p>`;
+  h+='<p><strong>Rationale for each card:</strong></p><ul class="rat">';
+  C.forEach(c=>{
+    const zone=['trad','oer','ai'].find(z=>document.getElementById('z-'+z)?.contains(document.getElementById(c.id)));
+    const correct=zone===c.b;
+    const tag=correct?`<span class="ok-tag">&#x2705; Correct</span>`:`<span class="ng-tag">&#x274C; Best fit: ${c.b==='trad'?'Traditional Digital':c.b==='oer'?'Open / OER':'AI-Generated'}</span>`;
+    h+=`<li>${tag} &mdash; <strong>${c.e} ${c.t}</strong><br><span style="color:#555;font-size:.82rem">${c.r}</span></li>`;
+  });
+  h+='</ul>';
+  fb.innerHTML=h;
+  fb.className='fb show '+(pct>=75?'good':'warn');
+  fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function reset(){
+  ['trad','oer','ai'].forEach(z=>{
+    [...document.getElementById('z-'+z).querySelectorAll('.card')].forEach(el=>{
+      el.className='card';
+      document.getElementById('bank').appendChild(el);
+    });
+  });
+  const fb=document.getElementById('fb');
+  fb.className='fb';fb.innerHTML='';
+}
+
+render();
+</script>
+</body>
+</html>
