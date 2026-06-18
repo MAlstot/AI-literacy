@@ -169,10 +169,16 @@
 
   :focus-visible{outline:3px solid var(--deep-amber);outline-offset:2px;border-radius:6px;}
 
-  @media (max-width:520px){
+ @media (max-width:520px){
     .band h1{font-size:1.04rem;}
     .grid{grid-template-columns:1fr;}
     .progress{margin-left:0;width:100%;}
+    
+    /* Mobile-only spacing tightening to prevent iframe scrollbars */
+    .wrap{padding:0 8px 20px;}
+    .term-head{padding:10px 12px; min-height:44px; font-size:.9rem;}
+    .choice{padding:6px 10px; min-height:38px; font-size:.82rem;}
+    .legend{padding:10px; margin:10px 0;}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;}
@@ -314,6 +320,7 @@
     choices.querySelectorAll(".choice").forEach(function(b){
       b.setAttribute("aria-pressed", b.dataset.state===s.key ? "true":"false");
     });
+    card.classList.remove("open");
     head.setAttribute("aria-expanded","false");
     update();
   }
