@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Vocabulary Confidence Tracker</title>
+<style>
+  :root{
+    /* BEARS palette */
+    --baylor-green:#154734;
+    --mid-green:#4C7C62;
+    --m1-accent:#E6C24A;        /* Module 1 accent */
+    --m1-accent-dark:#8A6A14;
+    --gold:#FFB81C;             /* fills only, never text on light */
+    --deep-amber:#D99A1C;
+    --cream:#FAF6EC;
+    --cream-2:#F4EEDF;
+    --pale-sage:#E7EFE9;
+    --pale-gold:#FBF3DC;
+    --charcoal:#2B2B2B;
+    --mid-gray:#6F6F6F;
+    --border:#D6D2C8;
+
+    /* Familiarity states (each pairs color + label + icon) */
+    --know:#2F6B4F;        --know-bg:#E4EFE7;
+    --think:#3E6E78;       --think-bg:#E3EEF0;
+    --heard:#9A7A12;       --heard-bg:#FBF3DC;   /* dark amber text on pale gold */
+    --new:#9A4F30;         --new-bg:#F3E4DC;     /* warm terracotta, not alarm-red */
+
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Lato, Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font);
+    color:var(--charcoal);
+    background:var(--cream);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 40px;}
+
+  /* ---- Title band (echoes the banner system) ---- */
+  .band{
+    background:var(--baylor-green);
+    color:#fff;
+    border-radius:0 0 10px 10px;
+    padding:18px 20px;
+    display:flex;align-items:center;gap:14px;
+    position:relative;overflow:hidden;
+  }
+  .band::after{ /* subtle gold diagonal, like the M1 banner accent */
+    content:"";position:absolute;top:0;right:-40px;bottom:0;width:120px;
+    background:var(--m1-accent);transform:skewX(-18deg);opacity:.9;
+  }
+  .tag{
+    background:var(--gold);color:var(--baylor-green);
+    font-weight:800;font-size:.72rem;letter-spacing:.06em;
+    padding:4px 10px;border-radius:20px;text-transform:uppercase;
+    position:relative;z-index:1;flex:0 0 auto;
+  }
+  .band h1{font-size:1.18rem;margin:0;font-weight:700;position:relative;z-index:1;}
+
+  .intro{margin:20px 2px 8px;color:var(--charcoal);}
+  .intro p{margin:0 0 10px;}
+  .intro .lead{font-size:1.02rem;}
+  .muted{color:var(--mid-gray);font-size:.92rem;}
+
+  /* ---- Legend ---- */
+  .legend{
+    background:var(--cream-2);border:1px solid var(--border);
+    border-radius:10px;padding:14px 16px;margin:14px 0 22px;
+  }
+  .legend h2{font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--mid-green);margin:0 0 10px;}
+  .legend ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
+  .legend li{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;}
+  .chip-ico{flex:0 0 auto;width:22px;height:22px;border-radius:6px;
+    display:grid;place-items:center;margin-top:1px;}
+  .chip-ico svg{width:13px;height:13px;display:block;}
+  .lg-label{font-weight:700;}
+  .lg-def{color:var(--mid-gray);}
+
+  /* ---- Dashboard summary ---- */
+  .dash{
+    border:1px solid var(--border);border-radius:10px;
+    background:#fff;padding:14px 16px;margin-bottom:18px;
+  }
+  .dash-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .count{
+    display:flex;align-items:center;gap:7px;font-size:.86rem;font-weight:600;
+    padding:5px 11px;border-radius:20px;border:1px solid var(--border);
+    background:var(--cream);
+  }
+  .count .dot{width:11px;height:11px;border-radius:3px;flex:0 0 auto;}
+  .count b{font-variant-numeric:tabular-nums;}
+  .progress{margin-left:auto;font-size:.86rem;color:var(--mid-gray);
+    font-weight:600;font-variant-numeric:tabular-nums;}
+  .nudge{margin:12px 0 0;font-size:.92rem;padding:10px 12px;border-radius:8px;
+    background:var(--pale-sage);border-left:4px solid var(--mid-green);}
+  .nudge.focus{background:var(--new-bg);border-left-color:var(--new);}
+  .nudge.done{background:var(--pale-gold);border-left-color:var(--deep-amber);}
+
+  /* ---- Term grid ---- */
+  .grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));}
+  .term{
+    border:1px solid var(--border);border-left:5px solid var(--border);
+    border-radius:9px;background:#fff;overflow:hidden;transition:border-color .15s;
+  }
+  .term.set-know{border-left-color:var(--know);background:var(--know-bg);}
+  .term.set-think{border-left-color:var(--think);background:var(--think-bg);}
+  .term.set-heard{border-left-color:var(--heard);background:var(--heard-bg);}
+  .term.set-new{border-left-color:var(--new);background:var(--new-bg);}
+
+  .term-head{
+    width:100%;text-align:left;border:0;background:transparent;cursor:pointer;
+    font-family:inherit;color:var(--charcoal);
+    padding:13px 14px;display:flex;align-items:center;gap:10px;
+    min-height:50px;font-size:.96rem;font-weight:600;
+  }
+  .term-head:hover{background:rgba(21,71,52,.04);}
+  .term-name{flex:1;}
+  .state-chip{
+    display:none;align-items:center;gap:6px;font-size:.74rem;font-weight:700;
+    padding:3px 8px;border-radius:14px;white-space:nowrap;
+  }
+  .term.is-set .state-chip{display:inline-flex;}
+  .state-chip svg{width:11px;height:11px;display:block;}
+  .set-know .state-chip{background:var(--know);color:#fff;}
+  .set-think .state-chip{background:var(--think);color:#fff;}
+  .set-heard .state-chip{background:var(--heard);color:#fff;}
+  .set-new .state-chip{background:var(--new);color:#fff;}
+  .caret{flex:0 0 auto;transition:transform .18s;color:var(--mid-gray);}
+  .term-head[aria-expanded="true"] .caret{transform:rotate(180deg);}
+
+  .choices{display:none;padding:4px 12px 13px;gap:7px;flex-direction:column;}
+  .term.open .choices{display:flex;}
+  .choice{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    font-family:inherit;font-size:.86rem;color:var(--charcoal);cursor:pointer;
+    background:#fff;border:1px solid var(--border);border-radius:8px;
+    padding:9px 11px;min-height:42px;transition:border-color .12s,box-shadow .12s;
+  }
+  .choice:hover{border-color:var(--mid-green);}
+  .choice[aria-pressed="true"]{border-width:2px;font-weight:700;}
+  .choice[data-state="know"][aria-pressed="true"]{border-color:var(--know);background:var(--know-bg);}
+  .choice[data-state="think"][aria-pressed="true"]{border-color:var(--think);background:var(--think-bg);}
+  .choice[data-state="heard"][aria-pressed="true"]{border-color:var(--heard);background:var(--heard-bg);}
+  .choice[data-state="new"][aria-pressed="true"]{border-color:var(--new);background:var(--new-bg);}
+  .choice .chip-ico{width:20px;height:20px;}
+  .c-text b{display:block;}
+  .c-text span{color:var(--mid-gray);font-size:.8rem;font-weight:400;}
+
+  .ico-know{background:var(--know);} .ico-think{background:var(--think);}
+  .ico-heard{background:var(--heard);} .ico-new{background:var(--new);}
+
+  /* ---- Footer / reset ---- */
+  .foot{margin-top:22px;display:flex;justify-content:flex-end;}
+  .reset{
+    font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;
+    color:var(--baylor-green);background:#fff;border:1.5px solid var(--baylor-green);
+    border-radius:8px;padding:10px 18px;min-height:44px;display:inline-flex;
+    align-items:center;gap:8px;transition:background .12s,color .12s;
+  }
+  .reset:hover{background:var(--baylor-green);color:#fff;}
+  .reset:hover svg{stroke:#fff;}
+
+  :focus-visible{outline:3px solid var(--deep-amber);outline-offset:2px;border-radius:6px;}
+
+  @media (max-width:520px){
+    .band h1{font-size:1.04rem;}
+    .grid{grid-template-columns:1fr;}
+    .progress{margin-left:0;width:100%;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="band">
+    <span class="tag">M1</span>
+    <h1>AI Vocabulary Confidence Tracker</h1>
+  </div>
+
+  <div class="intro">
+    <p class="lead">You've just seen how AI turns tokens into text — now let's build on it. Tap each term and choose how familiar it feels right now.</p>
+    <p class="muted">There are no wrong answers and nothing is graded or saved — this is just for you. The terms you don't know yet are your map for the rest of this page.</p>
+  </div>
+
+  <div class="legend">
+    <h2>What the levels mean</h2>
+    <ul>
+      <li>
+        <span class="chip-ico ico-know" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <span><span class="lg-label">I know it</span> — <span class="lg-def">I can provide a definition and explain it.</span></span>
+      </li>
+      <li>
+        <span class="chip-ico ico-think" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3a9 9 0 0 0 0 18z"/></svg></span>
+        <span><span class="lg-label">I think I know it</span> — <span class="lg-def">I'm somewhat confident I can define and explain it.</span></span>
+      </li>
+      <li>
+        <span class="chip-ico ico-heard" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M9.1 9a3 3 0 1 1 4.6 3.3c-1 .7-1.7 1.3-1.7 2.7"/><circle cx="12" cy="18.5" r=".6" fill="#fff" stroke="none"/></svg></span>
+        <span><span class="lg-label">I have heard of it</span> — <span class="lg-def">I've heard it but don't know what it means when discussing AI.</span></span>
+      </li>
+      <li>
+        <span class="chip-ico ico-new" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 6v12M6 12h12"/></svg></span>
+        <span><span class="lg-label">New to me</span> — <span class="lg-def">I haven't heard it before.</span></span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="dash" aria-live="polite">
+    <div class="dash-row">
+      <span class="count"><span class="dot" style="background:var(--know)"></span>I know it <b id="c-know">0</b></span>
+      <span class="count"><span class="dot" style="background:var(--think)"></span>I think I know it <b id="c-think">0</b></span>
+      <span class="count"><span class="dot" style="background:var(--heard)"></span>Heard of it <b id="c-heard">0</b></span>
+      <span class="count"><span class="dot" style="background:var(--new)"></span>New to me <b id="c-new">0</b></span>
+      <span class="progress"><span id="c-rated">0</span> of 13 rated</span>
+    </div>
+    <p class="nudge" id="nudge">Tap a term below to begin.</p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="foot">
+    <button class="reset" id="reset" type="button">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--baylor-green)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      Reset tracker
+    </button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var TERMS = ["Autoregression","Context window","Hallucination","Human-in-the-Loop",
+    "Large Language Model (LLM)","Neural Network","Parameters","Prompt","Prompt engineering",
+    "Training Data","Token","Tokenization","Transformer"];
+
+  var STATES = [
+    {key:"know",  label:"I know it",        def:"I can provide a definition and explain it.",
+      ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'},
+    {key:"think", label:"I think I know it", def:"I'm somewhat confident I can define and explain it.",
+      ico:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3a9 9 0 0 0 0 18z"/></svg>'},
+    {key:"heard", label:"I have heard of it", def:"I've heard it but don't know what it means in AI.",
+      ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M9.1 9a3 3 0 1 1 4.6 3.3c-1 .7-1.7 1.3-1.7 2.7"/><circle cx="12" cy="18.5" r=".6" fill="#fff" stroke="none"/></svg>'},
+    {key:"new",   label:"New to me",        def:"I haven't heard it before.",
+      ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 6v12M6 12h12"/></svg>'}
+  ];
+  var ICO = {}; STATES.forEach(function(s){ICO[s.key]=s.ico;});
+
+  var grid = document.getElementById("grid");
+  var picks = {}; // term -> state key
+
+  TERMS.forEach(function(term, i){
+    var card = document.createElement("div");
+    card.className = "term";
+    card.dataset.term = term;
+
+    var head = document.createElement("button");
+    head.type = "button";
+    head.className = "term-head";
+    head.setAttribute("aria-expanded","false");
+    head.innerHTML =
+      '<span class="term-name">'+term+'</span>'+
+      '<span class="state-chip" aria-hidden="true"></span>'+
+      '<svg class="caret" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+    head.addEventListener("click", function(){ toggle(card, head); });
+
+    var choices = document.createElement("div");
+    choices.className = "choices";
+    choices.setAttribute("role","group");
+    choices.setAttribute("aria-label","Familiarity with "+term);
+    STATES.forEach(function(s){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "choice";
+      b.dataset.state = s.key;
+      b.setAttribute("aria-pressed","false");
+      b.innerHTML =
+        '<span class="chip-ico ico-'+s.key+'" aria-hidden="true">'+s.ico+'</span>'+
+        '<span class="c-text"><b>'+s.label+'</b><span>'+s.def+'</span></span>';
+      b.addEventListener("click", function(){ select(term, s, card, head, choices); });
+      choices.appendChild(b);
+    });
+
+    card.appendChild(head);
+    card.appendChild(choices);
+    grid.appendChild(card);
+  });
+
+  function toggle(card, head){
+    var open = card.classList.contains("open");
+    closeAll();
+    if(!open){ card.classList.add("open"); head.setAttribute("aria-expanded","true"); }
+  }
+  function closeAll(){
+    grid.querySelectorAll(".term.open").forEach(function(c){
+      c.classList.remove("open");
+      c.querySelector(".term-head").setAttribute("aria-expanded","false");
+    });
+  }
+
+  function select(term, s, card, head, choices){
+    picks[term] = s.key;
+    // clear prior state classes
+    card.className = "term is-set set-"+s.key;
+    var chip = head.querySelector(".state-chip");
+    chip.innerHTML = ICO[s.key] + s.label;
+    choices.querySelectorAll(".choice").forEach(function(b){
+      b.setAttribute("aria-pressed", b.dataset.state===s.key ? "true":"false");
+    });
+    head.setAttribute("aria-expanded","false");
+    update();
+  }
+
+  function update(){
+    var counts = {know:0,think:0,heard:0,new:0};
+    Object.keys(picks).forEach(function(t){ counts[picks[t]]++; });
+    document.getElementById("c-know").textContent  = counts.know;
+    document.getElementById("c-think").textContent = counts.think;
+    document.getElementById("c-heard").textContent = counts.heard;
+    document.getElementById("c-new").textContent   = counts.new;
+    var rated = Object.keys(picks).length;
+    document.getElementById("c-rated").textContent = rated;
+
+    var n = document.getElementById("nudge");
+    var gaps = counts.heard + counts.new;
+    n.className = "nudge";
+    if(rated === 0){
+      n.textContent = "Tap a term below to begin.";
+    } else if(rated < TERMS.length){
+      n.textContent = "Keep going — "+(TERMS.length-rated)+" term"+(TERMS.length-rated===1?"":"s")+" left to rate.";
+    } else if(gaps === 0){
+      n.classList.add("done");
+      n.textContent = "Confident across the board — use this page to sharpen the terms you'd want to explain to someone else.";
+    } else {
+      n.classList.add("focus");
+      n.textContent = "Your focus for this page: the "+gaps+" term"+(gaps===1?"":"s")+" you marked \u201CHeard of it\u201D or \u201CNew to me.\u201D Now that you've seen the video, give "+(gaps===1?"it":"them")+" extra attention as you read on.";
+    }
+  }
+
+  document.getElementById("reset").addEventListener("click", function(){
+    picks = {};
+    grid.querySelectorAll(".term").forEach(function(card){
+      card.className = "term";
+      card.querySelector(".state-chip").innerHTML = "";
+      card.querySelector(".term-head").setAttribute("aria-expanded","false");
+      card.querySelectorAll(".choice").forEach(function(b){ b.setAttribute("aria-pressed","false"); });
+    });
+    update();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
