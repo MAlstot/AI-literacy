@@ -291,6 +291,24 @@
     .stage-tabs { gap: 6px; }
     .stage-tab { font-size: 0.75rem; padding: 7px 12px; }
   }
+  /* ATTENTION DEMO */
+  #attention-demo { display: none; }
+  .attn-svg { display: block; margin: 0 auto; max-width: 100%; }
+  .attn-plain { font-family: Arial, sans-serif; font-size: 15px; fill: var(--mid); }
+  .attn-word-text { font-family: Arial, sans-serif; font-size: 15px; }
+  .attn-word { cursor: pointer; }
+  .attn-word:focus { outline: none; }
+  .attn-word:focus .attn-chip { stroke: var(--gold); stroke-width: 3; }
+  .attn-chip { transition: fill 0.2s, stroke 0.2s; }
+  .attn-arc { fill: none; stroke: #2a6049; stroke-width: 2.5; opacity: 0.85; }
+  .attn-hint {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 0.82rem;
+    color: var(--mid);
+    font-style: italic;
+    margin-top: 12px;
+  }
 </style>
 </head>
 <body>
@@ -313,6 +331,7 @@
     <button class="stage-tab" aria-pressed="false" onclick="setStage(2)" id="tab-2">2. Hidden Layers</button>
     <button class="stage-tab" aria-pressed="false" onclick="setStage(3)" id="tab-3">3. Weights</button>
     <button class="stage-tab" aria-pressed="false" onclick="setStage(4)" id="tab-4">4. Output Layer</button>
+    <button class="stage-tab" aria-pressed="false" onclick="setStage(5)" id="tab-5">5. Attention</button>
   </div>
 
   <!-- VISUAL AREA -->
@@ -451,6 +470,55 @@
       </svg>
     </div>
 
+    <!-- ATTENTION DEMO (shown only on the Attention stage) -->
+    <div id="attention-demo" role="region" aria-label="Attention example sentence">
+      <svg class="attn-svg" viewBox="0 0 640 230" width="640" height="230" role="img"
+           aria-label="The sentence 'The trophy wouldn't fit in the suitcase because it was too big.' Attention links the word 'it' to 'trophy' and to 'too big'.">
+        <defs>
+          <marker id="attn-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#2a6049"/>
+          </marker>
+        </defs>
+
+        <!-- arcs first, so words sit on top -->
+        <path class="attn-arc" d="M 178 162 Q 150 72 122 124" marker-end="url(#attn-arrow)"/>
+        <path class="attn-arc" d="M 184 188 Q 250 222 312 188" marker-end="url(#attn-arrow)"/>
+
+        <!-- Line A -->
+        <text class="attn-plain" x="60"  y="120" text-anchor="middle">The</text>
+        <g class="attn-word" role="button" tabindex="0" aria-label="trophy — the word it refers to"
+           onclick="clickAttn('trophy')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();clickAttn('trophy');}">
+          <rect class="attn-chip" x="91" y="104" width="58" height="22" rx="5" fill="#fff5d6" stroke="#FFB81C" stroke-width="1.5"/>
+          <text class="attn-word-text" x="120" y="120" text-anchor="middle" fill="#154734" font-weight="bold">trophy</text>
+        </g>
+        <text class="attn-plain" x="205" y="120" text-anchor="middle">wouldn't</text>
+        <text class="attn-plain" x="266" y="120" text-anchor="middle">fit</text>
+        <text class="attn-plain" x="300" y="120" text-anchor="middle">in</text>
+        <text class="attn-plain" x="335" y="120" text-anchor="middle">the</text>
+        <text class="attn-plain" x="405" y="120" text-anchor="middle">suitcase</text>
+
+        <!-- Line B -->
+        <text class="attn-plain" x="110" y="180" text-anchor="middle">because</text>
+        <g class="attn-word" role="button" tabindex="0" aria-label="it — the focus word"
+           onclick="clickAttn('it')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();clickAttn('it');}">
+          <rect class="attn-chip" x="165" y="164" width="26" height="22" rx="5" fill="#154734" stroke="#154734"/>
+          <text class="attn-word-text" x="178" y="180" text-anchor="middle" fill="#ffffff" font-weight="bold">it</text>
+        </g>
+        <text class="attn-plain" x="222" y="180" text-anchor="middle">was</text>
+        <g class="attn-word" role="button" tabindex="0" aria-label="too — part of the description it links to"
+           onclick="clickAttn('big')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();clickAttn('big');}">
+          <rect class="attn-chip" x="253" y="164" width="34" height="22" rx="5" fill="#fff5d6" stroke="#FFB81C" stroke-width="1.5"/>
+          <text class="attn-word-text" x="270" y="180" text-anchor="middle" fill="#154734" font-weight="bold">too</text>
+        </g>
+        <g class="attn-word" role="button" tabindex="0" aria-label="big — part of the description it links to"
+           onclick="clickAttn('big')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();clickAttn('big');}">
+          <rect class="attn-chip" x="299" y="164" width="32" height="22" rx="5" fill="#fff5d6" stroke="#FFB81C" stroke-width="1.5"/>
+          <text class="attn-word-text" x="315" y="180" text-anchor="middle" fill="#154734" font-weight="bold">big</text>
+        </g>
+      </svg>
+      <p class="attn-hint">Tap a highlighted word &mdash; <strong>it</strong>, <strong>trophy</strong>, or <strong>big</strong> &mdash; to see how attention links them.</p>
+    </div>
+
     <!-- EXPLANATION PANEL -->
     <div class="explain-panel" aria-live="polite" id="explain-panel">
       <h3 id="explain-title">Select a stage or click a neuron to learn more</h3>
@@ -505,6 +573,11 @@
         <span class="icon" aria-hidden="true">📤</span>
         <h3>Output Layer</h3>
         <p>Produces a probability for each possible next word. The model samples from these probabilities to generate a response.</p>
+      </div>
+      <div class="concept-box">
+        <span class="icon" aria-hidden="true">🔎</span>
+        <h3>Attention</h3>
+        <p>The transformer's key move: every word weighs which other words matter to its meaning, so the model handles each word in context.</p>
       </div>
     </div>
   </section>
@@ -579,6 +652,11 @@
       title: "Output Layer: Choosing the Next Word",
       text: "The output layer produces a probability score for each possible next word (W1, W2, W3 represent different candidates). The model does not always pick the single highest-scoring word — it samples from these probabilities, which is why responses can vary even to the same question.",
       highlight: "output"
+    },
+    {
+      title: "Attention: How a Transformer Connects Your Words",
+      text: "Everything so far describes a neural network in general. The specific kind that powers an LLM is called a transformer, and its signature move is attention: as the model reads your prompt, every word weighs which other words matter to its meaning. That is how it knows the \u201Cit\u201D below refers to the trophy, not the suitcase \u2014 and it is what makes the next-word predictions from the start of this module fit the context instead of guessing blind.",
+      highlight: "attention"
     }
   ];
 
@@ -590,6 +668,7 @@
     updateTabs(idx);
     updateExplanation(idx);
     updateConnections(stages[idx].highlight);
+    setAttentionView(stages[idx].highlight === 'attention');
     updateStepNav();
   }
 
@@ -660,6 +739,8 @@
         renderWeight(l, l._weight, to.indexOf('o') !== 0);
       });
       highlightLayerNodes(['o0','o1','o2']);
+    } else if (mode === 'attention') {
+      lines.forEach(function(l) { renderWeight(l, l._weight, false); });
     }
   }
 
@@ -720,6 +801,35 @@
 
     resetNeurons();
     highlightLayerNodes([id]);
+  }
+
+  /* ── ATTENTION DEMO ── */
+  function setAttentionView(on) {
+    var net = document.querySelector('.network-wrap');
+    var legend = document.querySelector('.weight-legend');
+    var attn = document.getElementById('attention-demo');
+    if (on) {
+      if (net) net.style.display = 'none';
+      if (legend) legend.style.display = 'none';
+      if (attn) attn.style.display = 'block';
+    } else {
+      if (net) net.style.display = '';
+      if (legend) legend.style.display = '';
+      if (attn) attn.style.display = 'none';
+    }
+  }
+
+  var attentionInfo = {
+    'it':     { title: "The word \u201Cit\u201D", text: "On its own, \u201Cit\u201D is ambiguous \u2014 it could mean the trophy or the suitcase. Attention lets the model weigh the other words and link \u201Cit\u201D to the one it actually refers to." },
+    'trophy': { title: "\u201Cit\u201D \u2192 trophy", text: "Attention forms a strong link between \u201Cit\u201D and \u201Ctrophy.\u201D The thing that wouldn\u2019t fit and is \u201Ctoo big\u201D is the trophy, so that is what \u201Cit\u201D points back to." },
+    'big':    { title: "\u201Cit\u201D \u2192 too big", text: "\u201Cit\u201D also links to \u201Ctoo big,\u201D the description that explains the problem. A transformer holds all of these relationships across the whole sentence at once." }
+  };
+
+  function clickAttn(word) {
+    var info = attentionInfo[word];
+    if (!info) return;
+    document.getElementById('explain-title').textContent = info.title;
+    document.getElementById('explain-text').textContent = info.text;
   }
 
   // Init
