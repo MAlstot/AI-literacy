@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Environmental Benefits Map — M3.3 TRAIL</title>
+  <title>AI for Environmental Work: Promising Applications — M3.3 TRAIL</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -26,6 +26,22 @@
       line-height: 1.5;
     }
 
+    .framing-note {
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      background: #f0f7f0;
+      border-radius: 8px;
+      border-left: 4px solid #154734;
+    }
+
+    .framing-note p {
+      font-size: 12.5px;
+      color: #333333;
+      line-height: 1.6;
+    }
+
+    .framing-note strong { color: #154734; }
+
     .tab-bar {
       display: flex;
       flex-wrap: wrap;
@@ -45,16 +61,18 @@
     }
 
     .tab-btn:focus {
-      outline: 3px solid #FFD700;
+      outline: 3px solid #FFB81C;
       outline-offset: 2px;
     }
 
     .benefit-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 10px;
       margin-bottom: 1rem;
     }
+
+    .benefit-grid:focus { outline: none; }
 
     .benefit-card {
       background: #ffffff;
@@ -77,162 +95,148 @@
       line-height: 1.5;
     }
 
-    .key-finding {
-      margin-top: 0.5rem;
-      padding: 0.875rem 1rem;
-      background: #f0f7f0;
-      border-radius: 8px;
-      border-left: 4px solid #1B4332;
-    }
-
-    .key-finding p {
-      font-size: 12px;
-      color: #333333;
-      line-height: 1.6;
-    }
-
-    .key-finding strong {
-      color: #1B4332;
-    }
-
-    .source-note {
-      margin-top: 0.75rem;
+    .benefit-card .cite {
+      display: block;
+      margin-top: 6px;
       font-size: 11px;
-      color: #888888;
+      color: #777777;
       font-style: italic;
-      line-height: 1.5;
     }
 
-    /* Accessibility */
+    .benefit-card .flag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #8a5a00;
+      background: #fdf3dd;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .references {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .references h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #333333;
+      margin-bottom: 8px;
+    }
+
+    .references ol {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .references li {
+      font-size: 11px;
+      color: #666666;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .references a { color: #185FA5; word-break: break-word; }
+
     @media (prefers-reduced-motion: reduce) {
       .tab-btn { transition: none; }
     }
 
-    /* High contrast */
     @media (prefers-color-scheme: dark) {
       body { background: #1a1a1a; color: #eeeeee; }
       .benefit-card { background: #2a2a2a; border-color: #444444; }
       .benefit-card h3 { color: #eeeeee; }
       .benefit-card p { color: #bbbbbb; }
-      .key-finding { background: #1e3a2a; }
-      .key-finding p { color: #cccccc; }
+      .benefit-card .cite { color: #999999; }
+      .framing-note { background: #1e3a2a; }
+      .framing-note p { color: #cccccc; }
+      .references li { color: #aaaaaa; }
     }
   </style>
 </head>
 <body>
 
   <div class="widget-header">
-    <p>Select a category to explore documented AI applications in environmental protection and sustainability. Sources: Microsoft AI for Good Lab (2019–2025); BCG &amp; Google / Dannouni et al. (2023); NREL (2024); IEA (2025).</p>
+    <p>Researchers are applying AI to real environmental problems. Select a category to explore documented, peer-reviewed examples.</p>
   </div>
 
-  <div class="tab-bar" id="tab-bar" role="tablist" aria-label="AI environmental benefit categories"></div>
-
-  <div class="benefit-grid" id="benefit-grid" role="region" aria-live="polite" aria-label="Benefits for selected category"></div>
-
-  <div class="key-finding">
-    <p><strong>Key finding:</strong> BCG &amp; Google (Dannouni et al., 2023) estimate that applying proven AI techniques to energy, transport, food, and industry could reduce global greenhouse gas emissions by <strong>5–10% by 2030</strong> — equivalent to eliminating the annual emissions of the entire European Union. This is based on documented applications already underway, not speculative projections.</p>
+  <div class="framing-note">
+    <p><strong>How to read this:</strong> These are promising applications drawn from published research, not evidence that AI has offset its own environmental footprint. They show what the technology can contribute when deliberately applied to specific problems. Whether those contributions outweigh the costs discussed earlier is a question the evidence does not yet settle, and one you are invited to weigh.</p>
   </div>
 
-  <p class="source-note">
-    Sources: Dannouni, A. et al. (2023). <em>Accelerating Climate Action with AI.</em> BCG &amp; Google. | Microsoft AI for Good Research Lab. (2019–2025). Advance Sustainability Publications. | NREL. (2024). AI Work Reveals Benefits to Wind Industry. | IEA. (2025). <em>Energy and AI.</em> | Greenhill et al. (2024). <em>Science, 383</em>, 406. | Kiesecker et al. (2024). <em>Frontiers in Environmental Science.</em>
-  </p>
+  <div class="tab-bar" id="tab-bar" role="tablist" aria-label="Categories of AI environmental applications"></div>
+
+  <div class="benefit-grid" id="benefit-grid" tabindex="-1" role="region" aria-live="polite" aria-label="Examples for selected category"></div>
+
+  <div class="references">
+    <h4>References</h4>
+    <ol>
+      <li>Greenhill, S., Druckenmiller, H., Wang, S., Keiser, D. A., Girotra, M., Moore, J. K., Yeh, N., Property, A., Konar, M., &amp; Shapiro, J. S. (2024). Machine learning predicts which rivers, streams, and wetlands the Clean Water Act regulates. <em>Science, 383</em>(6681), 406&ndash;412. <a href="https://doi.org/10.1126/science.adi3794">https://doi.org/10.1126/science.adi3794</a></li>
+      <li>Harrison-Atlas, D., Glaws, A., King, R. N., &amp; Lantz, E. (2024). Artificial intelligence-aided wind plant optimization for nationwide evaluation of land use and economic benefits of wake steering. <em>Nature Energy, 9</em>, 735&ndash;749. <a href="https://doi.org/10.1038/s41560-024-01516-8">https://doi.org/10.1038/s41560-024-01516-8</a></li>
+      <li>Kerner, H., et al. (2025). Fields of the World: A machine learning benchmark dataset for global agricultural field boundary segmentation. <em>Proceedings of the AAAI Conference on Artificial Intelligence.</em></li>
+      <li>Khan, C. B., et al. (2023). A biologist's guide to the galaxy: Leveraging artificial intelligence and very high-resolution satellite imagery to monitor marine mammals from space. <em>Journal of Marine Science and Engineering, 11</em>(3).</li>
+      <li>Warner, C., Callaway, D., &amp; Fowlie, M. (2024). <em>Risk-cost tradeoffs in power sector wildfire prevention</em> [Working paper]. Energy Institute at Haas, University of California, Berkeley. <a href="https://haas.berkeley.edu/wp-content/uploads/archive/WP347.pdf">https://haas.berkeley.edu/wp-content/uploads/archive/WP347.pdf</a></li>
+    </ol>
+  </div>
 
 <script>
+  const colors = {
+    'Renewable energy': '#BA7517',
+    'Climate & water': '#0F6E56',
+    'Biodiversity': '#3B6D11',
+    'Grid & wildfire': '#185FA5'
+  };
+
   const categories = {
-    'Energy grid': {
-      color: '#185FA5',
+    'Renewable energy': {
       items: [
         {
-          title: 'Wildfire prevention',
-          desc: 'AI sensors and cameras can reduce utility-caused wildfire ignition risk by up to 72% using sensors already installed at many utilities (Payne & Eisen, 2025). AI cameras have reportedly prevented at least one large wildfire in documented utility cases.'
-        },
-        {
-          title: 'Grid cooling optimization',
-          desc: "Google's DeepMind AI reduced data center cooling energy consumption by 40%, demonstrating that AI can meaningfully reduce its own infrastructure's footprint when deliberately applied."
-        },
-        {
-          title: 'Renewable dispatch',
-          desc: 'AI systems match available renewable generation with flexible loads in real time, reducing reliance on fossil fuel backup plants and improving integration of intermittent wind and solar resources.'
-        },
-        {
-          title: 'Weather & storm forecasting',
-          desc: 'AI improves storm prediction accuracy, enabling solar panels to reposition before hail damage and grid operators to pre-position resources before extreme weather events (Payne & Eisen, 2025).'
+          title: 'Reducing land use for wind power',
+          desc: 'An AI model trained on wind-flow simulations optimized turbine layouts across more than 6,800 potential U.S. wind sites. Co-optimizing layouts with "wake steering" reduced land requirements by an average of 18% per plant (ranging from 2% to 34% by site), subject to modeling uncertainties.',
+          cite: 'Harrison-Atlas et al. (2024), Nature Energy'
         }
       ]
     },
-    'Climate science': {
-      color: '#0F6E56',
+    'Climate & water': {
       items: [
         {
-          title: 'Climate modeling resolution',
-          desc: "NVIDIA's Earth-2 generative AI foundation model simulates global climate at kilometer-scale resolution — a dramatic improvement over prior capabilities that enables more accurate regional climate projections."
-        },
-        {
-          title: 'Methane leak detection',
-          desc: 'AI-powered satellite monitoring identifies methane releases across oil, gas, and agricultural infrastructure at scale — enabling targeted intervention that would be impossible through manual inspection.'
-        },
-        {
-          title: 'Wetlands & watershed mapping',
-          desc: 'Machine learning predicts which rivers, streams, and wetlands are regulated under the Clean Water Act, helping identify protected ecosystems at risk following regulatory changes (Greenhill et al., 2024, Science).'
-        },
-        {
-          title: 'Environmental impact assessment',
-          desc: 'AI tools assist in developing better environmental impact statements for infrastructure projects, improving the quality and speed of regulatory review processes (Payne & Eisen, 2025).'
+          title: 'Mapping protected waters',
+          desc: 'A machine learning model predicts which rivers, streams, and wetlands fall under Clean Water Act regulation, helping identify which ecosystems are protected, and which may lose protection when the rules change.',
+          cite: 'Greenhill et al. (2024), Science'
         }
       ]
     },
     'Biodiversity': {
-      color: '#3B6D11',
       items: [
         {
-          title: 'Marine mammal monitoring',
-          desc: "Microsoft's AI for Good Lab uses AI and very high-resolution satellite imagery to monitor whales, dolphins, and other marine mammals from space — enabling population assessments at scales previously impossible (Khan et al., 2023)."
+          title: 'Monitoring marine mammals from space',
+          desc: 'AI applied to very high-resolution satellite imagery can detect whales and other marine mammals from orbit, enabling population monitoring at scales that manual observation cannot reach.',
+          cite: 'Khan et al. (2023), J. Marine Science & Engineering'
         },
         {
-          title: 'Bioacoustics & species ID',
-          desc: 'Deep learning models identify endangered species including Cook Inlet beluga whales and rare bird species from passive acoustic recordings, enabling continuous monitoring without human observers (Zhong et al., 2021).'
-        },
-        {
-          title: 'Glacier & climate change tracking',
-          desc: 'Machine learning tracks glacial lake changes in the Hindu Kush Himalaya, providing early warning data for downstream flood risk and long-term climate change monitoring (Baraka et al., 2020).'
-        },
-        {
-          title: 'Agricultural & land use mapping',
-          desc: "Microsoft's AI for Good Lab maps agricultural field boundaries across Africa to support sustainable land use planning, food security analysis, and conservation priority-setting (Kerner et al., 2025)."
+          title: 'Mapping farmland to support land-use planning',
+          desc: 'Machine learning maps agricultural field boundaries across regions including Africa, supporting food-security analysis, sustainable land-use planning, and conservation priority-setting.',
+          cite: 'Kerner et al. (2025), AAAI'
         }
       ]
     },
-    'Renewable energy': {
-      color: '#BA7517',
+    'Grid & wildfire': {
       items: [
         {
-          title: 'Solar & wind siting',
-          desc: 'AI identifies low-conflict areas for solar and wind development in Europe and India, reducing land-use disputes and accelerating renewable energy siting decisions while protecting ecologically sensitive areas (Kiesecker et al., 2024).'
-        },
-        {
-          title: 'Wind farm optimization',
-          desc: "NREL's AI research reveals significant efficiency gains in wind farm design, turbine placement, and wake management — improving energy yield from existing and planned wind installations (NREL, 2024)."
-        },
-        {
-          title: 'Solar panel lifespan extension',
-          desc: "Microsoft Research's DeepDeg system uses AI to predict photovoltaic panel degradation, enabling proactive maintenance that extends panel lifespan — directly addressing the end-of-life waste challenge in solar energy (Oviedo et al., 2023)."
-        },
-        {
-          title: 'Community solar retention',
-          desc: 'Machine learning models reduce participant dropout rates in community solar programs, expanding clean energy access to lower-income households that cannot install their own solar systems (Allsup, 2024).'
+          title: 'Targeting wildfire prevention',
+          desc: 'Researchers built a machine learning model on utility data to predict daily ignition risk, then used it to evaluate which prevention strategies actually work. They estimated that "fast-trip" settings reduced ignition risk by 72% on average, helping utilities target mitigation where it matters most. The AI here is the research tool for prediction and targeting, not the intervention itself.',
+          cite: 'Warner, Callaway & Fowlie (2024), UC Berkeley',
+          flag: 'Working paper (not yet peer-reviewed)'
         }
       ]
     }
   };
 
-  const colors = {
-    'Energy grid': '#185FA5',
-    'Climate science': '#0F6E56',
-    'Biodiversity': '#3B6D11',
-    'Renewable energy': '#BA7517'
-  };
-
-  let activeCategory = 'Energy grid';
+  let activeCategory = 'Renewable energy';
 
   function renderTabs() {
     const bar = document.getElementById('tab-bar');
@@ -244,7 +248,7 @@
         role="tab"
         aria-selected="${isActive}"
         aria-controls="benefit-grid"
-        id="tab-${cat.replace(/\s/g, '-')}"
+        id="tab-${cat.replace(/[\s&]/g, '-')}"
         onclick="setCategory('${cat}')"
         style="
           background: ${isActive ? c : 'transparent'};
@@ -263,6 +267,8 @@
       <div class="benefit-card" style="border-top-color: ${c};" role="article">
         <h3>${item.title}</h3>
         <p>${item.desc}</p>
+        ${item.flag ? `<span class="flag">${item.flag}</span>` : ''}
+        <span class="cite">${item.cite}</span>
       </div>
     `).join('');
   }
@@ -271,11 +277,9 @@
     activeCategory = cat;
     renderTabs();
     renderGrid();
-    // Move focus to grid for screen readers
     document.getElementById('benefit-grid').focus();
   };
 
-  // Initialize
   renderTabs();
   renderGrid();
 </script>
