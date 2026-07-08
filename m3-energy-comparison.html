@@ -3,167 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Energy Comparison | TRAIL M3 — The Hidden Cost of a Prompt</title>
+<title>AI Energy Comparison | TRAIL M3.3 &#8212; The Hidden Cost of a Prompt</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;color:#222;font-size:15px}
-.wrap{max-width:900px;margin:0 auto;padding:20px}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f5;color:#1f2937;font-size:15px;line-height:1.5}
+.wrap{max-width:920px;margin:0 auto;padding:20px}
 header{background:#1a1a2e;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0}
-header h1{font-size:1.2rem}header p{font-size:.8rem;opacity:.75;margin-top:3px}
+header h1{font-size:1.2rem;line-height:1.3}
+header p{font-size:.8rem;opacity:.8;margin-top:3px}
 .body-card{background:#fff;border-radius:0 0 8px 8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.tip{background:#f0f9ff;border-left:4px solid #0ea5e9;padding:10px 14px;border-radius:4px;margin-bottom:18px;font-size:.87rem;line-height:1.5}
-.toggle-group{display:flex;gap:0;margin-bottom:22px;border:1.5px solid #d1d5db;border-radius:7px;overflow:hidden;width:fit-content}
-.toggle-btn{padding:8px 20px;border:0;background:#fff;font-size:.87rem;cursor:pointer;font-weight:600;color:#374151;transition:.15s;border-right:1.5px solid #d1d5db}
-.toggle-btn:last-child{border-right:0}
-.toggle-btn.active{background:#1a1a2e;color:#fff}
-.chart-view{display:none}.chart-view.active{display:block}
-.chart-container{width:100%;overflow-x:auto;margin-bottom:16px}
-.bar-chart{min-width:480px;padding:0 0 10px}
-.chart-title{font-weight:700;font-size:.95rem;color:#1a1a2e;margin-bottom:4px}
-.chart-subtitle{font-size:.78rem;color:#6b7280;margin-bottom:16px}
-.bar-row{display:flex;align-items:center;margin-bottom:10px;gap:10px}
-.bar-label{width:220px;min-width:220px;font-size:.82rem;color:#374151;text-align:right;line-height:1.3}
-.bar-label .sub{font-size:.72rem;color:#9ca3af;display:block}
-.bar-wrap{flex:1;position:relative}
-.bar{height:32px;border-radius:3px;display:flex;align-items:center;padding-left:8px;min-width:4px;transition:width .4s ease;cursor:pointer;position:relative}
-.bar .val{font-size:.78rem;color:#fff;font-weight:700;white-space:nowrap;position:absolute;left:8px}
-.bar .val.outside{color:#374151;left:calc(100% + 6px)}
-.bar-group-ai{background:#e86c3a}
-.bar-group-compare{background:#2563eb}
-.bar-group-training{background:#7c3aed}
-.bar-group-ev{background:#059669}
-.contested{font-size:.7rem;font-style:italic;color:#f59e0b;margin-left:4px}
-.tooltip{display:none;position:absolute;bottom:38px;left:0;background:#1a1a2e;color:#fff;padding:8px 12px;border-radius:6px;font-size:.78rem;line-height:1.5;width:240px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.bar:hover .tooltip{display:block}
-.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#374151}
-.legend-dot{width:12px;height:12px;border-radius:2px}
-.insight-box{background:#fefce8;border:1px solid #fde047;border-radius:6px;padding:12px 14px;margin-top:16px;font-size:.86rem;line-height:1.6}
-.insight-box strong{display:block;margin-bottom:4px;color:#92400e}
-.caveat{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:.8rem;color:#6b7280;line-height:1.5}
-.caveat strong{color:#374151}
-.src{margin-top:18px;font-size:.72rem;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:10px;line-height:1.6}
+.tip{background:#f0f9ff;border-left:4px solid #0369a1;padding:11px 14px;border-radius:4px;margin-bottom:18px;font-size:.87rem}
+.tip strong{color:#075985}
+.tablist{display:flex;flex-wrap:wrap;gap:0;margin-bottom:22px;border:1.5px solid #cbd5e1;border-radius:7px;overflow:hidden;width:fit-content;max-width:100%}
+.tab{padding:9px 16px;border:0;background:#fff;font-size:.84rem;cursor:pointer;font-weight:600;color:#334155;border-right:1.5px solid #cbd5e1;font-family:inherit}
+.tab:last-child{border-right:0}
+.tab[aria-selected="true"]{background:#1a1a2e;color:#fff}
+.tab:focus-visible{outline:3px solid #0369a1;outline-offset:-3px}
+.panel{display:none}
+.panel.active{display:block}
+.chart-title{font-weight:700;font-size:.98rem;color:#1a1a2e;margin-bottom:3px}
+.chart-sub{font-size:.79rem;color:#64748b;margin-bottom:14px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#334155}
+.legend-dot{width:13px;height:13px;border-radius:3px;flex-shrink:0}
+.bar-row{display:flex;align-items:center;margin-bottom:9px;gap:10px}
+.bar-label{width:170px;min-width:170px;font-size:.82rem;color:#334155;text-align:right;line-height:1.25}
+.bar-track{flex:1;background:#f1f5f9;border-radius:3px;height:26px;position:relative;min-width:60px}
+.bar-fill{height:100%;border-radius:3px;min-width:3px;transition:width .5s ease}
+.bar-value{font-size:.8rem;color:#1f2937;font-weight:700;white-space:nowrap;min-width:132px}
+.bar-value .eq{display:block;font-size:.7rem;color:#94a3b8;font-weight:400}
+.fill-classify{background:#2563eb}
+.fill-generate{background:#154734}
+.fill-small{background:#154734}
+.fill-large{background:#b45309}
+.fill-energy{background:#2563eb}
+.fill-carbon{background:#b45309}
+/* explainer */
+.family{margin-bottom:18px}
+.family-head{font-size:.92rem;font-weight:700;color:#fff;padding:8px 12px;border-radius:5px}
+.family-head span{display:block;font-size:.74rem;font-weight:400;opacity:.92;margin-top:2px}
+.fam-classify{background:#2563eb}
+.fam-generate{background:#154734}
+.deflist{margin:10px 4px 0}
+.deflist dt{font-weight:700;font-size:.84rem;color:#1f2937;margin-top:9px}
+.deflist dd{font-size:.83rem;color:#475569;margin:1px 0 0}
+/* reference strip */
+.refstrip{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:6px;padding:11px 14px;margin:16px 0}
+.refstrip-head{font-size:.8rem;font-weight:700;color:#475569;margin-bottom:8px}
+.refs{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.8rem;color:#475569}
+.refs li{display:flex;align-items:baseline;gap:6px}
+.refval{font-weight:700;color:#1f2937;font-variant-numeric:tabular-nums}
+.refnote{font-size:.72rem;color:#94a3b8;margin-top:8px}
+.callout{background:#fffbeb;border:1px solid #fde68a;border-left:5px solid #FFB81C;border-radius:6px;padding:13px 15px;margin:16px 0 4px;font-size:.87rem}
+.callout strong{display:block;color:#92400e;margin-bottom:3px;font-size:.9rem}
+.insight{background:#f6faf7;border:1px solid #bfdbca;border-radius:6px;padding:12px 14px;margin-top:16px;font-size:.86rem}
+.insight strong{display:block;margin-bottom:4px;color:#154734}
+.insight + .insight{margin-top:10px}
+.group-head{font-size:.82rem;font-weight:700;color:#475569;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #e2e8f0}
+.subchart-title{font-size:.83rem;font-weight:700;color:#334155;margin:14px 0 8px}
+.caveat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 14px;margin-top:14px;font-size:.79rem;color:#64748b}
+.caveat strong{color:#334155}
+.src{margin-top:18px;font-size:.72rem;color:#64748b;border-top:1px solid #e2e8f0;padding-top:10px}
+.src a{color:#0369a1}
+@media (prefers-reduced-motion:reduce){.bar-fill{transition:none}}
+@media (max-width:560px){.bar-label{width:120px;min-width:120px;font-size:.76rem}.bar-value{min-width:0;font-size:.74rem}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1>M3.3 &#8212; The Hidden Cost of a Prompt: AI Energy Comparison</h1><p>TRAIL &#8226; Module 3: AI and Ethics &#8226; Baylor University</p></header>
+<header>
+  <h1>M3.3 &#8212; The Hidden Cost of a Prompt: AI Energy at a Glance</h1>
+  <p>TRAIL &#8226; Module 3: AI and Ethics &#8226; Baylor University</p>
+</header>
 <div class="body-card">
-<div class="tip"><strong>Key framing:</strong> The environmental story of AI is neither simple reassurance nor simple alarm. Per-query AI consumption is modest; at the scale of billions of daily queries and the training of frontier models, it becomes significant. Toggle between views to see the honest picture.</div>
 
-<div class="toggle-group">
-  <button class="toggle-btn active" onclick="switchView('per-use')">Per-Use View</button>
-  <button class="toggle-btn" onclick="switchView('scale')">Scale / Training View</button>
-</div>
+  <div class="tip"><strong>Start here:</strong> AI's energy use is not one number. It depends on what you ask it to do, which model you use, and the scale of use. The first tab explains the types of AI use; the next three show how task, tool, and volume change the footprint.</div>
 
-<div class="chart-view active" id="view-per-use">
-  <div class="bar-chart">
-    <div class="chart-title">Energy per Single Use/Event (Wh)</div>
-    <div class="chart-subtitle">Comparing individual AI queries to everyday energy consumption activities</div>
-    <div id="chart-per-use"></div>
+  <div class="tablist" role="tablist" aria-label="Energy comparison views">
+    <button class="tab" role="tab" id="tab-0" aria-selected="true" aria-controls="panel-0" tabindex="0">Types of AI use</button>
+    <button class="tab" role="tab" id="tab-1" aria-selected="false" aria-controls="panel-1" tabindex="-1">What you ask</button>
+    <button class="tab" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">Which model</button>
+    <button class="tab" role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1">Training &amp; scale</button>
   </div>
-  <div class="insight-box">
-    <strong>&#x1F4A1; What this shows</strong>
-    A single ChatGPT query (&#126;0.001&#8211;0.01 kWh) consumes more energy than a Google search but less than leaving a ceiling fan on for 20 minutes. Per-use, AI is not catastrophic &#8212; but scale changes the picture dramatically.
-  </div>
-</div>
 
-<div class="chart-view" id="view-scale">
-  <div class="bar-chart">
-    <div class="chart-title">Large-Scale &amp; Lifecycle Energy Comparison (MWh or equivalent)</div>
-    <div class="chart-subtitle">Training runs, annual AI data center demand, and lifecycle comparisons</div>
-    <div id="chart-scale"></div>
-  </div>
-  <div class="insight-box">
-    <strong>&#x1F4A1; What this shows</strong>
-    Training a large language model can emit as much CO&#8202;2 as five transatlantic flights. Total AI electricity demand is projected to double by 2026 (IEA, 2024). The Jevons Paradox warning: efficiency gains may simply enable more use at greater aggregate scale.
-  </div>
-</div>
+  <!-- VIEW 0: EXPLAINER -->
+  <div class="panel active" role="tabpanel" id="panel-0" aria-labelledby="tab-0">
+    <div class="chart-title">Types of AI use</div>
+    <div class="chart-sub">AI tasks fall into two families. The difference explains most of the energy story in the other tabs.</div>
 
-<div class="caveat">
-  <strong>&#9888;&#xFE0F; Data note:</strong> Energy figures for AI vary significantly across sources, model sizes, hardware, and data center efficiency. Values shown are best available estimates from cited sources; ranges reflect genuine uncertainty. Some comparisons (e.g., EV lifecycle vs. AI training) involve contested methodological assumptions. Treat as illustrative of <em>order of magnitude</em>, not exact equivalents.
-</div>
+    <div class="family">
+      <div class="family-head fam-classify">Sorting &amp; classifying<span>Working with content that already exists. Lower energy.</span></div>
+      <dl class="deflist">
+        <dt>Text classification</dt><dd>Sorting text into categories. An email marked spam or not spam; a review flagged positive or negative.</dd>
+        <dt>Extractive question answering</dt><dd>Finding an answer inside a document and pulling out the exact words. You ask "what is the refund deadline," and it highlights the line in the policy. It locates, it does not compose.</dd>
+        <dt>Masked language modeling</dt><dd>Predicting a missing word from context. The autocomplete that fills in "see you ___ the meeting."</dd>
+        <dt>Token classification</dt><dd>Labeling each word in a sentence. Tagging "Baylor" as an organization and "Waco" as a place, or marking names to redact from a document.</dd>
+        <dt>Image classification</dt><dd>Labeling a whole image with one category. "Cat or dog," or a scan flagged normal or abnormal.</dd>
+        <dt>Object detection</dt><dd>Finding and boxing the things in an image. Your phone drawing squares around faces, or a backup camera spotting a pedestrian.</dd>
+      </dl>
+    </div>
+
+    <div class="family">
+      <div class="family-head fam-generate">Generating<span>Creating something new. Higher energy, images highest.</span></div>
+      <dl class="deflist">
+        <dt>Text generation</dt><dd>Writing new text. Drafting an email, a chatbot reply, or finishing a sentence you started.</dd>
+        <dt>Summarization</dt><dd>Condensing a long text into a short one. Turning a twelve-page report into a three-sentence recap.</dd>
+        <dt>Image captioning</dt><dd>Describing a picture in words. Automatic alt text: "a child flying a red kite on a beach."</dd>
+        <dt>Image generation</dt><dd>Creating a brand-new image from a description. Typing "a watercolor mountain cairn at sunrise" and getting a picture. The most energy-intensive task in the study.</dd>
+      </dl>
+    </div>
+
+    <div class="insight">
+      <strong>Energy differs by family</strong>
+      Tasks in the first family work with content that already exists; tasks in the second create new content. In the measurements in the next tabs, tasks in the first family use less energy per use than tasks in the second, and image generation uses the most.
+    </div>
+  </div>
+
+  <!-- VIEW 1: TASK SPECTRUM -->
+  <div class="panel" role="tabpanel" id="panel-1" aria-labelledby="tab-1">
+    <div class="chart-title">What you ask AI to do</div>
+    <div class="chart-sub">Energy per 1,000 uses (kWh), by task, measured on representative open models</div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#2563eb"></span>Sorting or classifying content</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#154734"></span>Generating content</span>
+    </div>
+    <div id="chart-tasks"></div>
+
+    <div class="refstrip">
+      <div class="refstrip-head">For scale &#8212; everyday energy, in the same units (kWh)</div>
+      <ul class="refs">
+        <li><span class="refval">0.01</span> LED bulb (10 W), 1 hour</li>
+        <li><span class="refval">0.022</span> one smartphone charge</li>
+        <li><span class="refval">0.05</span> laptop, 1 hour of use</li>
+        <li><span class="refval">0.06</span> ceiling fan (60 W), 1 hour</li>
+      </ul>
+      <div class="refnote">Smartphone charge from Luccioni et al. (2024); bulb, laptop, and fan are standard electrical calculations, shown only for scale, not measured in the study.</div>
+    </div>
+
+    <div class="callout">
+      <strong>Image generation, compared with the other tasks</strong>
+      At 2.907 kWh per 1,000 images, image generation uses about 46 times the next-highest task (image captioning) and about 1,450 times text classification. A single image, on the least efficient model measured, uses about half a smartphone charge. In carbon terms, 1,000 images on the heaviest model measured equal roughly the emissions of driving 4 miles in an average gasoline car.
+    </div>
+    <div class="insight">
+      <strong>What the measurements show</strong>
+      Across the tasks measured, energy per 1,000 uses ranges from 0.002 kWh (text classification) to 2.907 kWh (image generation). Sorting and classifying tasks fall at the low end, text generation and summarization in the middle, and image tasks at the high end.
+    </div>
+    <div class="caveat"><strong>Data note:</strong> Means across representative open models on standardized hardware (NVIDIA A100, Oregon grid). Image generation varies widely with image size, up to 11.49 kWh per 1,000 on the least efficient model. These are open models measured directly, not proprietary systems such as ChatGPT. Source: Luccioni, Jernite &amp; Strubell (2024), Table 2.</div>
+  </div>
+
+  <!-- VIEW 2: MODEL CHOICE -->
+  <div class="panel" role="tabpanel" id="panel-2" aria-labelledby="tab-2">
+    <div class="chart-title">Which model you pick</div>
+    <div class="chart-sub">Carbon per 1,000 queries: a small task-specific model vs. a large general-purpose model, same task</div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#154734"></span>Small task-specific model</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#b45309"></span>Large general-purpose model</span>
+    </div>
+    <div class="group-head">Text classification (sentiment)</div>
+    <div id="chart-model-a"></div>
+    <div class="group-head">Extractive question answering</div>
+    <div id="chart-model-b"></div>
+    <div class="insight">
+      <strong>What the measurements show</strong>
+      For the same task, the large general-purpose models emitted more carbon per 1,000 queries than the small task-specific models: about 8 to 15 times more for sentiment classification, and about 33 times more for extractive question answering.
+    </div>
+    <div class="caveat"><strong>Data note:</strong> Grams of CO&#8322;eq per 1,000 queries on a 297.6 gCO&#8322;eq/kWh grid. Carbon scales with the grid, but the ordering holds regardless of region. Source: Luccioni, Jernite &amp; Strubell (2024), discussion and Table 3.</div>
+  </div>
+
+  <!-- VIEW 3: TRAINING & SCALE -->
+  <div class="panel" role="tabpanel" id="panel-3" aria-labelledby="tab-3">
+    <div class="chart-title">Training and scale</div>
+    <div class="chart-sub">One-time training footprints for four similar-sized models, and why the grid matters as much as the model</div>
+    <div class="subchart-title">Energy used in training (MWh)</div>
+    <div id="chart-energy"></div>
+    <div class="subchart-title">Emissions from training (tonnes CO&#8322;eq)</div>
+    <div id="chart-carbon"></div>
+    <div class="insight">
+      <strong>Energy and emissions can diverge</strong>
+      BLOOM used more energy than OPT (433 vs. 324 MWh) but emitted less (25 vs. 70 tonnes), and about 20 times less than GPT-3. The four models trained on grids of differing carbon intensity, from 57 gCO&#8322;eq/kWh for BLOOM to 429 for GPT-3.
+    </div>
+    <div class="insight">
+      <strong>Training vs. inference</strong>
+      Training is a one-time cost; inference recurs with each query. Per query, inference is small, but volume is large: ChatGPT drew about 1.7 billion visits in October 2023. Estimates place inference at 60 to 90 percent of operational ML compute. In one deployment study, about 75 percent of the energy went to keeping the model loaded in memory rather than answering queries.
+    </div>
+    <div class="caveat"><strong>Data note:</strong> Training figures from Luccioni, Viguier &amp; Ligozat (2023), Table 4; GPT-3 also reported in Patterson et al. (2021). Energy and carbon are shown separately because carbon depends on the grid, not just the computation. GPT-3's training, about 502 tonnes (552 with data-center overhead), is roughly the lifetime emissions of five average cars.</div>
+  </div>
+
 </div>
 <p class="src">
-  Sources: Luccioni, A. S., et al. (2023). Estimating the carbon footprint of BLOOM. <em>JMLR, 24</em>(253). arXiv:2211.02001. |
-  Strubell, E., et al. (2019). Energy and policy considerations for deep learning in NLP. <em>ACL 2019.</em> |
-  Goldman Sachs Global Investment Research (2023). AI infrastructure: Power demand. |
-  IEA (2024). <em>Electricity 2024: Analysis and forecast to 2026.</em> International Energy Agency. |
-  Mytton, D. (2021). Hiding greenhouse gas emissions in the cloud. <em>Nature Climate Change, 11.</em> |
-  ICCT (2021, 2024). <em>Lifecycle greenhouse gas emissions of battery electric vehicles.</em>
+  Sources: Luccioni, A. S., Jernite, Y., &amp; Strubell, E. (2024). Power hungry processing: Watts driving the cost of AI deployment? <em>ACM FAccT &#8217;24.</em> <a href="https://doi.org/10.1145/3630106.3658542">doi:10.1145/3630106.3658542</a> |
+  Luccioni, A. S., Viguier, S., &amp; Ligozat, A.-L. (2023). Estimating the carbon footprint of BLOOM, a 176B parameter language model. arXiv:2211.02001. |
+  Patterson, D., et al. (2021). Carbon emissions and large neural network training. arXiv:2104.10350.
 </p>
 </div>
 
 <script>
-// Per-use data (Wh per single event)
-const perUseData = [
-  {label:'Google Search',sub:'1 query',val:0.3,group:'compare',source:'Lannelongue et al. 2021; IEA estimates',unit:'Wh',contested:false},
-  {label:'ChatGPT Query (simple)',sub:'1 text query',val:1.0,group:'ai',source:'Luccioni et al. 2023 (arXiv:2211.02001); Goldman Sachs 2023 — range: 0.1-3 Wh',unit:'Wh',contested:true},
-  {label:'ChatGPT Query (complex)',sub:'long reasoning task',val:10.0,group:'ai',source:'Estimated upper range; figures vary by model and task length',unit:'Wh',contested:true},
-  {label:'Streaming Video (1 min)',sub:'Netflix, typical',val:0.8,group:'compare',source:'Carbon Trust / IEA estimates',unit:'Wh',contested:false},
-  {label:'LED Bulb (1 hour)',sub:'10W bulb',val:10.0,group:'compare',source:'Standard electrical calculation',unit:'Wh',contested:false},
-  {label:'Ceiling Fan (1 hour)',sub:'60W fan',val:60.0,group:'compare',source:'Standard electrical calculation',unit:'Wh',contested:false},
-  {label:'Electric Kettle (1 boil)',sub:'full kettle ~3 min',val:90.0,group:'compare',source:'UK Energy Saving Trust',unit:'Wh',contested:false},
-  {label:'Laptop (1 hour)',sub:'charging/use',val:50.0,group:'compare',source:'EPA estimates',unit:'Wh',contested:false}
+// ---- VIEW 1: task spectrum (kWh per 1,000 inferences; Luccioni et al. 2024, Table 2) ----
+var taskData = [
+  {label:'Text classification', val:0.002, group:'classify'},
+  {label:'Extractive QA',       val:0.003, group:'classify'},
+  {label:'Masked language modeling', val:0.003, group:'classify'},
+  {label:'Token classification', val:0.004, group:'classify'},
+  {label:'Image classification', val:0.007, group:'classify'},
+  {label:'Object detection',     val:0.038, group:'classify'},
+  {label:'Text generation',      val:0.047, group:'generate'},
+  {label:'Summarization',        val:0.049, group:'generate'},
+  {label:'Image captioning',     val:0.063, group:'generate'}
 ];
 
-// Scale/training data (MWh or CO2-equivalent)
-const scaleData = [
-  {label:'Training GPT-3 (est.)',sub:'one full training run',val:1287,group:'training',source:'Patterson et al. 2021; Brown et al. 2020 — 1,287 MWh electricity estimated',unit:'MWh',contested:true},
-  {label:'Training BLOOM (measured)',sub:'176B parameter model',val:433,group:'training',source:'Luccioni et al. 2023 arXiv:2211.02001 — 433 MWh measured (Jean Zay cluster, France)',unit:'MWh',contested:false},
-  {label:'AI Data Center Electricity (2024)',sub:'global annual estimate',val:200000,group:'ai',source:'IEA Electricity 2024: &#126;200 TWh = 200,000,000 MWh for data centers; AI-specific portion contested',unit:'TWh x 1000 (in MWh)',contested:true},
-  {label:'Transatlantic Flight (one way)',sub:'NYC-London, one passenger',val:0.5,group:'compare',source:'ICAO carbon calculator &#126;0.5 tCO2 = &#126;0.5 MWh equivalent (for chart scale)',unit:'MWh equiv.',contested:false},
-  {label:'EV Battery Lifecycle (mfg. only)',sub:'per vehicle produced',val:8.8,group:'ev',source:'ICCT 2021 lifecycle report: 8.8 tCO2 for battery manufacturing = &#126;8.8 MWh equiv. (rough)',unit:'MWh equiv.',contested:true},
-  {label:'US Home (1 year)',sub:'avg. household electricity',val:10.5,group:'compare',source:'EIA 2023: avg US home uses 10,500 kWh = 10.5 MWh/year',unit:'MWh',contested:false}
+// ---- VIEW 2: small vs large model (g CO2eq per 1,000 queries; Luccioni et al. 2024) ----
+var modelA = [
+  {label:'Small model (BERT)', val:0.32, group:'small'},
+  {label:'Flan-T5-XL',         val:2.66, group:'large'},
+  {label:'BLOOMz-7B',          val:4.67, group:'large'}
+];
+var modelB = [
+  {label:'Task-specific',   val:0.3, group:'small'},
+  {label:'General-purpose', val:10,  group:'large'}
 ];
 
-function buildChart(containerId, data, maxVal) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  const total = maxVal || Math.max(...data.map(d => d.val));
-  
-  data.forEach(item => {
-    const pct = Math.max(2, (item.val / total) * 100);
-    const colorMap = {ai:'#e86c3a',compare:'#2563eb',training:'#7c3aed',ev:'#059669'};
-    const color = colorMap[item.group] || '#6b7280';
-    const valDisplay = item.val >= 1000 ? (item.val >= 100000 ? (item.val/1000).toFixed(0)+'K' : item.val.toLocaleString()) : item.val + ' ' + item.unit;
-    const isOutside = pct < 15;
-    
-    const row = document.createElement('div');
+// ---- VIEW 3: training energy and carbon (Luccioni et al. 2023, Table 4) ----
+var energyData = [
+  {label:'GPT-3', sub:'429 gCO\u2082/kWh', val:1287, group:'energy'},
+  {label:'Gopher', sub:'330 gCO\u2082/kWh', val:1066, group:'energy'},
+  {label:'BLOOM', sub:'57 gCO\u2082/kWh', val:433, group:'energy'},
+  {label:'OPT', sub:'231 gCO\u2082/kWh', val:324, group:'energy'}
+];
+var carbonData = [
+  {label:'GPT-3', sub:'429 gCO\u2082/kWh', val:502, group:'carbon'},
+  {label:'Gopher', sub:'330 gCO\u2082/kWh', val:352, group:'carbon'},
+  {label:'OPT', sub:'231 gCO\u2082/kWh', val:70, group:'carbon'},
+  {label:'BLOOM', sub:'57 gCO\u2082/kWh', val:25, group:'carbon'}
+];
+
+function phoneCharges(kwh){
+  var c = kwh / 0.022;
+  if (c < 1) return Math.round(c*100) + '% of a phone charge';
+  return c.toFixed(c<10?1:0) + ' phone charges';
+}
+
+function buildBars(containerId, data, opts){
+  opts = opts || {};
+  var el = document.getElementById(containerId);
+  el.innerHTML = '';
+  var max = opts.max || Math.max.apply(null, data.map(function(d){return d.val;}));
+  data.forEach(function(d){
+    var pct = Math.max(3, (d.val / max) * 100);
+    var valText, eqText, aria;
+    if (opts.kind === 'energy-kwh'){
+      valText = d.val + ' kWh';
+      eqText = phoneCharges(d.val);
+      aria = d.label + ': ' + d.val + ' kilowatt hours per 1,000 uses, about ' + phoneCharges(d.val);
+    } else if (opts.kind === 'carbon-g'){
+      valText = d.val + ' g CO\u2082eq';
+      eqText = 'per 1,000 queries';
+      aria = d.label + ': ' + d.val + ' grams CO2 equivalent per 1,000 queries';
+    } else if (opts.kind === 'mwh'){
+      valText = d.val.toLocaleString() + ' MWh';
+      eqText = d.sub;
+      aria = d.label + ': ' + d.val + ' megawatt hours, grid ' + d.sub;
+    } else if (opts.kind === 'tonnes'){
+      valText = d.val + ' tonnes';
+      eqText = d.sub;
+      aria = d.label + ': ' + d.val + ' tonnes CO2 equivalent, grid ' + d.sub;
+    }
+    var row = document.createElement('div');
     row.className = 'bar-row';
+    row.setAttribute('role','group');
+    row.setAttribute('aria-label', aria);
     row.innerHTML =
-      '<div class="bar-label">' + item.label + '<span class="sub">' + item.sub + '</span></div>' +
-      '<div class="bar-wrap">' +
-        '<div class="bar bar-group-' + item.group + '" style="width:' + pct + '%;background:' + color + '">' +
-          '<span class="val' + (isOutside ? ' outside' : '') + '">' + valDisplay + (item.contested ? ' *' : '') + '</span>' +
-          '<div class="tooltip">' + item.source + (item.contested ? '<br><em>* Figures vary significantly across sources; treat as estimate.</em>' : '') + '</div>' +
-        '</div>' +
-      '</div>';
-    container.appendChild(row);
+      '<div class="bar-label">' + d.label + '</div>' +
+      '<div class="bar-track"><div class="bar-fill fill-' + d.group + '" style="width:' + pct + '%"></div></div>' +
+      '<div class="bar-value">' + valText + '<span class="eq">' + eqText + '</span></div>';
+    el.appendChild(row);
   });
 }
 
-function switchView(viewId) {
-  document.querySelectorAll('.chart-view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('view-' + viewId).classList.add('active');
-  document.querySelectorAll('.toggle-btn').forEach(b => {
-    if (b.textContent.toLowerCase().includes(viewId === 'per-use' ? 'per-use' : 'scale')) b.classList.add('active');
+buildBars('chart-tasks', taskData, {kind:'energy-kwh', max:0.063});
+buildBars('chart-model-a', modelA, {kind:'carbon-g'});
+buildBars('chart-model-b', modelB, {kind:'carbon-g'});
+buildBars('chart-energy', energyData, {kind:'mwh', max:1287});
+buildBars('chart-carbon', carbonData, {kind:'tonnes', max:502});
+
+// ---- Tab behavior (accessible: click + arrow keys) ----
+var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+function selectTab(i){
+  tabs.forEach(function(t,j){
+    var on = i === j;
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+    t.tabIndex = on ? 0 : -1;
+    panels[j].classList.toggle('active', on);
   });
 }
-
-// Build both charts
-buildChart('chart-per-use', perUseData);
-buildChart('chart-scale', scaleData);
-
-// Fix toggle button active logic
-document.querySelectorAll('.toggle-btn').forEach((btn, i) => {
-  btn.onclick = () => {
-    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.chart-view').forEach(v => v.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.chart-view')[i].classList.add('active');
-  };
+tabs.forEach(function(tab,i){
+  tab.addEventListener('click', function(){ selectTab(i); });
+  tab.addEventListener('keydown', function(e){
+    var n = null;
+    if (e.key === 'ArrowRight') n = (i+1) % tabs.length;
+    else if (e.key === 'ArrowLeft') n = (i-1+tabs.length) % tabs.length;
+    if (n !== null){ e.preventDefault(); selectTab(n); tabs[n].focus(); }
+  });
 });
 </script>
 </body>
