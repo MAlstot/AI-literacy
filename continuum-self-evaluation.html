@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Am I on the Continuum? — Faculty Self-Evaluation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F2937;
+    --ink-soft:#4B5563;
+    --paper:#FCFCFA;
+    --panel:#FFFFFF;
+    --line:#D8DCD3;
+    --pine:#1D4E4A;
+    --pine-soft:#EAF1EF;
+    --gold:#B98A2E;
+    --gold-soft:#F7EFDD;
+    --stretch:#C9B27F;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Source Sans 3',system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);
+    line-height:1.55;font-size:16.5px;
+    padding:clamp(16px,4vw,40px);
+    max-width:880px;margin:0 auto;
+  }
+  h1,h2,h3{font-family:'Bitter',Georgia,serif;color:var(--pine);line-height:1.25}
+  h1{font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700}
+  h2{font-size:1.2rem;font-weight:600;margin-bottom:.5rem}
+  .eyebrow{
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:.4rem;
+  }
+  header{margin-bottom:2rem;border-bottom:2px solid var(--pine);padding-bottom:1.25rem}
+  header p{color:var(--ink-soft);margin-top:.6rem;max-width:62ch}
+
+  section{margin-bottom:2.25rem}
+  .step-label{
+    display:inline-block;background:var(--pine);color:#fff;
+    font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:.2rem .6rem;border-radius:3px;margin-bottom:.6rem;
+  }
+
+  /* Level cards */
+  .levels{display:grid;gap:.6rem;margin-top:.75rem}
+  details.level{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;
+  }
+  details.level summary{
+    display:flex;align-items:center;gap:.75rem;cursor:pointer;
+    padding:.7rem .9rem;font-weight:600;list-style:none;
+  }
+  details.level summary::-webkit-details-marker{display:none}
+  details.level[open] summary{border-bottom:1px solid var(--line)}
+  .lvl-num{
+    flex:none;width:2rem;height:2rem;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bitter',serif;font-weight:700;color:#fff;font-size:.95rem;
+  }
+  details.level .body{padding:.7rem .95rem .85rem;color:var(--ink-soft);font-size:.95rem}
+  details.level .body strong{color:var(--ink)}
+  .l1{background:#8A9BA8}.l2{background:#5F8A8B}.l3{background:#3D6F6B}.l4{background:#1D4E4A}.l5{background:#B98A2E}
+
+  /* Form */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:1.1rem 1.15rem;margin-top:.75rem;
+  }
+  .q{margin-bottom:1.35rem}
+  .q:last-child{margin-bottom:0}
+  .q label.qlabel{display:block;font-weight:700;margin-bottom:.15rem}
+  .q .hint{font-size:.88rem;color:var(--ink-soft);margin-bottom:.55rem}
+  .choices{display:flex;flex-wrap:wrap;gap:.45rem}
+  .choices label{
+    border:1.5px solid var(--line);border-radius:999px;
+    padding:.35rem .85rem;cursor:pointer;font-size:.92rem;font-weight:600;
+    color:var(--ink-soft);background:#fff;transition:all .15s ease;
+    user-select:none;
+  }
+  .choices input{position:absolute;opacity:0;pointer-events:none}
+  .choices label:hover{border-color:var(--pine)}
+  .choices label:has(input:checked){
+    background:var(--pine);border-color:var(--pine);color:#fff;
+  }
+  .choices label:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:2px}
+  textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:8px;
+    padding:.6rem .7rem;font:inherit;font-size:.95rem;min-height:84px;resize:vertical;
+    background:#fff;color:var(--ink);
+  }
+  textarea:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--pine)}
+
+  /* Continuum track — signature element */
+  .track-wrap{margin:1.4rem 0 .4rem;padding:0 .5rem}
+  .track{position:relative;height:6px;border-radius:3px;
+    background:linear-gradient(90deg,#8A9BA8,#5F8A8B,#3D6F6B,#1D4E4A,#B98A2E);
+  }
+  .stretch-band{
+    position:absolute;top:-7px;height:20px;border-radius:10px;
+    background:var(--gold-soft);border:1.5px dashed var(--stretch);
+    opacity:0;transition:all .35s ease;z-index:0;
+  }
+  .stops{position:relative;display:flex;justify-content:space-between;margin-top:.55rem}
+  .stop{flex:1;text-align:center;font-size:.72rem;font-weight:700;
+    letter-spacing:.03em;color:var(--ink-soft);text-transform:uppercase;line-height:1.2}
+  .stop:first-child{text-align:left}.stop:last-child{text-align:right}
+  .pin{
+    position:absolute;top:-30px;transform:translateX(-50%);
+    font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:.15rem .5rem;border-radius:4px;white-space:nowrap;
+    opacity:0;transition:left .35s ease,opacity .3s ease;z-index:1;
+  }
+  .pin::after{
+    content:'';position:absolute;left:50%;top:100%;transform:translateX(-50%);
+    border:5px solid transparent;
+  }
+  .pin.now{background:var(--pine);color:#fff}
+  .pin.now::after{border-top-color:var(--pine)}
+  .pin.aim{background:var(--gold);color:#fff;top:auto;bottom:-30px}
+  .pin.aim::after{top:auto;bottom:100%;border-bottom-color:var(--gold);border-top-color:transparent}
+  .pin.visible{opacity:1}
+  .track-note{font-size:.85rem;color:var(--ink-soft);text-align:center;margin-top:2.2rem;font-style:italic;min-height:1.3em}
+
+  /* Buttons + summary */
+  .actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.25rem}
+  button{
+    font:inherit;font-weight:700;border-radius:8px;cursor:pointer;
+    padding:.55rem 1.15rem;border:1.5px solid var(--pine);
+    transition:all .15s ease;font-size:.95rem;
+  }
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .btn-primary{background:var(--pine);color:#fff}
+  .btn-primary:hover{background:#16403C}
+  .btn-secondary{background:#fff;color:var(--pine)}
+  .btn-secondary:hover{background:var(--pine-soft)}
+  .btn-secondary[disabled]{opacity:.45;cursor:not-allowed}
+  #summary{
+    display:none;background:var(--pine-soft);border:1px solid var(--pine);
+    border-radius:var(--radius);padding:1.15rem 1.2rem;margin-top:1.25rem;
+  }
+  #summary h2{margin-bottom:.7rem}
+  #summary .row{margin-bottom:.6rem;font-size:.97rem}
+  #summary .row b{color:var(--pine)}
+  .gap-flag{
+    display:inline-block;background:var(--gold-soft);border:1px solid var(--stretch);
+    border-radius:6px;padding:.4rem .7rem;font-size:.9rem;margin-top:.4rem;
+  }
+  .footnote{font-size:.82rem;color:var(--ink-soft);margin-top:2rem;border-top:1px solid var(--line);padding-top:.8rem}
+
+  @media (prefers-reduced-motion:reduce){
+    .pin,.stretch-band{transition:none}
+  }
+  @media print{
+    .no-print{display:none !important}
+    #summary{display:block !important}
+    body{padding:0}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Teaching Forward · Module 4 · Practice Activity</div>
+  <h1>Where Am I on the Continuum?</h1>
+  <p>Before you place your redesign candidate on the AI Literacy Continuum, take a few minutes to place <em>yourself</em>. There are no wrong answers here — the goal is an honest snapshot of where your teaching sits today, where you feel confident, and where you want your redesigned assignment to land. Your responses stay on this page until you download them; nothing is submitted or saved.</p>
+</header>
+
+<section>
+  <span class="step-label">Step 1 · Review</span>
+  <h2>The Five Levels at a Glance</h2>
+  <p class="hint" style="color:var(--ink-soft);font-size:.92rem">Tap each level to expand. Notice how the 4Ds intensify as you move right: what you <strong>delegate</strong> expands, the <strong>discernment</strong> students must exercise deepens, and the <strong>diligence</strong> (documentation) expected grows.</p>
+  <div class="levels">
+    <details class="level">
+      <summary><span class="lvl-num l1">1</span> Level 1 — No AI Use</summary>
+      <div class="body">Students complete the work entirely without AI. <strong>Best for:</strong> assessing foundational knowledge and skills students must own independently. <strong>4Ds connection:</strong> the delegation decision is "delegate nothing" — and that's a deliberate, defensible choice, not a default.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l2">2</span> Level 2 — Limited AI Use</summary>
+      <div class="body">AI is permitted for narrow, specified tasks (brainstorming, feedback on drafts) while core work remains the student's. <strong>4Ds connection:</strong> description skills begin to matter; students acknowledge where AI assisted.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l3">3</span> Level 3 — Collaborative AI Use</summary>
+      <div class="body">Students work with AI as a thought partner throughout the task — generating, critiquing, and revising — while adapting or rejecting its contributions with justification. <strong>4Ds connection:</strong> discernment is the heart of this level; documentation of the collaboration becomes expected.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l4">4</span> Level 4 — Integrated AI Use</summary>
+      <div class="body">AI is woven into the workflow the way it is in professional practice — purposeful tool selection, strategic prompting, and critical synthesis of outputs. <strong>4Ds connection:</strong> all four Ds operate together; diligence expands to transcripts and rationale for AI decisions.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l5">5</span> Level 5 — AI Innovation</summary>
+      <div class="body">Students use AI to create novel approaches, products, or insights — exploring what the technology makes newly possible in the discipline. <strong>4Ds connection:</strong> delegation and description at their most sophisticated; diligence includes ethical analysis of the innovation itself.</div>
+    </details>
+  </div>
+</section>
+
+<section class="no-print">
+  <span class="step-label">Step 2 · Reflect</span>
+  <h2>Your Self-Placement</h2>
+  <div class="card">
+    <div class="q">
+      <label class="qlabel">Where does your current instruction sit?</label>
+      <p class="hint">Think about the assignments you actually give today — not aspirations, just current practice.</p>
+      <div class="choices" role="radiogroup" aria-label="Current instruction level" id="q-current">
+        <label><input type="radio" name="current" value="1">1 · No AI</label>
+        <label><input type="radio" name="current" value="2">2 · Limited</label>
+        <label><input type="radio" name="current" value="3">3 · Collaborative</label>
+        <label><input type="radio" name="current" value="4">4 · Integrated</label>
+        <label><input type="radio" name="current" value="5">5 · Innovation</label>
+      </div>
+    </div>
+    <div class="q">
+      <label class="qlabel">Where do you feel most comfortable supporting students right now?</label>
+      <p class="hint">This may differ from where your instruction sits — comfort and current practice don't always match.</p>
+      <div class="choices" role="radiogroup" aria-label="Comfort level" id="q-comfort">
+        <label><input type="radio" name="comfort" value="1">1 · No AI</label>
+        <label><input type="radio" name="comfort" value="2">2 · Limited</label>
+        <label><input type="radio" name="comfort" value="3">3 · Collaborative</label>
+        <label><input type="radio" name="comfort" value="4">4 · Integrated</label>
+        <label><input type="radio" name="comfort" value="5">5 · Innovation</label>
+      </div>
+    </div>
+    <div class="q">
+      <label class="qlabel">What level should your redesign candidate aim for?</label>
+      <p class="hint">Choose the level that best serves your learning goals and students' AI literacy — even if it stretches beyond your current comfort.</p>
+      <div class="choices" role="radiogroup" aria-label="Target level" id="q-target">
+        <label><input type="radio" name="target" value="1">1 · No AI</label>
+        <label><input type="radio" name="target" value="2">2 · Limited</label>
+        <label><input type="radio" name="target" value="3">3 · Collaborative</label>
+        <label><input type="radio" name="target" value="4">4 · Integrated</label>
+        <label><input type="radio" name="target" value="5">5 · Innovation</label>
+      </div>
+    </div>
+    <div class="q">
+      <label class="qlabel" for="ready">What would you need to feel ready to support students at your target level?</label>
+      <p class="hint">Skills, examples, tools, time, backup — anything. This becomes a great agenda item for your 1:1 consultation.</p>
+      <textarea id="ready" placeholder="e.g., I'd want to see a model assignment in my discipline, and practice evaluating AI output on the kind of analysis I assign…"></textarea>
+    </div>
+    <div class="q">
+      <label class="qlabel" for="fourds">Which of the 4Ds feels strongest for you right now — and which needs the most growth?</label>
+      <textarea id="fourds" placeholder="e.g., Discernment is my strength — I can spot a weak AI answer in my field. Description (framing the problem for AI) is where I need practice…"></textarea>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="step-label">Step 3 · See It</span>
+  <h2>Your Continuum</h2>
+  <div class="track-wrap" aria-hidden="true">
+    <div style="position:relative;padding:32px 0">
+      <div class="track">
+        <div class="stretch-band" id="stretchBand"></div>
+        <div class="pin now" id="pinNow">You are here</div>
+        <div class="pin aim" id="pinAim">Aiming for</div>
+      </div>
+    </div>
+    <div class="stops">
+      <span class="stop">No AI</span><span class="stop">Limited</span><span class="stop">Collaborative</span><span class="stop">Integrated</span><span class="stop">Innovation</span>
+    </div>
+    <p class="track-note" id="trackNote">Answer the questions above to see your placement.</p>
+  </div>
+
+  <div class="actions no-print">
+    <button class="btn-primary" id="btnGenerate">Generate my self-evaluation</button>
+    <button class="btn-secondary" id="btnDownload" disabled>Download (.txt)</button>
+    <button class="btn-secondary" id="btnPrint" disabled>Print / save as PDF</button>
+  </div>
+
+  <div id="summary" role="region" aria-live="polite">
+    <h2>Self-Evaluation Summary</h2>
+    <div id="summaryBody"></div>
+  </div>
+</section>
+
+<p class="footnote">This practice activity supports CLO 2 (applying the IWU 5-Level AI Literacy Continuum) and builds on the 4Ds &amp; 3 Modalities framework from Module 2. Bring your downloaded summary to the synchronous workshops and your 1:1 consultation. Continuum adapted from the IWU 5-Level AI Literacy Continuum (Indiana Wesleyan University).</p>
+
+<script>
+(function(){
+  const LEVELS = {1:"Level 1 — No AI Use",2:"Level 2 — Limited AI Use",3:"Level 3 — Collaborative AI Use",4:"Level 4 — Integrated AI Use",5:"Level 5 — AI Innovation"};
+  const state = {current:null, comfort:null, target:null};
+  const pinNow = document.getElementById('pinNow');
+  const pinAim = document.getElementById('pinAim');
+  const band = document.getElementById('stretchBand');
+  const note = document.getElementById('trackNote');
+  const btnDownload = document.getElementById('btnDownload');
+  const btnPrint = document.getElementById('btnPrint');
+  let summaryText = '';
+
+  function pct(level){ return ((level-1)/4)*100; }
+
+  function updateTrack(){
+    if(state.current){ pinNow.style.left = pct(state.current)+'%'; pinNow.classList.add('visible'); }
+    if(state.target){ pinAim.style.left = pct(state.target)+'%'; pinAim.classList.add('visible'); }
+    if(state.current && state.target){
+      const lo = Math.min(state.current,state.target), hi = Math.max(state.current,state.target);
+      if(hi>lo){
+        band.style.left = pct(lo)+'%';
+        band.style.width = (pct(hi)-pct(lo))+'%';
+        band.style.opacity = '1';
+      } else { band.style.opacity = '0'; }
+      const gap = state.target - state.current;
+      if(gap>1) note.textContent = 'A meaningful stretch — exactly what this program is built to support.';
+      else if(gap===1) note.textContent = 'One level up: an ambitious but very achievable target.';
+      else if(gap===0) note.textContent = 'Deepening practice at your current level — refinement is progress too.';
+      else note.textContent = 'Aiming below current practice can be intentional — some learning goals call for less AI, not more.';
+    }
+  }
+
+  document.querySelectorAll('.choices input').forEach(el=>{
+    el.addEventListener('change', e=>{
+      state[e.target.name] = parseInt(e.target.value,10);
+      updateTrack();
+    });
+  });
+
+  document.getElementById('btnGenerate').addEventListener('click', ()=>{
+    if(!state.current || !state.comfort || !state.target){
+      note.textContent = 'Please answer the first three questions before generating your summary.';
+      return;
+    }
+    const ready = document.getElementById('ready').value.trim() || '(not answered)';
+    const fourds = document.getElementById('fourds').value.trim() || '(not answered)';
+    const gap = state.target - state.current;
+    const comfortGap = state.target - state.comfort;
+    let gapNote;
+    if(gap>0) gapNote = 'Your target sits '+gap+' level'+(gap>1?'s':'')+' above your current practice — this stretch zone is where the workshops and consultations will focus.';
+    else if(gap===0) gapNote = 'Your target matches your current practice — your redesign will deepen and refine work at this level.';
+    else gapNote = 'Your target sits below your current practice — an intentional choice when learning goals call for students to work without AI.';
+    let comfortNote = '';
+    if(comfortGap>0) comfortNote = ' Note: your target is beyond your current comfort level ('+LEVELS[state.comfort]+') — name what support would close that gap in your consultation.';
+
+    const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    summaryText =
+'AI LITERACY CONTINUUM — FACULTY SELF-EVALUATION\n'+
+'Teaching Forward: AI Fluency for Practitioners · Module 4\n'+
+'Date: '+date+'\n\n'+
+'Current instruction level:  '+LEVELS[state.current]+'\n'+
+'Comfort level:              '+LEVELS[state.comfort]+'\n'+
+'Redesign target level:      '+LEVELS[state.target]+'\n\n'+
+'PLACEMENT NOTE\n'+gapNote+comfortNote+'\n\n'+
+'WHAT I NEED TO FEEL READY\n'+ready+'\n\n'+
+'MY 4Ds REFLECTION (strongest / growth area)\n'+fourds+'\n\n'+
+'NEXT STEP\nBring this summary to the synchronous workshops and your 1:1 consultation.\n';
+
+    document.getElementById('summaryBody').innerHTML =
+      '<div class="row"><b>Current practice:</b> '+LEVELS[state.current]+'</div>'+
+      '<div class="row"><b>Comfort level:</b> '+LEVELS[state.comfort]+'</div>'+
+      '<div class="row"><b>Redesign target:</b> '+LEVELS[state.target]+'</div>'+
+      '<div class="row gap-flag">'+gapNote+comfortNote+'</div>'+
+      '<div class="row" style="margin-top:.8rem"><b>What I need to feel ready:</b><br>'+escapeHtml(ready)+'</div>'+
+      '<div class="row"><b>My 4Ds reflection:</b><br>'+escapeHtml(fourds)+'</div>';
+    document.getElementById('summary').style.display = 'block';
+    btnDownload.disabled = false;
+    btnPrint.disabled = false;
+    document.getElementById('summary').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+
+  document.getElementById('btnDownload').addEventListener('click', ()=>{
+    const blob = new Blob([summaryText], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ai-literacy-self-evaluation.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById('btnPrint').addEventListener('click', ()=>window.print());
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+})();
+</script>
+</body>
+</html>
