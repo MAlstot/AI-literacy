@@ -334,22 +334,36 @@
     let comfortNote = '';
     if(comfortGap>0) comfortNote = ' Note: your target is beyond your current comfort level ('+LEVELS[state.comfort]+') — name what support would close that gap in your consultation.';
 
+    const SHORT = {1:'No AI Use',2:'Limited AI Use',3:'Collaborative AI Use',4:'Integrated AI Use',5:'AI Innovation'};
+    const DOCS = {1:'no AI acknowledgment is expected — the design decision itself is what you document',
+      2:'a brief acknowledgment of where AI assisted',
+      3:'documentation of the collaboration — what AI contributed, and what students adapted or rejected with justification',
+      4:'transcripts and rationale for AI decisions, mirroring professional practice',
+      5:'full documentation plus ethical analysis of the innovation itself'};
+    const cur = state.current, tgt = state.target, cmf = state.comfort;
+    const noAI = (tgt === 1);
     const roadmap = [];
     roadmap.push({d:'Day 1 — SAMR & Activity Inventory',
-      n: gap>0 ? 'Your placement gets confirmed with the cohort, and the Activity Inventory breaks your assignment into tasks — the raw material for moving it up the continuum.'
-       : gap===0 ? 'Confirm your placement with the cohort, then use the Activity Inventory to see your assignment task-by-task — refinement starts with knowing exactly what you\'re refining.'
-       : 'Confirm your placement, then use the Activity Inventory to identify precisely which tasks carry the cognitive work you intend to protect.'});
+      n: noAI ? 'Choosing '+SHORT[1]+' is a designed position, not a default. The Activity Inventory names the cognitive work your assignment develops — so your Level 1 choice becomes explicit and defensible, and you\'ll hear how colleagues across the continuum reason about the same decision. Confidence here starts with clarity about what your assignment actually asks students to think.'
+       : gap>0 ? 'Your placement gets confirmed with the cohort, and the Activity Inventory breaks your Level '+cur+' ('+SHORT[cur]+') assignment into tasks — the raw material for the climb to Level '+tgt+'. Confidence starts with seeing the assignment concretely; you can\'t feel ready to change what you haven\'t named.'
+       : gap===0 ? 'Confirm your Level '+cur+' ('+SHORT[cur]+') placement with the cohort, then use the Activity Inventory to see the assignment task-by-task. Confidence here is confirmation — hearing your reasoning hold up in the room.'
+       : 'Confirm your placement, then use the Activity Inventory on your Level '+cur+' ('+SHORT[cur]+') assignment to identify precisely which tasks carry the cognitive work you intend to protect at Level '+tgt+'. Naming what you\'re protecting, and why, is the first confidence move.'});
     roadmap.push({d:'Day 2 — AI Stress Test & Gap Analysis',
-      n: gap>0 ? 'Your heavy-lift day. The stress test shows what AI can already do with your assignment — those tasks are your strongest candidates for literacy integration at your target level.'
-       : gap===0 ? 'The stress test may surprise you even at a steady target — watch for tasks that no longer serve the learning objective; trimming them is refinement too.'
-       : 'Your decisive day. The Gap Analysis separates at-risk tasks from human-essential ones — the evidence base for your AI-resistant design choices.'});
+      n: noAI ? 'Essential for you — you can\'t design AI-resistance without seeing what you\'re resisting. The stress test shows exactly what generic AI produces for your assignment, and the Gap Analysis identifies where student reasoning must live. That evidence is what turns "no AI" from a policy into a design. Confidence here comes from replacing worry with specifics.'
+       : gap>1 ? 'Your heavy-lift day. With a '+gap+'-level climb to '+SHORT[tgt]+', expect the stress test to reassign several tasks — what AI already does well becomes your integration material, and what it can\'t becomes the human core your redesign protects. Confidence comes from evidence: you\'ll know what AI actually does with your assignment, not what you fear it might.'
+       : gap===1 ? 'Your heavy-lift day. The stress test shows what AI can already do with your assignment — those tasks are your candidates for '+SHORT[tgt]+'-style integration, one deliberate level up from today. Seeing the output firsthand replaces uncertainty with evidence, which is where confidence starts.'
+       : gap===0 ? 'The stress test may surprise you even holding steady at '+SHORT[tgt]+' — watch for tasks that no longer serve the learning objective; trimming them is refinement too. Confidence grows from knowing your design holds up against real AI output.'
+       : 'Your decisive day. The Gap Analysis separates at-risk tasks from human-essential ones — the evidence for moving from '+SHORT[cur]+' toward '+SHORT[tgt]+' and for exactly which tasks justify it. Evidence beats instinct for building confidence in a protective design.'});
     roadmap.push({d:'Day 3 — Redesign & Rubric Building',
-      n: gap>0 ? 'You\'ll draft the redesign that closes your stretch zone. Expect your documentation expectations to scale up with your target level — Diligence intensifies as integration deepens.'
-       : gap===0 ? 'Your emphasis day. Tighten AI-use expectations and documentation in the rubric so your current level is explicit and defensible, not implicit.'
-       : 'You\'ll build the safeguards: rubric criteria that measure the cognitive work you\'re protecting, with integrity considerations made explicit.'});
+      n: noAI ? 'Your build day, and here\'s the reframe: a well-designed AI-resistant assignment IS AI-literacy teaching. Task structures that keep reasoning with the student — process documentation, live or localized elements, oral components — develop exactly the critical thinking that professional bodies name as the durable human skill. You\'ll build a rubric that measures cognitive work AI can\'t replicate, with support in the room while you do it.'
+       : (gap>0 ? 'You\'ll draft the redesign that closes your stretch zone, with facilitators and peers in the room while you do it — confidence built by doing the work with support, not by reading about it. '
+        : gap===0 ? 'Your emphasis day: make '+SHORT[cur]+' explicit and defensible in the rubric rather than implicit — the confidence of having your expectations in writing. '
+        : 'You\'ll build the safeguards: rubric criteria that measure the cognitive work you\'re protecting, with integrity considerations made explicit. ')
+        + 'At your target — Level '+tgt+' ('+SHORT[tgt]+') — documentation expectations mean '+DOCS[tgt]+'; build that into the rubric on Day 3, not after.'});
     roadmap.push({d:'Day 4 — Peer Review & Commitments',
-      n: comfortGap>0 ? 'Especially important for you: your target is beyond your current comfort level, so use the Commitment Card and consultation sign-up to name exactly what support you need to feel ready.'
-       : 'Peer review pressure-tests your redesign, and the Commitment Card turns it into a dated plan — arrive ready to articulate your design decisions.'});
+      n: (comfortGap>0 ? 'Especially important for you: your target ('+SHORT[tgt]+') sits '+comfortGap+' level'+(comfortGap>1?'s':'')+' beyond your comfort zone ('+SHORT[cmf]+'). Use the Commitment Card and consultation sign-up to name exactly what would close that gap — examples, practice, backup. '
+       : 'Peer review pressure-tests your '+(noAI ? 'AI-resistant' : SHORT[tgt])+' redesign, and the Commitment Card turns it into a dated plan — arrive ready to articulate your design decisions. ')
+       + 'This is where confidence becomes visible: explaining your choices to colleagues and hearing that they hold.'});
 
     const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
     const roadTxt = roadmap.map(r => r.d.toUpperCase()+'\n'+r.n).join('\n\n');
@@ -363,7 +377,7 @@
 'PLACEMENT NOTE\n'+gapNote+comfortNote+'\n\n'+
 'WHAT I NEED TO FEEL READY\n'+ready+'\n\n'+
 'MY 4Ds REFLECTION (strongest / growth area)\n'+fourds+'\n\n'+
-'YOUR WORKSHOP ROADMAP — where each day works hardest for you\n(All four sessions build on each other; this is where to focus your attention given your placements.)\n\n'+roadTxt+'\n\n'+
+'YOUR WORKSHOP ROADMAP — how each day builds your confidence\n(All four sessions build on each other; this is where to focus your attention given your placements.)\n\n'+roadTxt+'\n\n'+
 'NEXT STEP\nBring this summary to the synchronous workshops and your 1:1 consultation.\n';
 
     document.getElementById('summaryBody').innerHTML =
@@ -373,7 +387,7 @@
       '<div class="row gap-flag">'+gapNote+comfortNote+'</div>'+
       '<div class="row" style="margin-top:.8rem"><b>What I need to feel ready:</b><br>'+escapeHtml(ready)+'</div>'+
       '<div class="row"><b>My 4Ds reflection:</b><br>'+escapeHtml(fourds)+'</div>'+
-      '<div class="row" style="margin-top:1rem"><b>Your workshop roadmap</b> — where each day works hardest for you <em style="font-weight:400;font-size:.85rem">(all four sessions build on each other; this is where to focus given your placements)</em></div>'+
+      '<div class="row" style="margin-top:1rem"><b>Your workshop roadmap</b> — how each day builds your confidence <em style="font-weight:400;font-size:.85rem">(all four sessions build on each other; this is where to focus given your placements)</em></div>'+
       roadmap.map(r => '<div class="row" style="padding-left:.75rem;border-left:3px solid var(--gold);margin-left:.15rem"><b>'+r.d+'</b><br>'+r.n+'</div>').join('');
     document.getElementById('summary').style.display = 'block';
     btnDownload.disabled = false;
