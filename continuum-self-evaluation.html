@@ -333,7 +333,25 @@
     let comfortNote = '';
     if(comfortGap>0) comfortNote = ' Note: your target is beyond your current comfort level ('+LEVELS[state.comfort]+') — name what support would close that gap in your consultation.';
 
+    const roadmap = [];
+    roadmap.push({d:'Day 1 — SAMR & Activity Inventory',
+      n: gap>0 ? 'Your placement gets confirmed with the cohort, and the Activity Inventory breaks your assignment into tasks — the raw material for moving it up the continuum.'
+       : gap===0 ? 'Confirm your placement with the cohort, then use the Activity Inventory to see your assignment task-by-task — refinement starts with knowing exactly what you\'re refining.'
+       : 'Confirm your placement, then use the Activity Inventory to identify precisely which tasks carry the cognitive work you intend to protect.'});
+    roadmap.push({d:'Day 2 — AI Stress Test & Gap Analysis',
+      n: gap>0 ? 'Your heavy-lift day. The stress test shows what AI can already do with your assignment — those tasks are your strongest candidates for literacy integration at your target level.'
+       : gap===0 ? 'The stress test may surprise you even at a steady target — watch for tasks that no longer serve the learning objective; trimming them is refinement too.'
+       : 'Your decisive day. The Gap Analysis separates at-risk tasks from human-essential ones — the evidence base for your AI-resistant design choices.'});
+    roadmap.push({d:'Day 3 — Redesign & Rubric Building',
+      n: gap>0 ? 'You\'ll draft the redesign that closes your stretch zone. Expect your documentation expectations to scale up with your target level — Diligence intensifies as integration deepens.'
+       : gap===0 ? 'Your emphasis day. Tighten AI-use expectations and documentation in the rubric so your current level is explicit and defensible, not implicit.'
+       : 'You\'ll build the safeguards: rubric criteria that measure the cognitive work you\'re protecting, with integrity considerations made explicit.'});
+    roadmap.push({d:'Day 4 — Peer Review & Commitments',
+      n: comfortGap>0 ? 'Especially important for you: your target is beyond your current comfort level, so use the Commitment Card and consultation sign-up to name exactly what support you need to feel ready.'
+       : 'Peer review pressure-tests your redesign, and the Commitment Card turns it into a dated plan — arrive ready to articulate your design decisions.'});
+
     const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const roadTxt = roadmap.map(r => r.d.toUpperCase()+'\n'+r.n).join('\n\n');
     summaryText =
 'AI LITERACY CONTINUUM — FACULTY SELF-EVALUATION\n'+
 'Teaching Forward: AI Fluency for Practitioners · Module 4\n'+
@@ -344,6 +362,7 @@
 'PLACEMENT NOTE\n'+gapNote+comfortNote+'\n\n'+
 'WHAT I NEED TO FEEL READY\n'+ready+'\n\n'+
 'MY 4Ds REFLECTION (strongest / growth area)\n'+fourds+'\n\n'+
+'YOUR WORKSHOP ROADMAP — where each day works hardest for you\n(All four sessions build on each other; this is where to focus your attention given your placements.)\n\n'+roadTxt+'\n\n'+
 'NEXT STEP\nBring this summary to the synchronous workshops and your 1:1 consultation.\n';
 
     document.getElementById('summaryBody').innerHTML =
@@ -352,7 +371,9 @@
       '<div class="row"><b>Redesign target:</b> '+LEVELS[state.target]+'</div>'+
       '<div class="row gap-flag">'+gapNote+comfortNote+'</div>'+
       '<div class="row" style="margin-top:.8rem"><b>What I need to feel ready:</b><br>'+escapeHtml(ready)+'</div>'+
-      '<div class="row"><b>My 4Ds reflection:</b><br>'+escapeHtml(fourds)+'</div>';
+      '<div class="row"><b>My 4Ds reflection:</b><br>'+escapeHtml(fourds)+'</div>'+
+      '<div class="row" style="margin-top:1rem"><b>Your workshop roadmap</b> — where each day works hardest for you <em style="font-weight:400;font-size:.85rem">(all four sessions build on each other; this is where to focus given your placements)</em></div>'+
+      roadmap.map(r => '<div class="row" style="padding-left:.75rem;border-left:3px solid var(--gold);margin-left:.15rem"><b>'+r.d+'</b><br>'+r.n+'</div>').join('');
     document.getElementById('summary').style.display = 'block';
     btnDownload.disabled = false;
     btnPrint.disabled = false;
