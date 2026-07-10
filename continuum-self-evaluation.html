@@ -269,6 +269,7 @@
     <button class="btn-secondary" id="btnDownload" disabled>Download (.txt)</button>
     <button class="btn-secondary" id="btnPrint" disabled>Print / save as PDF</button>
   </div>
+  <p class="no-print" id="printHint" style="font-size:.82rem;color:var(--ink-soft);margin-top:.5rem">If the print dialog doesn't open, this page is inside an embedded preview — open it in its own browser tab and try again, or use the Download button.</p>
 
   <div id="summary" role="region" aria-live="polite">
     <h2>Self-Evaluation Summary</h2>
@@ -389,7 +390,12 @@
     URL.revokeObjectURL(a.href);
   });
 
-  document.getElementById('btnPrint').addEventListener('click', ()=>window.print());
+  document.getElementById('btnPrint').addEventListener('click', ()=>{
+    try { window.print(); } catch(e) {
+      const hint = document.getElementById('printHint');
+      if(hint) hint.style.display = 'block';
+    }
+  });
 
   function escapeHtml(s){
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
