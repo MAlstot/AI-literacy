@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can I Own It? — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;--red:#9C2B2E;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:720px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;}
+  h1{color:var(--green);font-size:1.3rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 14px;}
+  .q{border:2px solid var(--green);border-radius:12px;padding:16px 20px;background:#fdfdf9;}
+  .q h2{margin:0 0 8px;color:var(--green);font-size:1.05rem;}
+  .q p{margin:0 0 10px;font-size:.96rem;line-height:1.5;}
+  .opts{display:flex;gap:10px;flex-wrap:wrap;}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:2px solid var(--green);font-weight:600;padding:10px 16px;}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .opt{background:#fff;color:var(--green);} .opt:hover{background:var(--lgreen);}
+  .primary{background:var(--green);color:#fff;} .primary:hover{background:#0e3324;}
+  .stamp{display:inline-block;border:3px solid var(--red);color:var(--red);font-weight:800;letter-spacing:.06em;padding:4px 14px;border-radius:6px;transform:rotate(-2deg);margin:4px 0 10px;text-transform:uppercase;background:#fff;}
+  .stamp.ok{border-color:var(--green);color:var(--green);}
+  .stamp.mix{border-color:#8a6100;color:#8a6100;}
+  .trail{margin:0 0 12px;padding:0;list-style:none;font-size:.85rem;color:var(--mid);}
+  .trail li{margin:2px 0;}
+  .trail li::before{content:"↳ ";color:var(--gold);font-weight:700;}
+  .note{background:var(--sgold);border-left:4px solid var(--gold);padding:9px 13px;border-radius:0 8px 8px 0;font-size:.88rem;margin-top:12px;}
+  .small{font-size:.82rem;color:var(--mid);margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Can I Own It?</h1>
+  <p class="sub">Teach Forward · Module 6 · A decision walk for AI-assisted work, current as of summer 2026. Not legal advice; the framework is the stable part.</p>
+  <ul class="trail" id="trail" aria-label="Your answers so far"></ul>
+  <div id="stage" aria-live="polite"></div>
+  <p class="small">U.S. framework (Copyright Office guidance, 2025; courts through 2026). Ownership by contract and copyright protection are different questions; this walk covers both.</p>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);};
+var trail=[];
+var NODES={
+ start:{q:"Did AI generate any part of the work?",why:"If not, ordinary copyright rules apply and this walk is over quickly.",o:[["Yes","human"],["No","noai"]]},
+ noai:{end:true,stamp:"Yours, the ordinary way",cls:"ok",t:"No AI in the work means no AI wrinkle: normal authorship and ownership rules apply. Carry on."},
+ human:{q:"Beyond prompting, did a human meaningfully shape the result?",why:"Selection from a larger pool, arrangement into a composition, or substantive modification. Prompting alone, however iterative, does not count (a real 2025 case ran 600+ prompts and was refused).",o:[["Yes, real human shaping","protectable"],["No, it’s essentially as generated","unownable"]]},
+ unownable:{end:true,stamp:"Un-ownable",cls:"",t:"A wholly AI-generated work is effectively public domain: no copyright, no exclusive licensing, and no stopping anyone from copying it. The platform’s terms may say the output is “yours,” but contract ownership is not copyright protection. If ownership matters, add documented human shaping and walk this chart again."},
+ protectable:{q:"Will you register it, publish it commercially, or license it?",why:"The human contributions are protectable. What happens next depends on where the work is going.",o:[["Yes","register"],["No, internal or informal use","internal"]]},
+ internal:{end:true,stamp:"Protectable, in part",cls:"ok",t:"Your human contributions (selection, arrangement, modification) are protectable. Keep the receipts anyway: prompts, drafts, and edit history are what turn “I shaped this” into something you can demonstrate later."},
+ register:{q:"One more: was the work made in a consumer account or an enterprise/institutional account?",why:"Registration requires disclosing more-than-minimal AI-generated content, and your account tier decides your data exposure and legal cover.",o:[["Enterprise / institutional","entEnd"],["Consumer / free tier","conEnd"]]},
+ entEnd:{end:true,stamp:"Protectable, disclose at registration",cls:"ok",t:"Register the human contributions and disclose the AI-generated content (skipping that can jeopardize the registration). Enterprise terms typically exclude your content from training and add conditional indemnification, so your data and your legal cover are in reasonable shape. Document the human shaping and proceed."},
+ conEnd:{end:true,stamp:"Protectable, but check your tier",cls:"mix",t:"The human contributions are protectable, and registration requires disclosing the AI-generated content. But consumer tiers generally train on your inputs by default and provide no indemnification, so for commercial work, redo it in an enterprise account or accept the exposure knowingly. One decision, two consequences."}
+};
+function render(key){
+  var n=NODES[key];
+  $("trail").innerHTML = trail.map(function(t){ return "<li>"+t+"</li>"; }).join("");
+  if(n.end){
+    $("stage").innerHTML='<div class="q"><span class="stamp '+(n.cls||"")+'">'+n.stamp+'</span><p>'+n.t+'</p><div class="opts"><button type="button" class="primary" id="again">Start over</button></div>'
+     +(key==="unownable"?'<div class="note">The Rule of Thumb at the end of this page compresses this whole chart into three lines.</div>':"")+"</div>";
+    $("again").addEventListener("click",function(){ trail=[]; render("start"); });
+    return;
+  }
+  $("stage").innerHTML='<div class="q"><h2>'+n.q+'</h2><p>'+n.why+'</p><div class="opts">'
+   + n.o.map(function(o,i){ return '<button type="button" class="opt" data-n="'+o[1]+'">'+o[0]+"</button>"; }).join("") + "</div></div>";
+  Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(b){
+    b.addEventListener("click",function(){
+      trail.push(n.q+" — "+b.textContent);
+      render(b.getAttribute("data-n"));
+    });
+  });
+}
+render("start");
+})();
+</script>
+</body>
+</html>
