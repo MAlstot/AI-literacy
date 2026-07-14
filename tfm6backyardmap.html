@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Backyard Map: Who Is in the Loop? — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;--red:#9C2B2E;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:900px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;}
+  h1{color:var(--green);font-size:1.35rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 12px;}
+  .note{background:var(--sgold);border-left:4px solid var(--gold);padding:9px 13px;border-radius:0 8px 8px 0;font-size:.9rem;margin:10px 0;}
+  .mapbox{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f4f8f5;}
+  svg{display:block;width:100%;height:auto;}
+  .pin{cursor:pointer;}
+  .pin:focus{outline:none;}
+  .pin:focus circle.dot, .pin:hover circle.dot{stroke:var(--gold);stroke-width:4;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px;}
+  .chip{border:2px solid var(--green);background:#fff;color:var(--green);border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:600;cursor:pointer;}
+  .chip:hover{background:var(--lgreen);}
+  .chip[aria-pressed="true"]{background:var(--green);color:#fff;}
+  .chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .persona{border:1px solid var(--line);border-left:6px solid var(--green);border-radius:10px;padding:14px 16px;margin-top:10px;}
+  .persona h2{margin:0 0 2px;font-size:1.05rem;color:var(--green);}
+  .persona .role{color:var(--mid);font-size:.88rem;margin-bottom:8px;}
+  .persona p{margin:6px 0;font-size:.94rem;}
+  .qline{background:var(--lgreen);border-radius:8px;padding:8px 12px;font-style:italic;}
+  .tags{margin-top:8px;}
+  .tag{display:inline-block;background:var(--sgold);border:1px solid var(--gold);border-radius:999px;padding:1px 10px;font-size:.74rem;font-weight:700;color:#6b4c00;margin-right:6px;}
+  .closing{margin-top:16px;}
+  .small{font-size:.82rem;color:var(--mid);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Backyard Map: Who Is in the Loop?</h1>
+  <p class="sub">Teach Forward · Module 6 · Two proposed data center sites near Waco, and eight of the people whose lives they touch</p>
+  <p>Remember the $10 billion neighbor from the start of this module? You are standing in it. Click the <strong>site pins</strong> to locate the story, then meet the <strong>people around the sites</strong> — each is a composite persona grounded in local reporting, and each would ask a different question.</p>
+
+  <div class="mapbox" role="img" aria-label="Schematic map of the Waco area: Baylor University near downtown Waco; a proposed 520-acre data center campus near Elm Mott about five miles north; a second proposed site near Riesel about ten miles east-southeast; Lake Waco to the west; the Brazos River running through Waco; Interstate 35 running north to south. Locations approximate.">
+  <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+    <rect width="900" height="520" fill="#eef4ef"/>
+    <!-- distance rings around Baylor -->
+    <circle cx="430" cy="330" r="105" fill="none" stroke="#b9cfc2" stroke-dasharray="6 6"/>
+    <circle cx="430" cy="330" r="210" fill="none" stroke="#b9cfc2" stroke-dasharray="6 6"/>
+    <text x="430" y="218" text-anchor="middle" font-size="13" fill="#7a8f82">~5 miles</text>
+    <text x="430" y="112" text-anchor="middle" font-size="13" fill="#7a8f82">~10 miles</text>
+    <!-- Lake Waco -->
+    <path d="M120 300 q40 -30 80 -8 q30 18 12 42 q-30 30 -66 14 q-40 -18 -26 -48 Z" fill="#cfe3ee" stroke="#a9c8da"/>
+    <text x="160" y="380" font-size="13" fill="#5a768a">Lake Waco</text>
+    <!-- Brazos river -->
+    <path d="M300 60 C 360 140, 380 220, 430 300 C 470 360, 540 420, 640 480" fill="none" stroke="#a9c8da" stroke-width="8" opacity=".8"/>
+    <text x="620" y="505" font-size="13" fill="#5a768a">Brazos River</text>
+    <!-- I-35 -->
+    <path d="M470 20 L 430 250 L 410 500" fill="none" stroke="#d9c9a3" stroke-width="10" opacity=".9"/>
+    <text x="478" y="42" font-size="13" fill="#94834f">I-35</text>
+    <!-- Downtown Waco -->
+    <rect x="398" y="292" width="26" height="26" fill="#8aa595" rx="4"/>
+    <text x="388" y="286" font-size="14" fill="#40564a">Downtown Waco</text>
+    <!-- Baylor -->
+    <g>
+      <path d="M452 322 l7 14 15 2 -11 11 3 15 -14 -7 -14 7 3 -15 -11 -11 15 -2 Z" fill="#154734" stroke="#FFB81C" stroke-width="2"/>
+      <text x="472" y="352" font-size="15" font-weight="bold" fill="#154734">Baylor University</text>
+    </g>
+    <!-- Elm Mott site -->
+    <g class="pin" id="pinElm" role="button" tabindex="0" aria-label="Proposed 520-acre campus near Elm Mott, about five miles north of downtown Waco. Click for details.">
+      <circle class="dot" cx="452" cy="170" r="17" fill="#9C2B2E" stroke="#fff" stroke-width="3"/>
+      <text x="452" y="176" text-anchor="middle" font-size="15" fill="#fff" font-weight="bold">1</text>
+      <text x="478" y="162" font-size="14" font-weight="bold" fill="#40564a">Proposed site · Elm Mott / Lacy Lakeview</text>
+      <text x="478" y="180" font-size="12.5" fill="#5a6e61">$10B · 520 acres · on-site gas plant</text>
+      <text x="478" y="196" font-size="12.5" fill="#5a6e61">Ross (pop. ~250) next door</text>
+    </g>
+    <!-- Riesel site -->
+    <g class="pin" id="pinRsl" role="button" tabindex="0" aria-label="Second proposed site near Riesel, roughly ten miles east-southeast of Waco. Click for details.">
+      <circle class="dot" cx="700" cy="400" r="17" fill="#9C2B2E" stroke="#fff" stroke-width="3"/>
+      <text x="700" y="406" text-anchor="middle" font-size="15" fill="#fff" font-weight="bold">2</text>
+      <text x="600" y="443" font-size="14" font-weight="bold" fill="#40564a">Proposed site · near Riesel</text>
+      <text x="600" y="460" font-size="12.5" fill="#5a6e61">Up to 500 MW (~100,000 Texas homes)</text>
+    </g>
+    <text x="16" y="508" font-size="12" fill="#8a9a90">Locations approximate; for orientation, not navigation. Status as of July 2026; this story moves.</text>
+  </svg>
+  </div>
+
+  <div class="chips" id="chips" role="group" aria-label="Choose a stakeholder persona"></div>
+  <div id="card" aria-live="polite"></div>
+
+  <div class="note closing"><strong>Now the module’s question:</strong> which of these eight is <em>in the loop</em> on the decision, and which should be? Hold your answer; the loop question gets a name before this page ends.</div>
+  <p class="small">Composite personas grounded in 2025–2026 local reporting (Waco Bridge, Texas Tribune, KWTX, Baylor Lariat); the individuals are fictional. Perspectives presented for understanding, not persuasion.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var P=[
+ {k:"ross",n:"Dena",role:"Homeowner in Ross (pop. ~250), next door to Site 1",gain:"Honestly? She’s still looking for it. Maybe county services improve.",lose:"Her well, her quiet, her say. Her town learned about the project from a reporter.",q:"Why did I hear about this from a newspaper instead of from anyone involved?",tags:["Community consent","SITL","Negotiation & stakeholder mgmt"]},
+ {k:"mayor",n:"Mayor Delgado",role:"Mayor of Lacy Lakeview (tax base today: ~$649M)",gain:"A single project that could multiply his city’s tax base overnight. He’s called this kind of deal a paradigm-changer.",lose:"If the annexation, water plan, or developer falters, his small city holds the obligations.",q:"What does my town owe in this deal, and what exactly is it owed?",tags:["Economic opportunity","Public finance"]},
+ {k:"isd",n:"Dr. Whitfield",role:"School district superintendent near Site 1",gain:"Millions per year in new revenue: teachers, buildings, programs.",lose:"A budget built on one taxpayer, and on projections. Flagship projects elsewhere have been resized mid-build.",q:"What happens to our five-year plan if the project shrinks or the abatement deepens?",tags:["Economic opportunity","Public finance","Risk management"]},
+ {k:"trades",n:"Marcus",role:"Journeyman electrician, Central Texas",gain:"Roughly two years of well-paid work close to home. Projects like these employ construction workforces in the hundreds to low thousands.",lose:"The long term: at the Abilene flagship, ~1,500 construction jobs came with 357 promised permanent positions.",q:"Fifteen hundred of us build it and a few hundred stay. Which one am I?",tags:["Jobs","Labor economics","Operations"]},
+ {k:"water",n:"Elena",role:"Engineer, City of Waco water utility",gain:"Leverage, oddly: the region’s water and sewer decisions run through her systems, and the city is expanding treatment capacity.",lose:"Obligations she didn’t choose. Site 1’s wastewater plan needs more capacity than its city produces.",q:"Their project, our infrastructure: when exactly were we supposed to be consulted?",tags:["Water & environment","Infrastructure","SITL"]},
+ {k:"fin",n:"Priya",role:"VP of project finance, data center developer",gain:"A generational buildout: compute demand, if forecasts hold, justifies the $10B.",lose:"Those forecasts are the risk. Even flagship Texas projects have been resized mid-build when demand shifted.",q:"If AI demand forecasts miss by 30%, who is left holding a half-built campus?",tags:["Finance","Risk management","Economic opportunity"]},
+ {k:"rate",n:"James",role:"Retiree on fixed income, Waco ratepayer",gain:"Possibly cheaper unit rates, if giant new customers spread the grid’s fixed costs. Some analysts argue exactly that.",lose:"Possibly the opposite: demand-driven price increases. The state has told utilities not to pass data-center costs to residents; he wonders who checks.",q:"When the grid bill comes due, whose name is on it?",tags:["Energy economics","Grid & bills"]},
+ {k:"stu",n:"Jordan",role:"Baylor junior, finance major from Houston",gain:"A career: every side of this story hires — development, utilities, policy, community advocacy.",lose:"The luxury of having no position. In a few years, Jordan will be in one of these rooms.",q:"Which side of this table will I be sitting on, and will I remember the other seven?",tags:["Your students","Every discipline","SITL"]}
+];
+var chips=document.getElementById("chips"), card=document.getElementById("card");
+function render(i){
+  P.forEach(function(p,j){ chips.children[j].setAttribute("aria-pressed", j===i ? "true":"false"); });
+  var p=P[i];
+  card.innerHTML='<div class="persona"><h2>'+p.n+'</h2><div class="role">'+p.role+'</div>'
+   +'<p><strong>Stands to gain:</strong> '+p.gain+'</p><p><strong>Stands to lose:</strong> '+p.lose+'</p>'
+   +'<div class="qline">“'+p.q+'”</div>'
+   +'<div class="tags">'+p.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join("")+"</div></div>";
+}
+P.forEach(function(p,i){
+  var b=document.createElement("button");
+  b.type="button"; b.className="chip"; b.textContent=p.n; b.setAttribute("aria-pressed","false");
+  b.addEventListener("click",function(){ render(i); });
+  chips.appendChild(b);
+});
+function pinInfo(which){
+  card.innerHTML='<div class="persona"><h2>'+(which==="elm"?"Site 1 · Elm Mott / Lacy Lakeview":"Site 2 · near Riesel")+'</h2>'
+   +(which==="elm"
+     ?'<p>A proposed $10 billion, 520-acre campus with its own gas-fired power plant, about five miles north of downtown Waco, to be annexed by Lacy Lakeview. Its wastewater plan depends on infrastructure the City of Waco controls. Ross, the 250-person town next door, learned of it from a reporter; packed meetings, a 3,000-signature petition, and a city council election followed.</p>'
+     :'<p>A second proposal near Riesel: up to 500 megawatts, roughly the summer demand of 100,000 Texas homes, on land assembled quietly in late 2025. Water source undetermined in early reporting; the county commissioner called the company’s transparency “not very good right now.”</p>')
+   +'<p class="small">Details as of July 2026; follow the local reporting for the current chapter.</p></div>';
+  P.forEach(function(p,j){ chips.children[j].setAttribute("aria-pressed","false"); });
+}
+["pinElm","pinRsl"].forEach(function(id,ix){
+  var el=document.getElementById(id);
+  var fire=function(){ pinInfo(ix===0?"elm":"rsl"); };
+  el.addEventListener("click",fire);
+  el.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); fire(); }});
+});
+render(0);
+})();
+</script>
+</body>
+</html>
