@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Eleven Reasons: A Mentoring Matrix — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:860px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;}
+  h1{color:var(--green);font-size:1.35rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 6px;}
+  .tagline{font-style:italic;color:var(--green);font-weight:600;margin:8px 0 14px;}
+  .filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+  .filters button{font:inherit;font-size:.82rem;font-weight:600;border:2px solid var(--green);background:#fff;color:var(--green);border-radius:999px;padding:5px 13px;cursor:pointer;}
+  .filters button[aria-pressed="true"]{background:var(--green);color:#fff;}
+  .filters button:focus-visible,.reason button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .reason{border:1px solid var(--line);border-left:5px solid var(--green);border-radius:10px;margin-bottom:9px;overflow:hidden;}
+  .reason > button{width:100%;text-align:left;background:#fff;border:0;cursor:pointer;padding:12px 15px;display:flex;align-items:center;gap:10px;font:inherit;}
+  .reason > button:hover{background:var(--lgreen);}
+  .rnum{flex:0 0 30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+  .rhead{flex:1;}
+  .rname{font-weight:700;color:var(--green);font-size:1.02rem;}
+  .rq{font-style:italic;color:var(--mid);font-size:.9rem;}
+  .tag{display:inline-block;background:var(--sgold);border:1px solid var(--gold);border-radius:999px;padding:1px 9px;font-size:.72rem;font-weight:700;color:#6b4c00;white-space:nowrap;}
+  .chev{flex:0 0 auto;color:var(--green);font-weight:700;transition:transform .15s;}
+  .reason.open .chev{transform:rotate(90deg);}
+  .body{display:none;padding:0 15px 14px 55px;}
+  .reason.open .body{display:block;}
+  .body h3{margin:12px 0 3px;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;color:var(--green);}
+  .body p{margin:0;font-size:.94rem;line-height:1.55;}
+  .body ul{margin:4px 0 0;padding-left:20px;} .body li{margin-bottom:3px;font-size:.94rem;line-height:1.5;}
+  .contrib{color:var(--mid);font-size:.9rem;font-style:italic;}
+  .controls{display:flex;gap:10px;margin:6px 0 14px;flex-wrap:wrap;}
+  .controls button{font:inherit;font-size:.85rem;font-weight:600;border:2px solid var(--green);background:#fff;color:var(--green);border-radius:8px;padding:7px 14px;cursor:pointer;}
+  .note{background:var(--sgold);border-left:4px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.9rem;margin:14px 0 0;}
+  .foot{font-size:.82rem;color:var(--mid);margin-top:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Eleven Reasons: A Mentoring Matrix</h1>
+  <p class="sub">Teach Forward · Module 6 · Adapted from Bertram Gallant &amp; Rettinger (2025) and Megan Alstot&rsquo;s Teaching for Integrity materials</p>
+  <p class="tagline">Eleven reasons. One story. Cheating has always existed; AI did not change why, it changed how.</p>
+  <p>Research names eleven reasons students cheat. Each comes with a question worth asking of your assignment, the conditions that feed it, and the <strong>integrity builders</strong> that answer it. Filter by pairing or open any reason to see the full matrix. When you&rsquo;re ready, the self-diagnostic on this page turns it on your own assignment.</p>
+  <div class="filters" id="filters" role="group" aria-label="Filter by pairing"></div>
+  <div class="controls"><button type="button" id="expandAll">Expand all</button><button type="button" id="collapseAll">Collapse all</button></div>
+  <div id="list"></div>
+  <div class="note"><strong>No blame here.</strong> Most good assignments invite two to four of these without anyone intending it. Noticing is the mentoring move, and good teaching is still the best integrity builder.</div>
+  <p class="foot">Pairings (Communication · Consistent Values · Flexibility &amp; Accountability · Design &amp; Culture) group the reasons by the instructional response they share.</p>
+</div>
+<script>
+var R=[
+ {n:"Self-Efficacy",q:"Do they think they can?",tag:"Communication",m:"Students who do not believe they can succeed lower their effort or look for shortcuts. AI offers an easy way out when confidence is low.",c:"limited practice with feedback; failure treated as a verdict, not data",b:["Survey early to identify nervous students.","Build in practice with feedback before stakes rise.","Use growth-mindset language: “not yet” instead of “wrong.”","Frame failure as part of learning."]},
+ {n:"Expectations",q:"Do they know it is cheating?",tag:"Communication",m:"Students do not share one definition of cheating. Even faculty disagree about what counts as collaboration, paraphrasing, or AI assistance.",c:"inconsistent expectations across courses; unclear line between collaboration and cheating",b:["Define collaboration explicitly for each assignment.","Name what tools are allowed, and why.","Practice the rubric with examples, including AI examples."]},
+ {n:"Values",q:"Does the assignment match what they value?",tag:"Consistent Values",m:"When the assessment does not align with what the student came to college for, AI use feels less like cheating and more like efficiency.",c:"work perceived as busy work; no room for student voice",b:["Make the “why” of the assignment visible.","Offer choice in how students demonstrate learning.","Connect the work to disciplinary or professional practice."]},
+ {n:"Moral Disengagement",q:"How do they justify it?",tag:"Design & Culture",m:"Rationalizations soften the moral weight of the choice: “everyone does it,” “it does not really hurt anyone,” “the assignment is unfair.”",c:"perceived unfairness; peer modeling of rationalizations",b:["Discuss ethics openly, as practice rather than warning.","Surface and name common rationalizations.","Connect coursework to a larger purpose."]},
+ {n:"Contract Cheating",q:"Who actually did the work?",tag:"Design & Culture",m:"Paying someone, human or AI, to produce work submitted as the student’s own. The line between AI-as-tool and AI-as-author is the new question.",c:"high stakes plus low time; unclear authorship norms for AI use",b:["Require artifacts and reflection along the way.","Make process visible, not just product.","Define authorship for the discipline and the assignment."]},
+ {n:"Peer Effects",q:"What does the class culture say?",tag:"Design & Culture",m:"Students take cues from each other about what is normal. If cheating is common, it feels less like cheating.",c:"unaddressed peer norms around AI; anonymous classroom climate",b:["Build community early in the course.","Name and shape norms together.","Make integrity a class identity, not a rule."]},
+ {n:"Narcissism",q:"What rule applies to me?",tag:"Design & Culture",m:"A small subset of students operate as if rules are for others. Design, not exhortation, is the response.",c:"assessments that reward end product only; no structural cost for shortcuts",b:["Require process and presence.","Use in-class checkpoints.","Make scaffolded artifacts non-negotiable."]},
+ {n:"Motivation",q:"What is the point?",tag:"Consistent Values",m:"Mastery, performance, and extrinsic motivation coexist. Heavy extrinsic weight (one big grade) pushes students toward shortcuts.",c:"a single high-stakes grade; few chances to show mastery for its own sake",b:["Use many small, low-stakes summative moments.","Separate practice from grading.","Make growth, not just performance, visible."]},
+ {n:"Procrastination",q:"Where did the time go?",tag:"Flexibility & Accountability",m:"Time pressure narrows options. By the deadline, AI is often the only path that fits.",c:"a single deadline at the end of a long arc; penalty-heavy late policies",b:["Scaffold deadlines: outline, draft, draft, final.","Build in grace periods and no-questions extensions.","Allow submission withdrawal (24 hours, zero, no penalty)."]},
+ {n:"Instructor Effects",q:"Does this teacher seem to care?",tag:"Design & Culture",m:"Students cheat less in classes where the instructor knows them, engages them, and seems invested in their learning.",c:"large class, low contact; limited or low-quality feedback",b:["Learn names; check in early and often.","Make feedback feel like a conversation.","Show your own engagement with the material."]},
+ {n:"Cost-Benefit",q:"Is cheating worth it?",tag:"Flexibility & Accountability",m:"Students calculate. If the upside is high, the risk is low, and the relationship is thin, cheating becomes rational.",c:"low perceived likelihood of being caught; thin instructor relationship",b:["Build relationship: students do not cheat people they know.","Report first offenses for the record (no penalty) so patterns become visible.","Use multiple low-stakes checkpoints so any one offense stays small."]}
+];
+var TAGS=["Communication","Consistent Values","Flexibility & Accountability","Design & Culture"];
+var filter="All";
+var $=function(id){return document.getElementById(id);};
+// filter chips
+var fbox=$("filters");
+["All"].concat(TAGS).forEach(function(t){
+  var b=document.createElement("button"); b.type="button"; b.textContent=t; b.setAttribute("aria-pressed", t==="All"?"true":"false");
+  b.addEventListener("click",function(){ filter=t; render(); Array.prototype.forEach.call(fbox.children,function(c){c.setAttribute("aria-pressed", c.textContent===t?"true":"false");}); });
+  fbox.appendChild(b);
+});
+function render(){
+  var list=$("list"); list.innerHTML="";
+  R.forEach(function(r,i){
+    if(filter!=="All" && r.tag!==filter) return;
+    var d=document.createElement("div"); d.className="reason";
+    d.innerHTML='<button type="button" aria-expanded="false"><span class="rnum">'+(i+1)+'</span>'
+      +'<span class="rhead"><span class="rname">'+r.n+'</span> <span class="rq">'+r.q+'</span></span>'
+      +'<span class="tag">'+r.tag+'</span><span class="chev">&#9656;</span></button>'
+      +'<div class="body"><h3>What it means</h3><p>'+r.m+'</p>'
+      +'<h3>What feeds it</h3><p class="contrib">'+r.c+'</p>'
+      +'<h3>Integrity builders</h3><ul>'+r.b.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul></div>";
+    var btn=d.querySelector("button");
+    btn.addEventListener("click",function(){ var open=d.classList.toggle("open"); btn.setAttribute("aria-expanded",open?"true":"false"); });
+    list.appendChild(d);
+  });
+}
+$("expandAll").addEventListener("click",function(){ Array.prototype.forEach.call(document.querySelectorAll(".reason"),function(d){ d.classList.add("open"); d.querySelector("button").setAttribute("aria-expanded","true"); }); });
+$("collapseAll").addEventListener("click",function(){ Array.prototype.forEach.call(document.querySelectorAll(".reason"),function(d){ d.classList.remove("open"); d.querySelector("button").setAttribute("aria-expanded","false"); }); });
+render();
+</script>
+</body>
+</html>
