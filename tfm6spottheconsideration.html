@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spot the Consideration — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:800px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;}
+  h1{color:var(--green);font-size:1.3rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 12px;}
+  .scenario{border:2px solid var(--green);border-radius:12px;background:var(--green);color:#fff;padding:14px 18px;}
+  .scenario h2{margin:0 0 6px;font-size:1rem;}
+  .scenario p{margin:0;font-size:.97rem;line-height:1.55;}
+  .prompt{font-weight:700;color:var(--green);margin:12px 0 8px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:2px solid var(--green);font-weight:600;}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .chip{background:#fff;color:var(--green);padding:8px 13px;text-align:left;}
+  .chip:hover{background:var(--lgreen);}
+  .chip.picked{background:var(--green);color:#fff;}
+  .chip .d{display:block;font-weight:400;font-size:.78rem;opacity:.85;}
+  .primary{background:var(--green);color:#fff;padding:10px 16px;} .primary:hover{background:#0e3324;}
+  .secondary{background:#fff;color:var(--green);padding:10px 16px;}
+  button:disabled{opacity:.4;cursor:default;}
+  .fb{margin-top:10px;background:var(--sgold);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;font-size:.94rem;display:none;}
+  .fb.open{display:block;}
+  .nav{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap;}
+  .dots{display:flex;gap:6px;}
+  .dot{width:11px;height:11px;border-radius:50%;background:#cdd9d1;}
+  .dot.done{background:var(--gold);} .dot.here{background:var(--green);}
+  .finale{border:2px solid var(--gold);background:var(--sgold);border-radius:12px;padding:16px 20px;}
+  .finale h2{color:var(--green);margin:0 0 8px;font-size:1.1rem;}
+  .small{font-size:.84rem;color:var(--mid);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Spot the Consideration</h1>
+  <p class="sub">Teach Forward · Module 6 · Six scenarios, six considerations. Name the one each scenario most raises. Ungraded; some raise more than one, and the feedback says which.</p>
+  <div id="stage"></div>
+  <div class="nav">
+    <button type="button" class="secondary" id="prevBtn">Previous</button>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <button type="button" class="primary" id="nextBtn" disabled>Next</button>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+var C=[
+ {k:"integrity",n:"Academic integrity",d:"Honesty norms for student work: what AI use is allowed, and what must be disclosed."},
+ {k:"bias",n:"Bias",d:"How AI systems inherit and reproduce skewed patterns from the data they were trained on."},
+ {k:"ip",n:"Intellectual property & disclosure",d:"Who owns AI-assisted work, and who needs to know AI was used."},
+ {k:"assess",n:"Assessment ethics",d:"Fairness and validity in how you evaluate: sound measures, no unreliable detection."},
+ {k:"env",n:"Environmental impact",d:"The energy, water, materials, and human labor behind every prompt."},
+ {k:"privacy",n:"Privacy & security",d:"What happens to the data you and your students put into AI tools."}
+];
+var S=[
+ {t:"The Eerily Fluent Essays",f:"A take-home essay assignment returns a batch of submissions more polished than anything the class produced all term. A colleague suggests buying an AI-detection tool and grading accordingly.",a:3,also:[0],fb:"The temptation is an integrity response, but the *move* is an assessment-ethics failure: detectors err in both directions, and grading on their say-so risks false accusations. The design answer lives on the Teaching for Integrity page: expectations, process, and disclosure norms set before the work begins."},
+ {t:"The Hiring Screen",f:"A student team builds a résumé-screening prototype for a class project, training it on a decade of a partner company’s past hires. It keeps surfacing the same kind of candidate.",a:1,also:[],fb:"Bias: the model learned who *used to* get hired and reproduces it. The Amazon case from the Bias page, rebuilt by students who did not intend it. Ten years of skewed data needs no bad intent."},
+ {t:"The Exclusive License",f:"A student generates a logo entirely with AI and sells a client exclusive rights to it. Nobody mentions AI at any point in the deal.",a:2,also:[],fb:"Intellectual property and disclosure, both halves at once: a wholly AI-generated logo is effectively public domain, so the exclusive license oversells, and the silence about AI compounds it. Make the Call, card 1, in the wild."},
+ {t:"The Grading Assistant",f:"An instructor quietly uses AI to draft feedback on every student submission. The syllabus requires students to disclose any AI use in their own work.",a:0,also:[3,2],fb:"Academic integrity, from the faculty side: an asymmetry students read as hypocrisy. It also brushes assessment ethics (is the feedback sound?) and disclosure. Modeling the norm you require is the cheapest integrity intervention there is."},
+ {t:"The Image-Heavy Assignment",f:"A department adopts a new assignment requiring students to generate dozens of AI images each, the same semester campus debates AI’s footprint.",a:4,also:[],fb:"Environmental impact: image generation was the most energy-intensive task measured in the research on the Backyard page. The assignment may still be worth it; the consideration is weighing cost against learning value on purpose, not by accident."},
+ {t:"The Recommendation Letters",f:"A well-meaning professor pastes recommendation-letter drafts, student names and stories included, into a free chatbot to polish the prose.",a:5,also:[],fb:"Privacy and security: identifiable student information in a consumer tool that may retain and train on it. Dr. Reyes with different paperwork. The fix is on the Privacy page: licensed tools, de-identification, and disclosure."}
+];
+var idx=0, picks=new Array(S.length).fill(null);
+var $=function(id){return document.getElementById(id);};
+function render(){
+  var dots=""; for(var i=0;i<=S.length;i++){ dots+='<span class="dot'+(i<idx?" done":(i===idx?" here":""))+'"></span>'; }
+  $("dots").innerHTML=dots;
+  $("prevBtn").disabled = idx===0;
+  if(idx>=S.length){ finale(); return; }
+  var s=S[idx], p=picks[idx];
+  var h='<div class="scenario"><h2>Scenario '+(idx+1)+" of "+S.length+" · "+s.t+'</h2><p>'+s.f+'</p></div>'
+   +'<p class="prompt">Which consideration does this most raise?</p><div class="chips">'
+   + C.map(function(c,i){ return '<button type="button" class="chip'+(p===i?" picked":"")+'" data-i="'+i+'">'+c.n+'<span class="d">'+c.d+"</span></button>"; }).join("")
+   + '</div><div class="fb'+(p!==null?" open":"")+'" aria-live="polite">'+(p!==null?fb(s,p):"")+"</div>";
+  $("stage").innerHTML=h;
+  $("nextBtn").disabled = p===null;
+  $("nextBtn").textContent = idx===S.length-1 ? "Finish" : "Next";
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"),function(b){
+    b.addEventListener("click",function(){ picks[idx]=+b.getAttribute("data-i"); render(); });
+  });
+}
+function fb(s,p){
+  var head = p===s.a ? "<strong>That’s the design intent: "+C[s.a].n+".</strong> "
+    : (s.also.indexOf(p)>=0 ? "<strong>Defensible: "+C[p].n+" is in play here too.</strong> The design intent was "+C[s.a].n+". "
+    : "<strong>You said "+C[p].n+".</strong> The design intent was <strong>"+C[s.a].n+"</strong>. ");
+  return head + s.fb;
+}
+function finale(){
+  var hits=0; picks.forEach(function(p,i){ if(p===S[i].a||S[i].also.indexOf(p)>=0) hits++; });
+  $("stage").innerHTML='<div class="finale"><h2>Rehearsal complete</h2><p>You matched the design intent (or a defensible neighbor) on '+hits+" of 6 scenarios. More important than the score: you just did, six times, exactly what the discussion asks you to do once more, for real. <strong>Prompt 1 of the discussion asks which consideration is most relevant to <em>your</em> assignment or syllabus statement.</strong> You are warmed up. Go write it.</p><p class=\"small\">Ungraded and unrecorded; run it again anytime.</p></div>";
+  $("nextBtn").disabled=true;
+}
+$("prevBtn").addEventListener("click",function(){ if(idx>0){ idx--; render(); }});
+$("nextBtn").addEventListener("click",function(){ if(idx<S.length){ idx++; render(); }});
+render();
+})();
+</script>
+</body>
+</html>
