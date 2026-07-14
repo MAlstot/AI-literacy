@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Make the Call: Ownership & Disclosure — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;--red:#9C2B2E;--blue:#1f4e79;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;}
+  h1{color:var(--green);font-size:1.35rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 14px;}
+  .decks{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .decks button{font:inherit;font-weight:700;border:2px solid var(--green);border-radius:999px;padding:8px 18px;background:#fff;color:var(--green);cursor:pointer;}
+  .decks button[aria-pressed="true"]{background:var(--green);color:#fff;}
+  .decks button:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .card{border:2px solid var(--green);border-radius:14px;overflow:hidden;box-shadow:0 3px 10px rgba(21,71,52,.15);}
+  .card-top{background:var(--green);color:#fff;padding:16px 20px;}
+  .card-top h2{margin:0 0 6px;font-size:1.05rem;}
+  .card-top p{margin:0;font-size:.97rem;line-height:1.5;}
+  .card-mid{padding:14px 20px;}
+  .prompt{font-weight:700;color:var(--green);margin:0 0 8px;}
+  .opts{display:flex;flex-wrap:wrap;gap:8px;}
+  .opts button{font:inherit;border:2px solid var(--green);background:#fff;color:var(--green);border-radius:8px;padding:9px 14px;cursor:pointer;font-weight:600;}
+  .opts button:hover{background:var(--lgreen);}
+  .opts button.picked{background:var(--green);color:#fff;}
+  .reveal{padding:0 20px 16px;display:none;}
+  .reveal.open{display:block;}
+  .stamp{display:inline-block;border:3px solid var(--red);color:var(--red);font-weight:800;letter-spacing:.06em;padding:4px 14px;border-radius:6px;transform:rotate(-2deg);margin:6px 0 10px;font-size:1.02rem;text-transform:uppercase;background:#fff;}
+  .stamp.ok{border-color:var(--green);color:var(--green);}
+  .stamp.mix{border-color:#8a6100;color:#8a6100;}
+  .back{font-size:.95rem;line-height:1.55;}
+  .youpicked{font-size:.88rem;color:var(--mid);font-style:italic;margin:0 0 6px;}
+  .nav{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap;}
+  .nav button{font:inherit;border:2px solid var(--green);border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:600;background:var(--green);color:#fff;}
+  .nav button.secondary{background:#fff;color:var(--green);}
+  .nav button:disabled{opacity:.4;cursor:default;}
+  .dots{display:flex;gap:6px;}
+  .dot{width:11px;height:11px;border-radius:50%;background:#cdd9d1;}
+  .dot.done{background:var(--gold);}
+  .dot.here{background:var(--green);}
+  .finale{border:2px solid var(--gold);background:var(--sgold);border-radius:14px;padding:16px 20px;}
+  .finale h2{color:var(--green);margin:0 0 8px;font-size:1.1rem;}
+  .finale ul{margin:8px 0;padding-left:20px;} .finale li{margin-bottom:5px;}
+  .quote{border-left:4px solid var(--green);padding:6px 14px;font-style:italic;margin:10px 0;background:#fff;border-radius:0 8px 8px 0;}
+  .small{font-size:.84rem;color:var(--mid);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Make the Call: Ownership &amp; Disclosure</h1>
+  <p class="sub">Teach Forward · Module 6 · Ten business scenarios. Choose your verdict, then see the ruling. Ungraded; every answer gets the reasoning.</p>
+  <div class="decks" role="group" aria-label="Choose a deck">
+    <button type="button" id="d0" aria-pressed="true">Deck 1 · Who Owns It?</button>
+    <button type="button" id="d1" aria-pressed="false">Deck 2 · Disclose or Not?</button>
+  </div>
+  <div id="stage"></div>
+  <div class="nav">
+    <button type="button" class="secondary" id="prevBtn">Previous</button>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <button type="button" id="nextBtn">Next</button>
+  </div>
+  <p class="small" id="foot"></p>
+</div>
+
+<script>
+(function(){
+"use strict";
+var DECKS=[
+ {name:"Who Owns It?",prompt:"Your verdict?",cards:[
+  {t:"Marketing · The Campaign Image",f:"A student generates a striking campaign image entirely from prompts and licenses it exclusively to a client. Who owns the image?",o:["The student","The client","Nobody"],a:2,stamp:"Nobody owns it",cls:"",b:"Prompts alone don’t create authorship, however many it takes (U.S. Copyright Office, 2025). A wholly AI-generated work is effectively public domain, so the “exclusive” license promises rights that don’t exist. Ownable work requires documented human shaping: selection, arrangement, modification."},
+  {t:"Finance · The Rewritten Report",f:"An analyst has AI draft a market summary, then restructures it, adds original analysis, and rewrites most sections. Can the firm claim it?",o:["Yes, the human work is protectable","No, AI touched it"],a:0,stamp:"Protectable",cls:"ok",b:"AI-assisted is not AI-generated: creative selection, arrangement, and modification count as authorship. The claim is only as strong as the documentation of what the human changed. Keep the receipts."},
+  {t:"Entrepreneurship · 600 Prompts",f:"A founder iterates through more than 600 prompts to perfect an AI image for the brand, then files to register the copyright. Approved?",o:["Approved, that’s real effort","Refused"],a:1,stamp:"Registration refused",cls:"",b:"A real 2025 case. Iterating prompts, however carefully, is giving instructions to a machine, not authorship. And registration requires disclosing more-than-minimal AI-generated content; skipping that can jeopardize the registration itself."},
+  {t:"Any Field · The Account Question",f:"Two employees, same task. One drafts in a free consumer chatbot, the other in the firm’s enterprise account. Does it matter?",o:["It matters a lot","Same tool, same result"],a:0,stamp:"One decision, two consequences",cls:"mix",b:"Consumer tiers generally train on your content by default and provide no legal cover. Enterprise tiers contractually exclude training and add conditional indemnification if an output triggers a copyright claim. Which account you work in controls both your data and your protection. It’s the same line you drew on the privacy page."},
+  {t:"Accounting · The Client Deliverable",f:"A firm delivers AI-assisted analysis to a client. The engagement letter says nothing about AI. Problem?",o:["No problem, the work is good","Problem"],a:1,stamp:"Two problems",cls:"",b:"And ownership is the smaller one. Client data in third-party AI needs client consent under confidentiality rules, and liability guidance is blunt: undisclosed AI plus defective work reads as deception, not negligence (Journal of Accountancy, 2025). Who needs to know? That’s Deck 2."}
+ ],fin:'<h2>The Core Pillars of Protectable Work</h2><ul><li><strong>Selection:</strong> choosing specific AI outputs from a larger pool.</li><li><strong>Arrangement:</strong> structuring AI elements into a larger composition.</li><li><strong>Modification:</strong> substantive human edits and reworking.</li></ul><div class="quote">“Copyright law only protects works that are the product of human creativity. Prompting a machine is not authorship; it is merely giving instructions.” — U.S. Copyright Office guidance, paraphrased</div><p>Legal landscape current as of summer 2026 and moving; the framework (human authorship, account tiers, disclosure) is the stable part. Now try <strong>Deck 2</strong>.</p>'},
+ {name:"Disclose or Not?",prompt:"Your call?",cards:[
+  {t:"Consulting · The Polished Report",f:"A consulting team uses AI heavily on a client report. The deliverable is accurate and polished. Disclose?",o:["Disclose","No need, the work is good"],a:0,stamp:"Disclose",cls:"ok",b:"The module’s opening case answered this: the firm’s refund wasn’t for using AI; it was for fabrications that went uncaught and disclosure that never happened. Engagement letters increasingly address AI use, and being found out costs roughly twice what disclosing does (Schilke & Reimann, 2025)."},
+  {t:"Management · The Secret Cyborg",f:"An employee drafts reports with AI daily. The manager doesn’t know. Rare?",o:["Rare","Common"],a:1,stamp:"57% do it",cls:"mix",b:"57% of employees admit using AI in non-transparent ways (Gillespie et al., 2025). Their reasons (it feels like cheating, fear of seeming incompetent or lazy) are exactly your students’ reasons. The fix isn’t individual courage; it’s norms said out loud. People disclose where disclosure is normal."},
+  {t:"Marketing · The Synthetic Actor",f:"A campaign features an AI-generated actor indistinguishable from a human. Run it as-is?",o:["Run it","Label it"],a:1,stamp:"Label it",cls:"",b:"In New York, disclosure is now the law (synthetic-performer act, effective 2026), and the ad industry’s first AI transparency framework (IAB, 2026) makes labeling standard practice where AI materially affects authenticity. The era of quietly synthetic media is closing, market by market."},
+  {t:"Finance · The AI-Powered Pitch",f:"A startup tells investors its product is “fully AI-powered.” Behind the scenes, humans do most of the work. Fine?",o:["Fine, it’s marketing","Not fine"],a:1,stamp:"AI washing",cls:"",b:"Securities regulators have charged overstating AI, and they have also charged understating the humans behind “AI” systems. Truthful description cuts both ways: disclosure isn’t just admitting AI use, it’s describing it accurately."},
+  {t:"Your Desk · The Professor",f:"You use AI to help draft feedback on student work. Students don’t know. Different from the other cards?",o:["Different, I’m the instructor","Same question, my desk"],a:1,stamp:"Same card, your name on it",cls:"mix",b:"Students read undisclosed faculty AI use as hypocritical when they’re required to disclose (Perkins et al., 2023; Lund et al., 2023). Modeling disclosure is the cheapest integrity intervention you have, and this course has been modeling it to you all along: check the AI Use Disclosure at the bottom of every page."}
+ ],fin:'<h2>The Honest Paradox</h2><p>Disclosing AI use can reduce trust in the moment (thirteen experiments, 4,000+ participants: Schilke &amp; Reimann, 2025), while transparency is among the most consistent foundations of trust in AI over time (systematic review of 300+ studies: Afroogh et al., 2024). And concealment discovered costs the most of all.</p><p><strong>Disclosure has a price. Concealment has a bigger one. That is the honest case, and the honest version is the one worth teaching.</strong></p>'}
+];
+var deck=0, idx=0, picks=[[],[]];
+var $=function(id){return document.getElementById(id);};
+function render(){
+  var D=DECKS[deck];
+  var dots=""; for(var i=0;i<=D.cards.length;i++){ dots+='<span class="dot'+(i<idx?" done":(i===idx?" here":""))+'"></span>'; }
+  $("dots").innerHTML=dots;
+  $("prevBtn").disabled = idx===0;
+  $("nextBtn").disabled = idx>=D.cards.length ? true : (picks[deck][idx]===undefined);
+  $("nextBtn").textContent = idx===D.cards.length-1 ? "Finish deck" : "Next";
+  $("foot").textContent = idx<D.cards.length ? ("Card "+(idx+1)+" of "+D.cards.length+" · "+D.name+" · choose a verdict to continue") : "";
+  if(idx>=D.cards.length){ $("stage").innerHTML='<div class="finale">'+D.fin+"</div>"; $("nextBtn").disabled=true; return; }
+  var c=D.cards[idx], picked=picks[deck][idx];
+  var html='<div class="card"><div class="card-top"><h2>'+c.t+'</h2><p>'+c.f+"</p></div>"+'<div class="card-mid"><p class="prompt">'+D.prompt+'</p><div class="opts">'
+   + c.o.map(function(o,i){ return '<button type="button" data-i="'+i+'"'+(picked===i?' class="picked"':'')+">"+o+"</button>"; }).join("")
+   + '</div></div><div class="reveal'+(picked!==undefined?" open":"")+'" aria-live="polite">'
+   + (picked!==undefined ? ('<p class="youpicked">You said: “'+c.o[picked]+'”'+(picked===c.a?" · that’s the ruling.":" · here’s the ruling:")+'</p><span class="stamp '+c.cls+'">'+c.stamp+'</span><p class="back">'+c.b+"</p>") : "")
+   + "</div></div>";
+  $("stage").innerHTML=html;
+  Array.prototype.forEach.call($("stage").querySelectorAll(".opts button"),function(b){
+    b.addEventListener("click",function(){ picks[deck][idx]=+b.getAttribute("data-i"); render(); });
+  });
+}
+$("prevBtn").addEventListener("click",function(){ if(idx>0){ idx--; render(); }});
+$("nextBtn").addEventListener("click",function(){ var D=DECKS[deck]; if(idx<D.cards.length){ idx++; render(); }});
+[0,1].forEach(function(d){
+  $("d"+d).addEventListener("click",function(){
+    deck=d; idx=0;
+    $("d0").setAttribute("aria-pressed", d===0 ? "true":"false");
+    $("d1").setAttribute("aria-pressed", d===1 ? "true":"false");
+    render();
+  });
+});
+render();
+})();
+</script>
+</body>
+</html>
