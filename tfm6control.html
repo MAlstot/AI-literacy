@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What’s In My Control? — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:780px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 26px;}
+  h1{color:var(--green);font-size:1.3rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 12px;}
+  .note{background:var(--sgold);border-left:4px solid var(--gold);padding:9px 13px;border-radius:0 8px 8px 0;font-size:.9rem;margin:10px 0;}
+  .card{border:2px solid var(--green);border-radius:12px;padding:16px 20px;background:#fdfdf9;}
+  .card h2{margin:0 0 4px;color:var(--green);font-size:1.05rem;}
+  .buckets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 16px;border:2px solid var(--green);font-weight:600;}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .bkt{background:#fff;color:var(--green);}
+  .bkt:hover{background:var(--lgreen);}
+  .bkt.picked{background:var(--green);color:#fff;}
+  .primary{background:var(--green);color:#fff;} .primary:hover{background:#0e3324;}
+  .secondary{background:#fff;color:var(--green);}
+  button:disabled{opacity:.4;cursor:default;}
+  .fb{margin-top:10px;background:var(--lgreen);border-radius:8px;padding:9px 13px;font-size:.93rem;display:none;}
+  .fb.open{display:block;}
+  .nav{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap;}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;background:#cdd9d1;}
+  .dot.done{background:var(--gold);} .dot.here{background:var(--green);}
+  .hidden{display:none;}
+  .bar-row{display:flex;align-items:center;gap:10px;margin:6px 0;}
+  .bar-label{width:130px;font-size:.9rem;font-weight:600;color:var(--green);}
+  .bar-track{flex:1;background:var(--lgreen);border-radius:6px;height:22px;}
+  .bar{height:100%;border-radius:6px;background:var(--green);min-width:2px;}
+  .bar.b1{background:#2e6b50;} .bar.b2{background:#8aa595;}
+  .small{font-size:.84rem;color:var(--mid);}
+  .finale{border:2px solid var(--gold);background:var(--sgold);border-radius:12px;padding:16px 20px;}
+  .finale h2{color:var(--green);margin:0 0 8px;font-size:1.1rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>What’s In My Control?</h1>
+  <p class="sub">Teach Forward · Module 6 · Thirteen responses to AI’s footprint. Sort each into the loop where it lives.</p>
+  <div class="note">There are no wrong answers; several cards genuinely belong in more than one bucket, and noticing that is the point.</div>
+  <div id="stage"></div>
+  <div class="nav">
+    <button type="button" class="secondary" id="prevBtn">Previous</button>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <button type="button" class="primary" id="nextBtn" disabled>Next</button>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+var B=["My practice","My institution","Society"];
+var CARDS=[
+ {t:"Choose a smaller, faster model for small tasks",best:[0],n:"Task-to-model matching is the single most direct personal lever; the energy chart on this page showed the difference."},
+ {t:"Batch questions into one session instead of many scattered ones",best:[0],n:"Fewer, better-planned sessions cost less than dozens of fragments. Description practice, too."},
+ {t:"Verify once, well, instead of re-running until it sounds right",best:[0],n:"Re-running as a comfort habit is a cost multiplier. Discernment saves watts."},
+ {t:"Use Baylor-licensed tools for anything sensitive",best:[0,1],n:"Your choice to make, but the institution built the option; this card lives in both loops."},
+ {t:"Institutional AI licenses and local AI hosting",best:[1],n:"Individual faculty cannot negotiate enterprise agreements or host local models; institutions can, and Baylor does."},
+ {t:"Campus procurement and sustainability standards for AI tools",best:[1],n:"Purchasing power is policy power; what a university requires, vendors build."},
+ {t:"AI-disclosure policies for courses",best:[0,1],n:"Your syllabus statement is yours; the norms and templates behind it are institutional work. Both loops."},
+ {t:"Community-benefit agreements with data center developers",best:[2],n:"Negotiated between developers and communities; the Temple project on this page signed one with the farm next door."},
+ {t:"Grid-curtailment law for very large computing loads",best:[2],n:"A 2025 Texas law; state policy is the society loop working through legislation."},
+ {t:"Water-use reporting requirements for data centers",best:[2],n:"Currently weak in Texas, and expected before the 2027 Legislature; transparency rules are society-scale."},
+ {t:"Fund research on AI’s true footprint",best:[1,2],n:"Universities and public funders share this one; it is the evidence every other card depends on."},
+ {t:"Teach students to ask these questions",best:[0],n:"The most durable lever on the list, and it is entirely yours. It is also this module’s reason for existing."},
+ {t:"Vote and participate in local decisions",best:[2],n:"Petitions, council elections, public comment: the backyard story shows all three in action nearby."}
+];
+var idx=0, picks=new Array(CARDS.length).fill(null);
+var $=function(id){return document.getElementById(id);};
+function render(){
+  var dots=""; for(var i=0;i<=CARDS.length;i++){ dots+='<span class="dot'+(i<idx?" done":(i===idx?" here":""))+'"></span>'; }
+  $("dots").innerHTML=dots;
+  $("prevBtn").disabled = idx===0;
+  if(idx>=CARDS.length){ renderFinale(); return; }
+  var c=CARDS[idx], p=picks[idx];
+  var h='<div class="card"><h2>Card '+(idx+1)+" of "+CARDS.length+'</h2><p>'+c.t+'</p><div class="buckets">'
+   + B.map(function(b,i){ return '<button type="button" class="bkt'+(p===i?" picked":"")+'" data-i="'+i+'">'+b+"</button>"; }).join("")
+   + '</div><div class="fb'+(p!==null?" open":"")+'" aria-live="polite">'+(p!==null?fbText(c,p):"")+"</div></div>";
+  $("stage").innerHTML=h;
+  $("nextBtn").disabled = p===null;
+  $("nextBtn").textContent = idx===CARDS.length-1 ? "See the pattern" : "Next";
+  Array.prototype.forEach.call(document.querySelectorAll(".bkt"),function(b){
+    b.addEventListener("click",function(){ picks[idx]=+b.getAttribute("data-i"); render(); });
+  });
+}
+function fbText(c,p){
+  var names=c.best.map(function(i){return "<strong>"+B[i]+"</strong>";});
+  var head = c.best.indexOf(p)>=0 ? "Placed in <strong>"+B[p]+"</strong>. " : "Placed in <strong>"+B[p]+"</strong>, defensible. Most place this in "+names.join(" and ")+". ";
+  if(c.best.indexOf(p)>=0 && c.best.length>1){ head += "It also fits "+names.filter(function(n,k){return c.best[k]!==p;}).join(" and ")+". "; }
+  return head + c.n;
+}
+function renderFinale(){
+  var counts=[0,0,0];
+  picks.forEach(function(p){ if(p!==null) counts[p]++; });
+  var most=[0,0,0]; CARDS.forEach(function(c){ most[c.best[0]]++; });
+  var h='<div class="finale"><h2>The pattern</h2><p>Your sort:</p>';
+  B.forEach(function(b,i){
+    h+='<div class="bar-row"><span class="bar-label">'+b+'</span><div class="bar-track"><div class="bar b'+i+'" style="width:'+(counts[i]/CARDS.length*100)+'%"></div></div><span class="small">'+counts[i]+"</span></div>";
+  });
+  h+='<p>However you sorted, one shape holds: <strong>a few levers are entirely yours, and most of the big ones need bigger loops</strong> — institutions negotiating, communities consenting, legislatures writing rules. Hold that thought. The loop question gets a name in the next section of this page.</p>'
+   +'<p class="small">Ungraded and unrecorded; sort again anytime.</p></div>';
+  $("stage").innerHTML=h;
+  $("nextBtn").disabled=true;
+}
+$("prevBtn").addEventListener("click",function(){ if(idx>0){ idx--; render(); }});
+$("nextBtn").addEventListener("click",function(){ if(idx<CARDS.length){ idx++; render(); }});
+render();
+})();
+</script>
+</body>
+</html>
