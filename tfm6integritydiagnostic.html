@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eleven Reasons: Where Might Your Assignment Invite Low Integrity? — Teach Forward M6</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:880px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px 28px;}
+  h1{color:var(--green);font-size:1.4rem;margin:0 0 4px;}
+  .sub{color:var(--mid);font-size:.95rem;margin:0 0 14px;}
+  h2{color:var(--green);font-size:1.1rem;margin:24px 0 8px;border-bottom:2px solid var(--gold);padding-bottom:4px;}
+  .note{background:var(--sgold);border-left:4px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.92rem;margin:12px 0;}
+  button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 18px;border:2px solid var(--green);}
+  button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .primary{background:var(--green);color:#fff;font-weight:600;} .primary:hover{background:#0e3324;}
+  .secondary{background:#fff;color:var(--green);font-weight:600;} .secondary:hover{background:var(--lgreen);}
+  .reason{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;}
+  .reason.checked{border-color:var(--green);background:var(--lgreen);}
+  .reason input{width:22px;height:22px;margin-top:4px;flex-shrink:0;accent-color:var(--green);}
+  .reason label{cursor:pointer;}
+  .rtitle{font-weight:700;color:var(--green);}
+  .rq{font-style:italic;color:var(--mid);}
+  .rmeans{font-size:.92rem;margin-top:2px;}
+  .tag{display:inline-block;background:var(--sgold);border:1px solid var(--gold);border-radius:999px;padding:1px 9px;font-size:.72rem;font-weight:700;color:#6b4c00;margin-left:6px;vertical-align:middle;}
+  .actions{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;}
+  .hidden{display:none;}
+  .builder-card{border:1px solid var(--line);border-left:5px solid var(--green);border-radius:8px;padding:10px 14px;margin-bottom:10px;}
+  .builder-card h3{margin:0 0 4px;font-size:1rem;color:var(--green);}
+  .builder-card ul{margin:6px 0 0;padding-left:20px;} .builder-card li{margin-bottom:3px;font-size:.93rem;}
+  .contrib{font-size:.85rem;color:var(--mid);font-style:italic;}
+  textarea{width:100%;min-height:170px;font:inherit;padding:10px;border:2px solid var(--line);border-radius:8px;}
+  .small{font-size:.85rem;color:var(--mid);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Eleven Reasons: Where Might Your Assignment Invite Low Integrity?</h1>
+  <p class="sub">Teach Forward · Module 6 · Adapted from Bertram Gallant &amp; Rettinger (2025) and Megan Alstot’s Teaching for Integrity materials</p>
+
+  <div id="intro">
+    <p><em>Cheating has always existed. AI did not change why; it changed how.</em></p>
+    <p>Pick one assignment you know well, ideally the one you’re bringing to this module’s discussion. Research finds eleven reasons students cheat. Each comes with a question worth asking of your assignment. <strong>Check every reason that might be quietly present.</strong></p>
+    <div class="note"><strong>No blame here.</strong> Most good assignments invite two to four of these without anyone intending it; AI has made everything more challenging. Noticing is the mentoring move, and good teaching is still the best integrity builder.</div>
+  </div>
+
+  <form id="quiz" novalidate><div id="reasons"></div>
+    <div class="actions">
+      <button type="button" class="primary" id="goBtn">Show my integrity builders</button>
+      <button type="button" class="secondary" id="clearBtn">Clear checks</button>
+    </div>
+  </form>
+
+  <div id="results" class="hidden">
+    <h2 id="resTitle"></h2>
+    <div id="resIntro"></div>
+    <div id="resCards"></div>
+    <div class="actions">
+      <button type="button" class="primary" id="dlBtn">Download my shortlist (.txt)</button>
+      <button type="button" class="secondary" id="copyBtn">View as text to copy</button>
+      <button type="button" class="secondary" id="backBtn">Back to the checklist</button>
+    </div>
+    <textarea id="copyOut" class="hidden" aria-label="Your shortlist as plain text — select all and copy"></textarea>
+    <p class="small" id="bridge"></p>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var R=[
+ {n:"Self-Efficacy",q:"Do they think they can?",tag:"Communication",m:"Students who do not believe they can succeed lower their effort or look for shortcuts. AI offers an easy way out when confidence is low.",c:"limited practice with feedback; failure treated as a verdict, not data",b:["Survey early to identify nervous students.","Build in practice with feedback before stakes rise.","Use growth-mindset language: “not yet” instead of “wrong.”","Frame failure as part of learning."]},
+ {n:"Expectations",q:"Do they know it is cheating?",tag:"Communication",m:"Students do not share one definition of cheating. Even faculty disagree about what counts as collaboration, paraphrasing, or AI assistance.",c:"inconsistent expectations across courses; unclear line between collaboration and cheating",b:["Define collaboration explicitly for each assignment.","Name what tools are allowed, and why.","Practice the rubric with examples, including AI examples."]},
+ {n:"Values",q:"Does the assignment match what they value?",tag:"Consistent Values",m:"When the assessment does not align with what the student came to college for, AI use feels less like cheating and more like efficiency.",c:"work perceived as busy work; no room for student voice",b:["Make the “why” of the assignment visible.","Offer choice in how students demonstrate learning.","Connect the work to disciplinary or professional practice."]},
+ {n:"Moral Disengagement",q:"How do they justify it?",tag:"Design & Culture",m:"Rationalizations soften the moral weight of the choice: “everyone does it,” “it does not really hurt anyone,” “the assignment is unfair.”",c:"perceived unfairness; peer modeling of rationalizations",b:["Discuss ethics openly, as practice rather than warning.","Surface and name common rationalizations.","Connect coursework to a larger purpose."]},
+ {n:"Contract Cheating",q:"Who actually did the work?",tag:"Design & Culture",m:"Paying someone, human or AI, to produce work submitted as the student’s own. The line between AI-as-tool and AI-as-author is the new question.",c:"high stakes plus low time; unclear authorship norms for AI use",b:["Require artifacts and reflection along the way.","Make process visible, not just product.","Define authorship for the discipline and the assignment."]},
+ {n:"Peer Effects",q:"What does the class culture say?",tag:"Design & Culture",m:"Students take cues from each other about what is normal. If cheating is common, it feels less like cheating.",c:"unaddressed peer norms around AI; anonymous classroom climate",b:["Build community early in the course.","Name and shape norms together.","Make integrity a class identity, not a rule."]},
+ {n:"Narcissism",q:"What rule applies to me?",tag:"Design & Culture",m:"A small subset of students operate as if rules are for others. Design, not exhortation, is the response.",c:"assessments that reward end product only; no structural cost for shortcuts",b:["Require process and presence.","Use in-class checkpoints.","Make scaffolded artifacts non-negotiable."]},
+ {n:"Motivation",q:"What is the point?",tag:"Consistent Values",m:"Mastery, performance, and extrinsic motivation coexist. Heavy extrinsic weight (one big grade) pushes students toward shortcuts.",c:"a single high-stakes grade; few chances to show mastery for its own sake",b:["Use many small, low-stakes summative moments.","Separate practice from grading.","Make growth, not just performance, visible."]},
+ {n:"Procrastination",q:"Where did the time go?",tag:"Flexibility & Accountability",m:"Time pressure narrows options. By the deadline, AI is often the only path that fits.",c:"a single deadline at the end of a long arc; penalty-heavy late policies",b:["Scaffold deadlines: outline, draft, draft, final.","Build in grace periods and no-questions extensions.","Allow submission withdrawal (24 hours, zero, no penalty)."]},
+ {n:"Instructor Effects",q:"Does this teacher seem to care?",tag:"Design & Culture",m:"Students cheat less in classes where the instructor knows them, engages them, and seems invested in their learning.",c:"large class, low contact; limited or low-quality feedback",b:["Learn names; check in early and often.","Make feedback feel like a conversation.","Show your own engagement with the material."]},
+ {n:"Cost-Benefit",q:"Is cheating worth it?",tag:"Flexibility & Accountability",m:"Students calculate. If the upside is high, the risk is low, and the relationship is thin, cheating becomes rational.",c:"low perceived likelihood of being caught; thin instructor relationship",b:["Build relationship: students do not cheat people they know.","Report first offenses for the record (no penalty) so patterns become visible.","Use multiple low-stakes checkpoints so any one offense stays small."]}
+];
+var $=function(id){return document.getElementById(id);};
+var host=$("reasons");
+R.forEach(function(r,i){
+  var d=document.createElement("div"); d.className="reason";
+  d.innerHTML='<input type="checkbox" id="r'+i+'" aria-describedby="rm'+i+'">'
+   +'<label for="r'+i+'"><span class="rtitle">'+(i+1)+" · "+r.n+'</span> <span class="rq">'+r.q+'</span><span class="tag">'+r.tag+'</span>'
+   +'<div class="rmeans" id="rm'+i+'">'+r.m+"</div></label>";
+  host.appendChild(d);
+  d.querySelector("input").addEventListener("change",function(e){ d.classList.toggle("checked",e.target.checked); });
+});
+function picked(){ var out=[]; R.forEach(function(r,i){ if($("r"+i).checked) out.push(i); }); return out; }
+function show(sel){
+  var p=picked();
+  $("results").classList.remove("hidden"); $("quiz").classList.add("hidden"); $("intro").classList.add("hidden");
+  if(p.length===0){
+    $("resTitle").textContent="Nothing checked — two possibilities";
+    $("resIntro").innerHTML='<div class="note">Either your assignment is unusually well-defended (possible!), or a second pass with a skeptical colleague’s eyes would surface something. Most good assignments invite two to four of the eleven. Go back and try the questions aloud, as if a student were asking them.</div>';
+    $("resCards").innerHTML=""; $("bridge").textContent="";
+  } else {
+    $("resTitle").textContent="Your integrity builders shortlist ("+p.length+" of 11 reasons checked)";
+    var typ = p.length>=2&&p.length<=4 ? "That’s the typical range: design, not failure." : (p.length===1?"A focused starting point.":"A lot checked — pick the two or three that feel most alive; builders overlap, so a few moves cover many reasons.");
+    $("resIntro").innerHTML='<div class="note"><strong>'+typ+'</strong> Each reason below comes with its research-backed integrity builders. These are mentoring moves, not policing moves.</div>';
+    $("resCards").innerHTML=p.map(function(i){var r=R[i];
+      return '<div class="builder-card"><h3>'+(i+1)+" · "+r.n+' <span class="tag">'+r.tag+'</span></h3><div class="contrib">Often enters through: '+r.c+'.</div><ul>'+r.b.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul></div>";
+    }).join("");
+    $("bridge").textContent="Next: your discussion post’s “open question” prompt is a natural home for the reason you most want help with, and the synchronous workshops work the full mentoring matrix. Bring this shortlist.";
+  }
+  $("results").scrollIntoView({behavior:"smooth"});
+}
+function buildText(){
+  var p=picked();
+  var t="INTEGRITY BUILDERS SHORTLIST · Teach Forward Module 6\nAdapted from Bertram Gallant & Rettinger (2025) and Megan Alstot’s Teaching for Integrity materials\n\nReasons I checked for my assignment ("+p.length+" of 11):\n\n";
+  p.forEach(function(i){var r=R[i];
+    t+=(i+1)+". "+r.n+" — "+r.q+"\n   Often enters through: "+r.c+".\n"+r.b.map(function(x){return "   • "+x;}).join("\n")+"\n\n";
+  });
+  t+="Nothing here is stored anywhere except this file.\n";
+  return t;
+}
+$("goBtn").addEventListener("click",show);
+$("clearBtn").addEventListener("click",function(){ R.forEach(function(r,i){ $("r"+i).checked=false; $("r"+i).closest(".reason").classList.remove("checked"); }); });
+$("backBtn").addEventListener("click",function(){ $("results").classList.add("hidden"); $("quiz").classList.remove("hidden"); $("intro").classList.remove("hidden"); window.scrollTo({top:0,behavior:"smooth"}); });
+$("dlBtn").addEventListener("click",function(){ try{
+  var blob=new Blob([buildText()],{type:"text/plain"}); var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="integrity-builders-shortlist.txt"; document.body.appendChild(a); a.click(); a.remove();
+ }catch(e){ $("copyOut").value=buildText(); $("copyOut").classList.remove("hidden"); $("copyOut").select(); } });
+$("copyBtn").addEventListener("click",function(){ $("copyOut").value=buildText(); $("copyOut").classList.remove("hidden"); $("copyOut").focus(); $("copyOut").select(); });
+})();
+</script>
+</body>
+</html>
