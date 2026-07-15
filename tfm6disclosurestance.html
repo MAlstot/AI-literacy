@@ -38,12 +38,29 @@
   .finish{background:var(--sgold);border-radius:8px;padding:8px 12px;font-weight:600;}
   textarea{width:100%;min-height:150px;font:inherit;padding:10px;border:2px solid var(--line);border-radius:8px;}
   .small{font-size:.84rem;color:var(--mid);}
+  .help{font-size:.9rem;color:var(--mid);line-height:1.55;margin:0 0 10px;}
+  .draft .crit{background:#fdf3dc;border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:8px 12px;}
+  .reqbox{border:1px dashed var(--green);border-radius:10px;padding:12px 16px;margin-top:10px;background:#fbfdfb;}
+  .reqbox h3{margin:0 0 6px;color:var(--green);font-size:1rem;}
+  .reqbox ol{margin:6px 0 0;padding-left:22px;} .reqbox li{margin-bottom:3px;}
+  .sectlabel{font-weight:700;color:var(--green);font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;margin:14px 0 4px;}
+  .grp{font-weight:600;color:var(--green);margin:12px 0 4px;}
+  .prow{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pcat{flex:1;min-width:190px;font-size:.93rem;}
+  .pbtns{display:flex;gap:6px;}
+  .pb{padding:6px 12px;font-size:.85rem;border:2px solid var(--line);background:#fff;color:var(--mid);border-radius:8px;font-weight:600;cursor:pointer;}
+  .pb.no.on{background:#9C2B2E;border-color:#9C2B2E;color:#fff;}
+  .pb.ok.on{background:var(--green);border-color:var(--green);color:#fff;}
+  .reqbox ul{margin:6px 0 0;padding-left:22px;} .reqbox ul li{margin-bottom:3px;}
+  textarea.pnote{width:100%;min-height:64px;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px 10px;box-sizing:border-box;resize:vertical;}
+  textarea.pnote:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .guidebox{background:var(--lgreen);border-radius:8px;padding:9px 13px;margin-top:8px;font-size:.93rem;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Draft Your Disclosure Stance</h1>
-  <p class="sub">Teach Forward · Module 6 · Four honest questions, one starter statement. Ungraded; nothing you enter leaves this page.</p>
+  <p class="sub">Teach Forward · Module 6 · A few questions to start drafting your disclosure statement — you’ll develop it further in the workshop. Ungraded; nothing you enter leaves this page.</p>
   <div class="stepline" id="stepline" aria-hidden="true"></div>
   <div id="stage"></div>
   <div class="nav" id="navrow">
@@ -55,7 +72,6 @@
     <div class="draft">
       <h2>Your starter disclosure stance</h2>
       <div id="draftBody"></div>
-      <p class="finish" id="finishLine">For this course, I will ask students to … <span class="small">(this sentence is yours to finish; the widget won’t)</span></p>
     </div>
     <div class="note">This is a draft in your voice, built from your answers. Edit it, finish the last sentence, and it becomes a syllabus statement or an assignment-brief note. Disclosure done matter-of-factly reads as unremarkable, informative, normal; that’s the tone to keep. <strong>Discussion prompt 2 asks exactly this question; bring this with you.</strong></p></div>
     <div class="nav">
@@ -71,81 +87,210 @@
 (function(){
 "use strict";
 var QS=[
- {q:"Do you currently use AI in preparing or teaching this course?",o:["Regularly","Sometimes","Rarely","Not yet"]},
- {q:"Do your students know about your AI use (or non-use)?",o:["Yes, I’ve told them","They might guess","No"]},
- {q:"What do you currently ask of students about AI use?",o:["It’s prohibited on graded work","Allowed with disclosure","Allowed freely","It varies by assignment","I haven’t said explicitly"]},
- {q:"What does your syllabus say about AI today?",o:["A clear statement","A vague mention","Nothing yet"]}
+ {q:"Do you use AI as you prepare and teach this course?",o:["Regularly","Sometimes","Rarely","Not yet"]},
+ {q:"Why does disclosing your own AI use matter to you? (select all that apply)",qAlt:"Even though you don’t use AI yourself, why does being transparent about AI still matter in your course? (select all that apply)",multi:true,o:["Because I ask the same of my students","Because it models honest professional practice","Because our work together depends on trust"]},
+ {q:"What may students do with AI in this course?",help:"First, a term to pin down: “AI” ranges from spell check and grammar tools (like Grammarly) to generative tools that produce content for you (like ChatGPT, Claude, or Copilot). Whatever you choose below, plan to tell students exactly which you mean. “No AI” reads very differently if it also bans spell check. You will sharpen this in the workshop; start thinking about your line now.",o:["Not on graded work","Yes, with disclosure","Yes, freely","It depends on the assignment","I’m still deciding"]},
+ {q:"Build the disclosure you will ask of students",build:true,help:"A clear disclosure asks for specific things, not a vague “I used AI.” Below is a strong default drawn from common practice; keep, trim, or add to fit your course. You will refine this in the workshop, so it does not need to be final today."}
 ];
 var S1=[
- "I use AI tools regularly in preparing this course: drafting materials, generating examples, and refining activities. Everything you receive has been reviewed and shaped by me.",
- "I sometimes use AI tools in preparing this course, for example to draft or refine materials. Everything you receive has been reviewed and shaped by me.",
- "I rarely use AI tools in preparing this course, though I may occasionally use one to refine materials. What you receive is my work.",
- "I do not currently use AI tools in preparing this course."
+ "I use AI regularly as I build and teach this course, and everything you receive has been reviewed and shaped by me. I will disclose when and how I have used AI in our course, on assignments, and in any materials I develop.",
+ "I use AI from time to time as I build this course, for example to draft or refine materials, and everything you receive has been reviewed and shaped by me. I will disclose when and how I have used AI in our course, on assignments, and in any materials I develop.",
+ "I rarely use AI in building this course, and when I do, it is to refine materials I have written; what you receive is my work. I will disclose when and how I have used AI in our course, on assignments, and in any materials I develop.",
+ "I do not currently use AI to build this course. If that changes, I will disclose when and how I use it in our course, on assignments, and in any materials I develop."
 ];
-var S2=[
- "I tell you when and how I have used AI, because I ask the same of you.",
- "I have not always said this plainly before now; this statement is me starting.",
- "Until now, that has not been visible to you; this statement changes that."
-];
-var S2_NOTYET=[
- "I have told you where I stand, and I will say so plainly if my practice changes.",
- "I have not said that plainly before now; this statement is me starting, and I will tell you if my practice changes.",
- "I have not said that plainly before now; this statement is me starting, and I will tell you if my practice changes."
-];
-var S3=[
+var WHY_CLAUSES=["I ask the same transparency of you","it models the professional practice you will be held to","our work together depends on trust"];
+function whySentence(arr){
+  if(!arr || !arr.length) return "";
+  var parts = arr.slice().sort(function(a,b){return a-b;}).map(function(i){ return WHY_CLAUSES[i]; });
+  var joined = parts.length===1 ? parts[0] : parts.slice(0,-1).join(", ") + (parts.length>2?",":"") + " and " + parts[parts.length-1];
+  var lead = ans[0]===3 ? "Being transparent about AI matters to me because " : "I disclose my own AI use because ";
+  return lead + joined + ".";
+}
+var PERMIT=[
  "In this course, AI use on graded work is not permitted, and I will always explain why: the skills this course builds need to be in your own hands first.",
- "You may use AI on many tasks in this course, provided you disclose what you used and how. Disclosure is not a confession; it is professional practice.",
+ "You may use AI on many tasks in this course, as long as you disclose it.",
  "You are free to use AI in this course. What I assess is your judgment about its output: what you kept, what you fixed, and what you can defend.",
- "AI expectations in this course vary by assignment, and each assignment states its rules. When in doubt, ask before you use.",
- "I have not yet set explicit AI expectations for this course; this statement is where that starts, and I would rather you ask than guess."
+ "What is permitted depends on the assignment, and each one will tell you exactly how AI may and may not be used.",
+ "I am still settling my AI expectations for this course; until each assignment says otherwise, please ask before you use AI."
 ];
-var S4=[
- "My syllabus states this policy; treat this as the plain-language version.",
- "My syllabus mentions AI but deserves a clearer statement; consider this the upgrade.",
- "My syllabus does not yet address AI; consider this the seed of that section."
+var ELEMENTS=[
+ "The name of the tool you used",
+ "How you used it",
+ "What you did with the output it provided",
+ "What you verified or changed yourself",
+ "Why it was useful, or where it fell short"
 ];
-var step=0, ans=[null,null,null,null];
+var PLACEMENTS=["before your references","at the end of the assignment","in a footnote or appendix"];
+var PROHIBIT=[
+ {t:"Generative AI that writes, codes, or creates for you",e:"ChatGPT, Claude, Copilot, Gemini"},
+ {t:"AI that rewrites or restyles your own sentences",e:"Grammarly’s rewrite, QuillBot"},
+ {t:"Basic spell check and grammar check",e:"built into Word, Google Docs, or your browser"},
+ {t:"Predictive text and autocomplete",e:"phone keyboard, Gmail Smart Compose"},
+ {t:"Translation tools",e:"Google Translate, DeepL"},
+ {t:"AI search and answer engines",e:"Perplexity, Google’s AI Overviews"}
+];
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+function prohibitBuckets(){
+  var no=[],ok=[],un=[];
+  PROHIBIT.forEach(function(c,i){
+    var s=ans[3].prohibit[i], item=c.t+" ("+c.e+")";
+    if(s==="no") no.push(item); else if(s==="ok") ok.push(item); else un.push(item);
+  });
+  return {no:no,ok:ok,un:un};
+}
+function reqLines(){
+  var els = ans[3].elements.slice().sort(function(a,b){return a-b;});
+  return els.map(function(e){ return ELEMENTS[e]; });
+}
+function reqLead(){
+  if(ans[2]===0){
+    return "Just as I disclose my own AI use, I ask you to be transparent about yours. AI is not permitted on graded work in this course. Where AI use is allowed, such as ungraded practice, studying, or brainstorming, be ready to tell me, for each AI tool you used:";
+  }
+  return "Just as I disclose my own AI use, I ask you to disclose yours. If you use AI on an assignment, include an AI disclosure statement " + PLACEMENTS[ans[3].placement] + ". For each AI tool you used, state:";
+}
+var step=0, ans=[null,[],null,{elements:[0,1,2],placement:0,prohibit:{0:"no",2:"ok"},pnote:"",pdisc:false}], N=QS.length;
 var $=function(id){return document.getElementById(id);};
 function renderSteps(){
-  var h="";
-  for(var i=0;i<4;i++){ h+='<span class="sdot'+(i<step?" done":(i===step?" here":""))+'">'+(i+1)+"</span>"+(i<3?'<span class="sbar"></span>':""); }
+  var h=""; for(var i=0;i<N;i++){ h+='<span class="sdot'+(i<step?" done":(i===step?" here":""))+'">'+(i+1)+"</span>"+(i<N-1?'<span class="sbar"></span>':""); }
   $("stepline").innerHTML=h;
 }
+function multiOK(){ return Array.isArray(ans[step]) && ans[step].length>0; }
 function renderQ(){
   renderSteps();
   var Q=QS[step];
-  var h='<fieldset><legend>Step '+(step+1)+" of 4: "+Q.q+"</legend>";
-  Q.o.forEach(function(o,i){
-    h+='<div class="opt"><input type="radio" name="q" id="o'+i+'" value="'+i+'"'+(ans[step]===i?" checked":"")+'><label for="o'+i+'">'+o+"</label></div>";
-  });
+  var qText = (step===1 && ans[0]===3 && Q.qAlt) ? Q.qAlt : Q.q;
+  var buildProhibit = Q.build && ans[2]===0;
+  var buildTitle = Q.build ? (buildProhibit ? "Define what “no AI” means" : Q.q) : qText;
+  var h='<fieldset><legend>Step '+(step+1)+" of "+N+": "+buildTitle+"</legend>";
+  if(Q.help && !Q.build){ h+='<p class="help">'+Q.help+'</p>'; }
+  if(Q.build){
+    if(buildProhibit){
+      h+='<p class="help">You told students AI is not allowed on graded work. That phrase is only as clear as the line behind it: “AI” runs from tools that write for you all the way down to the spell check built into Word. Mark where each kind of tool stands in your course so students are not left guessing.</p>';
+      h+='<p class="grp">On graded work, is each of these allowed?</p>';
+      PROHIBIT.forEach(function(c,i){
+        var st=ans[3].prohibit[i];
+        h+='<div class="prow"><div class="pcat">'+c.t+' <span class="small">('+c.e+')</span></div><div class="pbtns">'
+         +'<button type="button" class="pb no'+(st==="no"?" on":"")+'" data-i="'+i+'" data-v="no">Not allowed</button>'
+         +'<button type="button" class="pb ok'+(st==="ok"?" on":"")+'" data-i="'+i+'" data-v="ok">Still fine</button>'
+         +'</div></div>';
+      });
+      h+='<p class="help">Leave a row unmarked if you are still deciding; it will show up as “still to decide” so you remember to tell students before the assignment.</p>';
+      h+='<p class="grp">Your guidance on these tools (optional)</p>';
+      h+='<textarea class="pnote" id="pnote" placeholder="Add anything students should know. For example: for anything still to decide, check with me first. Basic spell check is fine; a tool that rewrites your sentences is not.">'+(ans[3].pnote||"")+'</textarea>';
+      h+='<div class="opt" style="margin-top:10px;"><input type="checkbox" id="pdisc"'+(ans[3].pdisc?" checked":"")+'><label for="pdisc">Also ask students to disclose which allowed tools they used, and how <span class="small">(adds one line to the requirement)</span></label></div>';
+    } else {
+    h+='<p class="help">'+Q.help+'</p>';
+    h+='<p class="grp">For each AI tool, students should state:</p>';
+    ELEMENTS.forEach(function(e,i){
+      var on = ans[3].elements.indexOf(i)>=0;
+      h+='<div class="opt"><input type="checkbox" id="e'+i+'"'+(on?" checked":"")+'><label for="e'+i+'">'+e+(i<3?' <span class="small">(core)</span>':' <span class="small">(optional)</span>')+"</label></div>";
+    });
+      h+='<p class="grp">Where should the statement go?</p>';
+      PLACEMENTS.forEach(function(pl,i){
+        h+='<div class="opt"><input type="radio" name="place" id="p'+i+'"'+(ans[3].placement===i?" checked":"")+'><label for="p'+i+'">'+pl+"</label></div>";
+      });
+    }
+  } else {
+    Q.o.forEach(function(o,i){
+      if(Q.multi){
+        var on = Array.isArray(ans[step]) && ans[step].indexOf(i)>=0;
+        h+='<div class="opt"><input type="checkbox" name="q" id="o'+i+'" value="'+i+'"'+(on?" checked":"")+'><label for="o'+i+'">'+o+"</label></div>";
+      } else {
+        h+='<div class="opt"><input type="radio" name="q" id="o'+i+'" value="'+i+'"'+(ans[step]===i?" checked":"")+'><label for="o'+i+'">'+o+"</label></div>";
+      }
+    });
+  }
   h+="</fieldset>";
   $("stage").innerHTML=h;
   $("backBtn").disabled = step===0;
-  $("nextBtn").disabled = ans[step]===null;
-  $("nextBtn").textContent = step===3 ? "Build my draft" : "Next";
-  Array.prototype.forEach.call(document.querySelectorAll('input[name=q]'),function(r){
-    r.addEventListener("change",function(){ ans[step]=+r.value; $("nextBtn").disabled=false; });
-  });
-}
-function draftText(){
-  var s2 = ans[0]===3 ? S2_NOTYET[ans[1]] : S2[ans[1]];
-  return [S1[ans[0]], s2, S3[ans[2]], S4[ans[3]]];
+  $("nextBtn").disabled = Q.build ? false : (Q.multi ? !multiOK() : ans[step]===null);
+  $("nextBtn").textContent = step===N-1 ? "Build my draft" : "Next";
+  if(Q.build){
+    if(buildProhibit){
+      Array.prototype.forEach.call(document.querySelectorAll('.pb'),function(b){
+        b.addEventListener("click",function(){
+          ans[3].prohibit[+b.getAttribute("data-i")]=b.getAttribute("data-v");
+          renderQ();
+        });
+      });
+      var pn=$("pnote"); if(pn){ pn.addEventListener("input",function(){ ans[3].pnote=pn.value; }); }
+      var pd=$("pdisc"); if(pd){ pd.addEventListener("change",function(){ ans[3].pdisc=pd.checked; }); }
+    } else {
+    ELEMENTS.forEach(function(e,i){
+      var el=$("e"+i); el.addEventListener("change",function(){
+        var arr=ans[3].elements;
+        if(el.checked){ if(arr.indexOf(i)<0) arr.push(i); } else { ans[3].elements=arr.filter(function(x){return x!==i;}); }
+      });
+    });
+    PLACEMENTS.forEach(function(pl,i){
+      var pe=$("p"+i); if(pe) pe.addEventListener("change",function(){ ans[3].placement=i; });
+    });
+    }
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=q]'),function(r){
+      r.addEventListener("change",function(){
+        if(Q.multi){
+          var v=+r.value, arr=Array.isArray(ans[step])?ans[step]:[];
+          if(r.checked){ if(arr.indexOf(v)<0) arr.push(v); } else { arr=arr.filter(function(x){return x!==v;}); }
+          ans[step]=arr; $("nextBtn").disabled=!multiOK();
+        } else { ans[step]=+r.value; $("nextBtn").disabled=false; }
+      });
+    });
+  }
 }
 function showResult(){
   $("stage").classList.add("hidden"); $("navrow").classList.add("hidden"); $("stepline").classList.add("hidden");
   $("result").classList.remove("hidden");
-  $("draftBody").innerHTML = draftText().map(function(s){ return "<p>"+s+"</p>"; }).join("");
+  var stance = [S1[ans[0]], whySentence(ans[1]), PERMIT[ans[2]]].map(function(s){return "<p>"+s+"</p>";}).join("");
+  var secondLabel, secondHtml;
+  if(ans[2]===0){
+    var b=prohibitBuckets(), box='<div class="reqbox"><h3>When I say no AI on graded work, here is what I mean</h3>';
+    var listHtml=function(arr){ return "<ul>"+arr.map(function(l){return "<li>"+l+"</li>";}).join("")+"</ul>"; };
+    if(b.no.length){ box+='<p class="grp">Not allowed on graded work:</p>'+listHtml(b.no); }
+    if(b.ok.length){ box+='<p class="grp">Still fine:</p>'+listHtml(b.ok); }
+    if(b.un.length){ box+='<p class="grp">Still to decide (I will tell you before the assignment):</p>'+listHtml(b.un); }
+    if(ans[3].pnote && ans[3].pnote.trim()){ box+='<div class="guidebox"><strong>My guidance:</strong> '+escapeHtml(ans[3].pnote.trim())+'</div>'; }
+    if(ans[3].pdisc){ box+='<p style="margin-top:10px;">Whenever you use a tool that is allowed here, tell me which tool it was and how you used it.</p>'; }
+    box+="</div>";
+    secondLabel='What “no AI on graded work” means'; secondHtml=box;
+  } else {
+    var lines = reqLines();
+    secondHtml = lines.length
+      ? '<div class="reqbox"><h3>The disclosure I ask of you</h3><p>'+reqLead()+'</p><ol>'+lines.map(function(l){return "<li>"+l+"</li>";}).join("")+"</ol></div>"
+      : '<div class="reqbox"><h3>The disclosure I ask of you</h3><p>Choose at least one element on the previous step to build this. Go back and check the three core items to start.</p></div>';
+    secondLabel='The requirement to give students';
+  }
+  $("draftBody").innerHTML = '<p class="sectlabel">Your disclosure stance</p>'+stance+'<p class="sectlabel">'+secondLabel+'</p>'+secondHtml;
   $("result").scrollIntoView({behavior:"smooth"});
 }
 function fullText(){
-  return "MY DISCLOSURE STANCE (draft) · Teach Forward Module 6\n\n"
-   + draftText().join(" ") + "\n\nFor this course, I will ask students to … [finish this sentence yourself]\n\nEdit freely; this reads best in your own voice. Nothing here is stored anywhere except this file.\n";
+  var stance = [S1[ans[0]], whySentence(ans[1]), PERMIT[ans[2]]].join("\n\n");
+  var secondHead, secondBody, closing;
+  if(ans[2]===0){
+    var b=prohibitBuckets(), sect=function(title,arr){ return arr.length ? title+"\n"+arr.map(function(l){return "- "+l;}).join("\n")+"\n\n" : ""; };
+    secondHead="WHAT \"NO AI ON GRADED WORK\" MEANS";
+    secondBody="When I say no AI is allowed on graded work, here is exactly what I mean:\n\n"
+      + sect("Not allowed on graded work:", b.no)
+      + sect("Still fine:", b.ok)
+      + sect("Still to decide (I will tell you before the assignment):", b.un);
+    secondBody=secondBody.replace(/\n+$/,"");
+    if(ans[3].pnote && ans[3].pnote.trim()){ secondBody+="\n\nMy guidance: "+ans[3].pnote.trim(); }
+    if(ans[3].pdisc){ secondBody+="\n\nWhenever you use a tool that is allowed here, tell me which tool it was and how you used it."; }
+    closing="\n\nThis is a starting draft, not a finished policy. Carry it into the workshop: pressure-test where you drew the line, and settle any tools you left undecided. Edit freely; it reads best in your own voice. Nothing here is stored anywhere except this file.\n";
+  } else {
+    var lines = reqLines();
+    secondHead="THE REQUIREMENT TO GIVE STUDENTS";
+    secondBody = lines.length ? reqLead()+"\n"+lines.map(function(l,i){return (i+1)+". "+l;}).join("\n") : "[Build your student disclosure requirement by selecting elements on step 4.]";
+    closing="\n\nThis is a starting draft, not a finished policy. Two things to carry into the workshop: define what \"AI\" means for your students (generative tools versus everyday spell and grammar checkers), and refine the disclosure you ask of them. Edit freely; it reads best in your own voice. Nothing here is stored anywhere except this file.\n";
+  }
+  return "MY DISCLOSURE STANCE (starting draft) · Teach Forward Module 6\n\n"
+   + "YOUR DISCLOSURE STANCE\n" + stance + "\n\n" + secondHead + "\n" + secondBody + closing;
 }
-$("nextBtn").addEventListener("click",function(){ if(step<3){ step++; renderQ(); } else { showResult(); } });
+$("nextBtn").addEventListener("click",function(){ if(step<N-1){ step++; renderQ(); } else { showResult(); } });
 $("backBtn").addEventListener("click",function(){ if(step>0){ step--; renderQ(); } });
 $("restartBtn").addEventListener("click",function(){
   $("result").classList.add("hidden"); $("stage").classList.remove("hidden"); $("navrow").classList.remove("hidden"); $("stepline").classList.remove("hidden");
-  step=0; renderQ(); window.scrollTo({top:0,behavior:"smooth"});
+  step=0; ans=[null,[],null,{elements:[0,1,2],placement:0,prohibit:{0:"no",2:"ok"},pnote:"",pdisc:false}]; renderQ(); window.scrollTo({top:0,behavior:"smooth"});
 });
 $("dlBtn").addEventListener("click",function(){ try{
   var blob=new Blob([fullText()],{type:"text/plain"}); var a=document.createElement("a");
