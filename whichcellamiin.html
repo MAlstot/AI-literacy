@@ -244,6 +244,19 @@
   }
   .restart:hover { background: var(--baylor-gold); color: var(--baylor-green-deep); }
   .restart:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  /* results export */
+  .export-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0 4px; }
+  .export-btn {
+    background: var(--baylor-gold); color: var(--baylor-green-deep);
+    border: none; border-radius: 8px; padding: 10px 16px;
+    font-size: 0.92rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .export-btn:hover { background: #ffcb52; }
+  .export-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .export-btn.ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.6); font-weight: 600; }
+  .export-btn.ghost:hover { border-color: var(--baylor-gold); color: var(--baylor-gold); background: transparent; }
+  .copy-status { font-size: 0.85rem; color: var(--baylor-gold); }
+  .export-hint { font-size: 0.85rem; color: rgba(255,255,255,0.85); margin: 4px 0 12px; }
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
@@ -270,6 +283,12 @@
     <h2>Scenarios complete</h2>
     <div class="score" id="score-line"></div>
     <p id="summary-msg"></p>
+    <div class="export-row">
+      <button class="export-btn" id="dl-results" type="button">Download my results (.txt)</button>
+      <button class="export-btn ghost" id="copy-results" type="button">Copy results to clipboard</button>
+      <span class="copy-status" id="copy-status" role="status" aria-live="polite"></span>
+    </div>
+    <p class="export-hint">Attach the downloaded file — or paste the copied text — into the Canvas submission for this activity.</p>
     <button class="restart" id="restart">Reset and try again</button>
   </div>
 
@@ -479,6 +498,60 @@ function updateProgress() {
     summary.classList.remove('show');
   }
 }
+
+/* --- results export (download / copy for Canvas submission) --- */
+function resultsText() {
+  const lines = [];
+  let both = 0;
+  lines.push('Which Cell Am I In? — My Results');
+  lines.push('Teach Forward: AI Fluency for Practitioners · Module 2');
+  lines.push('Completed: ' + new Date().toLocaleString());
+  lines.push('');
+  SCENARIOS.forEach(s => {
+    const st = state[s.id];
+    const modOK = st.mod === s.correctMod;
+    const dOK = st.d === s.correctD;
+    if (modOK && dOK) both++;
+    lines.push('Scenario ' + s.id + ' (' + s.discipline + ')');
+    lines.push('  My modality call: ' + st.mod + (modOK ? '  [correct]' : '  [correct answer: ' + s.correctMod + ']'));
+    lines.push('  My critical D:    ' + (st.d || '—') + (dOK ? '  [correct]' : '  [correct answer: ' + s.correctD + ']'));
+    lines.push('');
+  });
+  lines.push('Final score: ' + both + ' of 5 fully correct');
+  return lines.join('\n');
+}
+
+document.getElementById('dl-results').addEventListener('click', () => {
+  const blob = new Blob([resultsText()], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'which-cell-am-i-in-results.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+});
+
+document.getElementById('copy-results').addEventListener('click', () => {
+  const t = resultsText();
+  const statusEl = document.getElementById('copy-status');
+  const done = () => {
+    statusEl.textContent = 'Copied — paste into the Canvas submission box.';
+    setTimeout(() => { statusEl.textContent = ''; }, 5000);
+  };
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch (e) { statusEl.textContent = 'Copy failed — use the download button instead.'; }
+    ta.remove();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).then(done, fallback);
+  } else { fallback(); }
+});
 
 document.getElementById('restart').addEventListener('click', () => {
   SCENARIOS.forEach(s => { state[s.id] = { mod: null, d: null, submitted: false }; });
