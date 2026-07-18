@@ -108,10 +108,17 @@ var Z = {
 };
 var MKEYS = ['automation','augmentation','agency'];
 
+var lastH = 0;
 function sendHeight(){
   try{
-    var h = document.documentElement.scrollHeight;
-    var msg = {subject:'lti.frameResize', height:h + 24};
+    /* Measure the panel itself, NOT scrollHeight — scrollHeight is never smaller
+       than the iframe, so measuring it creates a runaway grow loop once the host
+       resizes the frame. 24 = body padding (12px top + bottom). */
+    var mc = document.querySelector('.mc');
+    var h = (mc ? mc.offsetHeight : document.body.offsetHeight) + 24;
+    if (Math.abs(h - lastH) < 4) return; /* no real change — don't re-send */
+    lastH = h;
+    var msg = {subject:'lti.frameResize', height:h};
     window.parent.postMessage(msg,'*');
     window.parent.postMessage(JSON.stringify(msg),'*');
   }catch(e){}
@@ -156,7 +163,7 @@ window.addEventListener('load', sendHeight);
 window.addEventListener('resize', sendHeight);
 document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
 if(window.ResizeObserver){
-  new ResizeObserver(sendHeight).observe(document.body);
+  new ResizeObserver(sendHeight).observe(document.querySelector('.mc'));
 }
 </script>
 </body>
