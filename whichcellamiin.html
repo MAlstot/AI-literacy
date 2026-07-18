@@ -518,6 +518,15 @@ function resultsText() {
     lines.push('');
   });
   lines.push('Final score: ' + both + ' of 5 fully correct');
+  lines.push('');
+  /* machine-readable summary line for cohort-level analysis */
+  const norm = v => (v && v.indexOf('STOP') > -1) ? 'STOP' : (v || 'none');
+  lines.push('SUMMARY: score=' + both + '/5 | ' + SCENARIOS.map(s => {
+    const st = state[s.id];
+    const m = norm(st.mod) + (st.mod === s.correctMod ? '[OK]' : '[X:' + norm(s.correctMod) + ']');
+    const d = norm(st.d) + (st.d === s.correctD ? '[OK]' : '[X:' + norm(s.correctD) + ']');
+    return 'S' + s.id + ':' + m + '/' + d;
+  }).join(' | '));
   return lines.join('\n');
 }
 
