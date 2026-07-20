@@ -142,7 +142,7 @@ input.tx:focus-visible{outline:2px solid #154734;outline-offset:1px}
       <div class="goal"><i class="ti ti-scale" aria-hidden="true"></i><b>Ethical engagement</b><span>What does honest, responsible AI use actually mean for a graduate student?</span></div>
       <div class="goal"><i class="ti ti-bulb" aria-hidden="true"></i><b>Imagination for use</b><span>What could AI make possible in your learning — without short-circuiting the thinking you came here to develop?</span></div>
     </div>
-    <div class="howto"><b>How this works:</b> two <b>musts</b> (watch six short videos, complete the reflection below) and a <b>menu</b> — pick one reading that interests you. At the end, submit your snapshot so I can read it before we meet, and keep a copy for yourself. Your responses come only to me — nothing is graded, and there are no wrong answers.</div>
+    <div class="howto"><b>How this works:</b> watch six short videos, read one item from the menu, then complete the reflection. At the end, submit your snapshot so I can read it before we meet, and keep a copy for yourself. Your responses come only to me — nothing is graded, and there are no wrong answers.</div>
   </div>
 
   <!-- MUST 1: WATCH -->
@@ -161,6 +161,20 @@ input.tx:focus-visible{outline:2px solid #154734;outline-offset:1px}
       </ol>
       <p class="hint" style="margin-top:10px">Want to keep going? The <a href="https://youtube.com/playlist?list=PLf2m23nhTg1NjL3-jL3s0qZCYzO07ZQPv" target="_blank" rel="noopener" style="color:#154734">full 12-video course playlist</a> adds lessons on how generative AI works and effective prompting.</p>
     </div>
+  </div>
+
+  <!-- PICK ONE -->
+  <div class="sec">
+    <span class="step-tag tag-pick"><i class="ti ti-list-check" aria-hidden="true"></i> Menu · Pick one</span>
+    <h2>Choose one short reading</h2>
+    <p>Before you reflect, read one of these — pick whichever one pulls at you. Each comes with a question to bring to our session, and what you read here will sharpen your answers below.</p>
+    <div class="menu" role="radiogroup" aria-label="Choose one reading">
+      <button type="button" class="mitem" data-menu="0" role="radio" aria-checked="false"><span class="mt">~13 min</span><b>Against "Brain Damage"</b><span class="msrc">Ethan Mollick · One Useful Thing</span><span class="mwhy">Does AI make you sharper or softer? The evidence says it depends entirely on <em>how</em> you use it.</span></button>
+      <button type="button" class="mitem" data-menu="1" role="radio" aria-checked="false"><span class="mt">~7 min</span><b>Student Guide to AI Literacy</b><span class="msrc">MLA Style Center</span><span class="mwhy">Seven competencies every student needs — from prompting to verifying to protecting your own learning.</span></button>
+      <button type="button" class="mitem" data-menu="2" role="radio" aria-checked="false"><span class="mt">~9 min</span><b>How University Students Use Claude</b><span class="msrc">Anthropic Education Report</span><span class="mwhy">A million real student conversations — and a warning about which kinds of thinking students hand over first.</span></button>
+      <button type="button" class="mitem" data-menu="3" role="radio" aria-checked="false"><span class="mt">~6 min + try it</span><b>AI as Tutor &amp; Questioning Partner</b><span class="msrc">Northeastern Univ. (written by a grad student)</span><span class="mwhy">Copy-paste prompts that turn AI into a Socratic questioner instead of an answer machine. Try one.</span></button>
+    </div>
+    <div class="mdetail" id="mdetail" hidden></div>
   </div>
 
   <!-- MUST 2: REFLECT -->
@@ -187,7 +201,7 @@ input.tx:focus-visible{outline:2px solid #154734;outline-offset:1px}
     <h2 style="margin-top:22px">Your default mode today</h2>
     <p>The framework describes three ways of working with AI. Which is your <em>default</em> right now, before this program shapes it — or are you not using AI at all yet?</p>
     <div class="modes" role="radiogroup" aria-label="Your default mode of working with AI">
-      <button type="button" class="mode" data-mode="Automation" role="radio" aria-checked="false"><i class="ti ti-robot" aria-hidden="true"></i><b>Automation</b><span>AI does the task; I take the output. Fast, but the thinking happens without me.</span></button>
+      <button type="button" class="mode" data-mode="Automation" role="radio" aria-checked="false"><i class="ti ti-robot" aria-hidden="true"></i><b>Automation</b><span>AI produces the output for tasks I define — and I stay diligent: describing well, evaluating and verifying everything it returns. The better my Ds, the better my automation.</span></button>
       <button type="button" class="mode" data-mode="Augmentation" role="radio" aria-checked="false"><i class="ti ti-users" aria-hidden="true"></i><b>Augmentation</b><span>AI and I trade drafts, critiques, and questions. The thinking stays shared — and mostly mine.</span></button>
       <button type="button" class="mode" data-mode="Agency" role="radio" aria-checked="false"><i class="ti ti-settings" aria-hidden="true"></i><b>Agency</b><span>I set up AI to work on my behalf with my standards — and I stay accountable for what it does.</span></button>
       <button type="button" class="mode" data-mode="Not yet / opting out" role="radio" aria-checked="false"><i class="ti ti-hand-stop" aria-hidden="true"></i><b>Not yet / opting out</b><span>I don't currently use AI — by circumstance, inexperience, or conviction. I want my reasons examined as carefully as anyone's use.</span></button>
@@ -201,22 +215,9 @@ input.tx:focus-visible{outline:2px solid #154734;outline-offset:1px}
 
     <label class="q" for="line2">4. Where could AI genuinely <em>enhance</em> your learning — make you a stronger scholar, not a faster copier? <span class="opt">(Skeptics: what would AI have to prove before you'd let it near your learning?)</span></label>
     <textarea id="line2" rows="2" placeholder="e.g., a Socratic questioner before an exam, a critic of my interview questions, a librarian generating search terms I then refine… — or the bar AI hasn't cleared for you yet."></textarea>
-  </div>
 
-  <!-- PICK ONE -->
-  <div class="sec">
-    <span class="step-tag tag-pick"><i class="ti ti-list-check" aria-hidden="true"></i> Menu · Pick one</span>
-    <h2>Choose one short reading</h2>
-    <p>Pick whichever one pulls at you. Each comes with a question to bring to our session.</p>
-    <div class="menu" role="radiogroup" aria-label="Choose one reading">
-      <button type="button" class="mitem" data-menu="0" role="radio" aria-checked="false"><span class="mt">~13 min</span><b>Against "Brain Damage"</b><span class="msrc">Ethan Mollick · One Useful Thing</span><span class="mwhy">Does AI make you sharper or softer? The evidence says it depends entirely on <em>how</em> you use it.</span></button>
-      <button type="button" class="mitem" data-menu="1" role="radio" aria-checked="false"><span class="mt">~7 min</span><b>Student Guide to AI Literacy</b><span class="msrc">MLA Style Center</span><span class="mwhy">Seven competencies every student needs — from prompting to verifying to protecting your own learning.</span></button>
-      <button type="button" class="mitem" data-menu="2" role="radio" aria-checked="false"><span class="mt">~9 min</span><b>How University Students Use Claude</b><span class="msrc">Anthropic Education Report</span><span class="mwhy">A million real student conversations — and a warning about which kinds of thinking students hand over first.</span></button>
-      <button type="button" class="mitem" data-menu="3" role="radio" aria-checked="false"><span class="mt">~6 min + try it</span><b>AI as Tutor &amp; Questioning Partner</b><span class="msrc">Northeastern Univ. (written by a grad student)</span><span class="mwhy">Copy-paste prompts that turn AI into a Socratic questioner instead of an answer machine. Try one.</span></button>
-    </div>
-    <div class="mdetail" id="mdetail" hidden></div>
-    <label class="q" for="menuNote" id="menuNoteLbl" hidden>One takeaway — or one pushback — to bring to our session:</label>
-    <textarea id="menuNote" rows="2" hidden placeholder="Agree, disagree, complicate — all three are welcome."></textarea>
+    <label class="q" for="menuNote" id="menuNoteLbl">5. From the reading you chose: one takeaway — or one pushback — to bring to our session.</label>
+    <textarea id="menuNote" rows="2" placeholder="Agree, disagree, complicate — all three are welcome."></textarea>
   </div>
 
   <!-- SNAPSHOT -->
@@ -354,8 +355,6 @@ function updScore(k, v){
 (function(){
   var btns = document.querySelectorAll('.mitem');
   var det = document.getElementById('mdetail');
-  var lbl = document.getElementById('menuNoteLbl');
-  var note = document.getElementById('menuNote');
   for (var i=0;i<btns.length;i++){
     btns[i].addEventListener('click', function(){
       menuPick = parseInt(this.getAttribute('data-menu'),10);
@@ -363,8 +362,9 @@ function updScore(k, v){
       this.classList.add('on'); this.setAttribute('aria-checked','true');
       var m = MENU[menuPick];
       det.innerHTML = '<a href="'+m.url+'" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i> Open: '+m.t+'</a>'+
-        '<div class="bq"><b>Bring this question</b>'+m.bq+'</div>';
-      det.hidden = false; lbl.hidden = false; note.hidden = false;
+        '<div class="bq"><b>Bring this question</b>'+m.bq+'</div>'+
+        '<div class="bq" style="margin-top:6px">You’ll capture your takeaway in question 5 of the reflection below.</div>';
+      det.hidden = false;
       refresh(); setTimeout(sendHeight, 80);
     });
   }
