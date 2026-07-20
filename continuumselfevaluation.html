@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Am I on the Continuum? — Faculty Self-Evaluation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F2937;
+    --ink-soft:#4B5563;
+    --paper:#FCFCFA;
+    --panel:#FFFFFF;
+    --line:#D8DCD3;
+    --pine:#1D4E4A;
+    --pine-soft:#EAF1EF;
+    --gold:#B98A2E;
+    --gold-soft:#F7EFDD;
+    --stretch:#C9B27F;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Source Sans 3',system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);
+    line-height:1.55;font-size:16.5px;
+    padding:0;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:clamp(16px,4vw,40px)}
+  h1,h2,h3{font-family:'Bitter',Georgia,serif;color:var(--pine);line-height:1.25}
+  h1{font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700}
+  h2{font-size:1.2rem;font-weight:600;margin-bottom:.5rem}
+  .eyebrow{
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin-bottom:.4rem;
+  }
+  header{margin-bottom:2rem;border-bottom:2px solid var(--pine);padding-bottom:1.25rem}
+  header p{color:var(--ink-soft);margin-top:.6rem;max-width:62ch}
+
+  section{margin-bottom:2.25rem}
+  .step-label{
+    display:inline-block;background:var(--pine);color:#fff;
+    font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:.2rem .6rem;border-radius:3px;margin-bottom:.6rem;
+  }
+
+  /* Level cards */
+  .levels{display:grid;gap:.6rem;margin-top:.75rem}
+  details.level{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;
+  }
+  details.level summary{
+    display:flex;align-items:center;gap:.75rem;cursor:pointer;
+    padding:.7rem .9rem;font-weight:600;list-style:none;
+  }
+  details.level summary::-webkit-details-marker{display:none}
+  details.level[open] summary{border-bottom:1px solid var(--line)}
+  .lvl-num{
+    flex:none;width:2rem;height:2rem;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bitter',serif;font-weight:700;color:#fff;font-size:.95rem;
+  }
+  details.level .body{padding:.7rem .95rem .85rem;color:var(--ink-soft);font-size:.95rem}
+  details.level .body strong{color:var(--ink)}
+  .l1{background:#8A9BA8}.l2{background:#5F8A8B}.l3{background:#3D6F6B}.l4{background:#1D4E4A}.l5{background:#B98A2E}
+
+  /* Form */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:1.1rem 1.15rem;margin-top:.75rem;
+  }
+  .q{margin-bottom:1.35rem}
+  .q:last-child{margin-bottom:0}
+  .q label.qlabel{display:block;font-weight:700;margin-bottom:.15rem}
+  .q .hint{font-size:.88rem;color:var(--ink-soft);margin-bottom:.55rem}
+  .choices{display:flex;flex-wrap:wrap;gap:.45rem}
+  .choices label{
+    border:1.5px solid var(--line);border-radius:999px;
+    padding:.35rem .85rem;cursor:pointer;font-size:.92rem;font-weight:600;
+    color:var(--ink-soft);background:#fff;transition:all .15s ease;
+    user-select:none;
+  }
+  .choices input{position:absolute;opacity:0;pointer-events:none}
+  .choices label:hover{border-color:var(--pine)}
+  .choices label:has(input:checked){
+    background:var(--pine);border-color:var(--pine);color:#fff;
+  }
+  .choices label:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:2px}
+  textarea{
+    width:100%;border:1.5px solid var(--line);border-radius:8px;
+    padding:.6rem .7rem;font:inherit;font-size:.95rem;min-height:84px;resize:vertical;
+    background:#fff;color:var(--ink);
+  }
+  textarea:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--pine)}
+
+  /* Optional candidate-assignment block */
+  .optional-block{
+    border:1.5px dashed var(--stretch);background:var(--gold-soft);
+    border-radius:var(--radius);padding:1rem 1.05rem;margin-top:1.1rem;
+  }
+  .optional-tag{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    padding:.15rem .5rem;border-radius:3px;margin-bottom:.5rem;
+  }
+
+  /* Continuum track — signature element */
+  .track-wrap{margin:1.4rem 0 .4rem;padding:0 .5rem}
+  .track{position:relative;height:6px;border-radius:3px;
+    background:linear-gradient(90deg,#8A9BA8,#5F8A8B,#3D6F6B,#1D4E4A,#B98A2E);
+  }
+  .stretch-band{
+    position:absolute;top:-7px;height:20px;border-radius:10px;
+    background:var(--gold-soft);border:1.5px dashed var(--stretch);
+    opacity:0;transition:all .35s ease;z-index:0;
+  }
+  .stops{position:relative;display:flex;justify-content:space-between;margin-top:.55rem}
+  .stop{flex:1;text-align:center;font-size:.72rem;font-weight:700;
+    letter-spacing:.03em;color:var(--ink-soft);text-transform:uppercase;line-height:1.2}
+  .stop:first-child{text-align:left}.stop:last-child{text-align:right}
+  .pin{
+    position:absolute;top:-30px;transform:translateX(-50%);
+    font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:.15rem .5rem;border-radius:4px;white-space:nowrap;
+    opacity:0;transition:left .35s ease,opacity .3s ease;z-index:1;
+  }
+  .pin::after{
+    content:'';position:absolute;left:50%;top:100%;transform:translateX(-50%);
+    border:5px solid transparent;
+  }
+  .pin.now{background:var(--pine);color:#fff}
+  .pin.now::after{border-top-color:var(--pine)}
+  .pin.aim{background:var(--gold);color:#fff;top:auto;bottom:-30px}
+  .pin.aim::after{top:auto;bottom:100%;border-bottom-color:var(--gold);border-top-color:transparent}
+  .pin.visible{opacity:1}
+  .track-note{font-size:.85rem;color:var(--ink-soft);text-align:center;margin-top:2.2rem;font-style:italic;min-height:1.3em}
+
+  /* Buttons + summary */
+  .actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.25rem}
+  button{
+    font:inherit;font-weight:700;border-radius:8px;cursor:pointer;
+    padding:.55rem 1.15rem;border:1.5px solid var(--pine);
+    transition:all .15s ease;font-size:.95rem;
+  }
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .btn-primary{background:var(--pine);color:#fff}
+  .btn-primary:hover{background:#16403C}
+  .btn-secondary{background:#fff;color:var(--pine)}
+  .btn-secondary:hover{background:var(--pine-soft)}
+  .btn-secondary[disabled]{opacity:.45;cursor:not-allowed}
+  #summary{
+    display:none;background:var(--pine-soft);border:1px solid var(--pine);
+    border-radius:var(--radius);padding:1.15rem 1.2rem;margin-top:1.25rem;
+  }
+  #summary h2{margin-bottom:.7rem}
+  #summary .row{margin-bottom:.6rem;font-size:.97rem}
+  #summary .row b{color:var(--pine)}
+  .gap-flag{
+    display:inline-block;background:var(--gold-soft);border:1px solid var(--stretch);
+    border-radius:6px;padding:.4rem .7rem;font-size:.9rem;margin-top:.4rem;
+  }
+  .footnote{font-size:.82rem;color:var(--ink-soft);margin-top:2rem;border-top:1px solid var(--line);padding-top:.8rem}
+
+  @media (prefers-reduced-motion:reduce){
+    .pin,.stretch-band{transition:none}
+  }
+  @media print{
+    .no-print{display:none !important}
+    #summary{display:block !important}
+    body{padding:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Teaching Forward · Module 4 · Practice Activity</div>
+  <h1>Where Am I on the Continuum?</h1>
+  <p>Take a few minutes to place <em>yourself</em> on the AI Literacy Continuum — and, if you'd like, place an assignment you're considering redesigning. There are no wrong answers here; the goal is an honest snapshot of where your teaching sits today, where you feel confident, and where a candidate assignment might go. You won't formally choose your redesign assignment until Module 8, so nothing here is locked in — this is simply a chance to practice the lens on something you're already thinking about. Your responses stay on this page until you download them; nothing is submitted or saved.</p>
+</header>
+
+<section>
+  <span class="step-label">Step 1 · Review</span>
+  <h2>The Five Levels at a Glance</h2>
+  <p class="hint" style="color:var(--ink-soft);font-size:.92rem">Tap each level to expand. Notice two things as you move right: the 4Ds intensify — what you <strong>delegate</strong> expands, the <strong>discernment</strong> students must exercise deepens, and the <strong>diligence</strong> (documentation) expected grows — and <em>every</em> level, including No AI Use, carries its own AI-literacy focus.</p>
+  <div class="levels">
+    <details class="level">
+      <summary><span class="lvl-num l1">1</span> Level 1 — No AI Use</summary>
+      <div class="body">Students complete the work entirely without AI. <strong>Best for:</strong> assessing foundational knowledge and skills students must own independently. <strong>4Ds connection:</strong> the delegation decision is "delegate nothing" — and that's a deliberate, defensible choice, not a default. <strong>AI-literacy focus:</strong> students still learn — they understand the limits of AI use, recognize ethical boundaries, and identify AI-detection and plagiarism concerns, because you <em>explain why</em> AI is set aside for this task.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l2">2</span> Level 2 — Limited AI Use</summary>
+      <div class="body">AI is permitted for narrow, specified tasks (brainstorming, feedback on drafts) while core work remains the student's. <strong>4Ds connection:</strong> description skills begin to matter; students acknowledge where AI assisted. <strong>AI-literacy focus:</strong> transparency and disclosure of AI use, recognizing bias and misinformation, and effective prompting for clarification or revision.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l3">3</span> Level 3 — Collaborative AI Use</summary>
+      <div class="body">Students work with AI as a thought partner throughout the task — generating, critiquing, and revising — while adapting or rejecting its contributions with justification. <strong>4Ds connection:</strong> discernment is the heart of this level; documentation of the collaboration becomes expected. <strong>AI-literacy focus:</strong> prompt strategy and iterative refinement, critically evaluating and editing AI output, and identifying its limitations and reasoning gaps.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l4">4</span> Level 4 — Integrated AI Use</summary>
+      <div class="body">AI is woven into the workflow the way it is in professional practice — purposeful tool selection, strategic prompting, and critical synthesis of outputs. <strong>4Ds connection:</strong> all four Ds operate together; diligence expands to transcripts and rationale for AI decisions. <strong>AI-literacy focus:</strong> ethical reasoning and responsible integration, domain-specific fluency and purposeful tool selection, and iterative workflow integration.</div>
+    </details>
+    <details class="level">
+      <summary><span class="lvl-num l5">5</span> Level 5 — AI Innovation</summary>
+      <div class="body">Students use AI to create novel approaches, products, or insights — exploring what the technology makes newly possible in the discipline. <strong>4Ds connection:</strong> delegation and description at their most sophisticated; diligence includes ethical analysis of the innovation itself. <strong>AI-literacy focus:</strong> literacy in AI policy, ethics, and governance; leading or innovating in emerging applications; and advocating for responsible AI practice.</div>
+    </details>
+  </div>
+</section>
+
+<section class="no-print">
+  <span class="step-label">Step 2 · Reflect</span>
+  <h2>Your Self-Placement</h2>
+  <div class="card">
+    <div class="q">
+      <label class="qlabel">Where does your current instruction sit?</label>
+      <p class="hint">Think about the assignments you actually give today — not aspirations, just current practice.</p>
+      <div class="choices" role="radiogroup" aria-label="Current instruction level" id="q-current">
+        <label><input type="radio" name="current" value="1">1 · No AI</label>
+        <label><input type="radio" name="current" value="2">2 · Limited</label>
+        <label><input type="radio" name="current" value="3">3 · Collaborative</label>
+        <label><input type="radio" name="current" value="4">4 · Integrated</label>
+        <label><input type="radio" name="current" value="5">5 · Innovation</label>
+      </div>
+    </div>
+    <div class="q">
+      <label class="qlabel">Where do you feel most comfortable supporting students right now?</label>
+      <p class="hint">This may differ from where your instruction sits — comfort and current practice don't always match.</p>
+      <div class="choices" role="radiogroup" aria-label="Comfort level" id="q-comfort">
+        <label><input type="radio" name="comfort" value="1">1 · No AI</label>
+        <label><input type="radio" name="comfort" value="2">2 · Limited</label>
+        <label><input type="radio" name="comfort" value="3">3 · Collaborative</label>
+        <label><input type="radio" name="comfort" value="4">4 · Integrated</label>
+        <label><input type="radio" name="comfort" value="5">5 · Innovation</label>
+      </div>
+    </div>
+    <div class="q">
+      <label class="qlabel">What level should your redesign candidate aim for?</label>
+      <p class="hint">Choose the level that best serves your learning goals and students' AI literacy — even if it stretches beyond your current comfort. If you name a specific assignment below, this is the level you'd move it toward.</p>
+      <div class="choices" role="radiogroup" aria-label="Target level" id="q-target">
+        <label><input type="radio" name="target" value="1">1 · No AI</label>
+        <label><input type="radio" name="target" value="2">2 · Limited</label>
+        <label><input type="radio" name="target" value="3">3 · Collaborative</label>
+        <label><input type="radio" name="target" value="4">4 · Integrated</label>
+        <label><input type="radio" name="target" value="5">5 · Innovation</label>
+      </div>
+    </div>
+
+    <div class="optional-block">
+      <span class="optional-tag">Optional</span>
+      <div class="q" style="margin-bottom:1rem">
+        <label class="qlabel" for="assignName">Place an assignment you're considering</label>
+        <p class="hint">You won't formally choose your redesign assignment until Module 8 — nothing here is locked in. But if a candidate is already on your mind, name it, then use what you explored in Modules 1–3 to place it. Where it sits today, paired with the target you chose above, is where your redesign work will begin.</p>
+        <textarea id="assignName" placeholder="e.g., The semester marketing-plan analysis in MKT 3310…" style="min-height:52px"></textarea>
+      </div>
+      <div class="q">
+        <label class="qlabel">Where does that assignment sit <em>today</em>, as it's currently written?</label>
+        <p class="hint">Not where you'd like it to be — where it actually lands right now.</p>
+        <div class="choices" role="radiogroup" aria-label="Assignment current level" id="q-assignnow">
+          <label><input type="radio" name="assignnow" value="1">1 · No AI</label>
+          <label><input type="radio" name="assignnow" value="2">2 · Limited</label>
+          <label><input type="radio" name="assignnow" value="3">3 · Collaborative</label>
+          <label><input type="radio" name="assignnow" value="4">4 · Integrated</label>
+          <label><input type="radio" name="assignnow" value="5">5 · Innovation</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="q" style="margin-top:1.35rem">
+      <label class="qlabel" for="ready">What would you need to feel ready to support students at your target level?</label>
+      <p class="hint">Skills, examples, tools, time, backup — anything. This becomes a great agenda item for your 1:1 consultation.</p>
+      <textarea id="ready" placeholder="e.g., I'd want to see a model assignment in my discipline, and practice evaluating AI output on the kind of analysis I assign…"></textarea>
+    </div>
+    <div class="q">
+      <label class="qlabel" for="fourds">Which of the 4Ds feels strongest for you right now — and which needs the most growth?</label>
+      <textarea id="fourds" placeholder="e.g., Discernment is my strength — I can spot a weak AI answer in my field. Description (framing the problem for AI) is where I need practice…"></textarea>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="step-label">Step 3 · See It</span>
+  <h2>Your Continuum</h2>
+  <div class="track-wrap" aria-hidden="true">
+    <div style="position:relative;padding:32px 0">
+      <div class="track">
+        <div class="stretch-band" id="stretchBand"></div>
+        <div class="pin now" id="pinNow">You are here</div>
+        <div class="pin aim" id="pinAim">Aiming for</div>
+      </div>
+    </div>
+    <div class="stops">
+      <span class="stop">No AI</span><span class="stop">Limited</span><span class="stop">Collaborative</span><span class="stop">Integrated</span><span class="stop">Innovation</span>
+    </div>
+    <p class="track-note" id="trackNote">Answer the questions above to see your placement.</p>
+  </div>
+
+  <div class="actions no-print">
+    <button class="btn-primary" id="btnGenerate">Generate my self-evaluation</button>
+    <button class="btn-secondary" id="btnDownload" disabled>Download (.txt)</button>
+    <button class="btn-secondary" id="btnPrint" disabled>Print / save as PDF</button>
+  </div>
+  <p class="no-print" id="printHint" style="font-size:.82rem;color:var(--ink-soft);margin-top:.5rem">If the print dialog doesn't open, this page is inside an embedded preview — open it in its own browser tab and try again, or use the Download button.</p>
+
+  <div id="summary" role="region" aria-live="polite">
+    <h2>Self-Evaluation Summary</h2>
+    <div id="summaryBody"></div>
+  </div>
+</section>
+
+<p class="footnote">This practice activity supports CLO 2 (applying the IWU 5-Level AI Literacy Continuum) and builds on the 4Ds &amp; 3 Modalities framework from Module 2. Bring your downloaded summary to the synchronous workshops and your 1:1 consultation. Continuum adapted from the IWU 5-Level AI Literacy Continuum (Indiana Wesleyan University).</p>
+</div>
+
+<script>
+/* Canvas iframe auto-resize — measures the .wrap wrapper (viewport-independent) */
+(function(){
+  var lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight);
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+  document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
+  setTimeout(sendHeight, 120);
+})();
+</script>
+
+<script>
+(function(){
+  const LEVELS = {1:"Level 1 — No AI Use",2:"Level 2 — Limited AI Use",3:"Level 3 — Collaborative AI Use",4:"Level 4 — Integrated AI Use",5:"Level 5 — AI Innovation"};
+  const state = {current:null, comfort:null, target:null};
+  const pinNow = document.getElementById('pinNow');
+  const pinAim = document.getElementById('pinAim');
+  const band = document.getElementById('stretchBand');
+  const note = document.getElementById('trackNote');
+  const btnDownload = document.getElementById('btnDownload');
+  const btnPrint = document.getElementById('btnPrint');
+  let summaryText = '';
+
+  function pct(level){ return ((level-1)/4)*100; }
+
+  function updateTrack(){
+    if(state.current){ pinNow.style.left = pct(state.current)+'%'; pinNow.classList.add('visible'); }
+    if(state.target){ pinAim.style.left = pct(state.target)+'%'; pinAim.classList.add('visible'); }
+    if(state.current && state.target){
+      const lo = Math.min(state.current,state.target), hi = Math.max(state.current,state.target);
+      if(hi>lo){
+        band.style.left = pct(lo)+'%';
+        band.style.width = (pct(hi)-pct(lo))+'%';
+        band.style.opacity = '1';
+      } else { band.style.opacity = '0'; }
+      const gap = state.target - state.current;
+      if(gap>1) note.textContent = 'A meaningful stretch — exactly what this program is built to support.';
+      else if(gap===1) note.textContent = 'One level up: an ambitious but very achievable target.';
+      else if(gap===0) note.textContent = 'Deepening practice at your current level — refinement is progress too.';
+      else note.textContent = 'Aiming below current practice can be intentional — some learning goals call for less AI, not more.';
+    }
+  }
+
+  document.querySelectorAll('.choices input[name="current"],.choices input[name="comfort"],.choices input[name="target"]').forEach(el=>{
+    el.addEventListener('change', e=>{
+      state[e.target.name] = parseInt(e.target.value,10);
+      updateTrack();
+    });
+  });
+
+  document.getElementById('btnGenerate').addEventListener('click', ()=>{
+    if(!state.current || !state.comfort || !state.target){
+      note.textContent = 'Please answer the first three questions before generating your summary.';
+      return;
+    }
+    const ready = document.getElementById('ready').value.trim() || '(not answered)';
+    const fourds = document.getElementById('fourds').value.trim() || '(not answered)';
+
+    // Optional candidate-assignment placement
+    const assignName = document.getElementById('assignName').value.trim();
+    const assignNowEl = document.querySelector('input[name="assignnow"]:checked');
+    const assignNow = assignNowEl ? parseInt(assignNowEl.value,10) : null;
+
+    const gap = state.target - state.current;
+    const comfortGap = state.target - state.comfort;
+    let gapNote;
+    if(gap>0) gapNote = 'Your target sits '+gap+' level'+(gap>1?'s':'')+' above your current practice — this stretch zone is where the workshops and consultations will focus.';
+    else if(gap===0) gapNote = 'Your target matches your current practice — your redesign will deepen and refine work at this level.';
+    else gapNote = 'Your target sits below your current practice — an intentional choice when learning goals call for students to work without AI.';
+    let comfortNote = '';
+    if(comfortGap>0) comfortNote = ' Note: your target is beyond your current comfort level ('+LEVELS[state.comfort]+') — name what support would close that gap in your consultation.';
+
+    // Build optional assignment block
+    let assignTxt = '';
+    let assignHtml = '';
+    if(assignName || assignNow){
+      const nm = assignName || '(candidate not named)';
+      let mv = '';
+      if(assignNow){
+        const d = state.target - assignNow;
+        mv = d>0 ? ' — a move of '+d+' level'+(d>1?'s':'')+' up'
+           : d===0 ? ' — holding at this level, with a redesign that deepens the work'
+           : ' — an intentional move down, protecting more of the student’s own work';
+      }
+      assignTxt = 'AN ASSIGNMENT I’M CONSIDERING\n'+nm+'\n'+
+        (assignNow
+          ? 'Sits today at:    '+LEVELS[assignNow]+'\nCould move toward: '+LEVELS[state.target]+mv+'\n'
+          : 'Could move toward: '+LEVELS[state.target]+'\n')+
+        '(Not locked in — you’ll finalize your redesign assignment in Module 8.)\n\n';
+      assignHtml = '<div class="row gap-flag" style="margin-top:.9rem"><b>An assignment I’m considering:</b> '+escapeHtml(nm)+
+        (assignNow
+          ? '<br>Sits today at <b>'+LEVELS[assignNow]+'</b>; could move toward <b>'+LEVELS[state.target]+'</b>'+escapeHtml(mv)
+          : '<br>Could move toward <b>'+LEVELS[state.target]+'</b>')+
+        '<br><em style="font-size:.85rem">Not locked in — you’ll finalize your redesign assignment in Module 8.</em></div>';
+    }
+
+    const SHORT = {1:'No AI Use',2:'Limited AI Use',3:'Collaborative AI Use',4:'Integrated AI Use',5:'AI Innovation'};
+    const DOCS = {1:'no AI acknowledgment is expected — the design decision itself is what you document',
+      2:'a brief acknowledgment of where AI assisted',
+      3:'documentation of the collaboration — what AI contributed, and what students adapted or rejected with justification',
+      4:'transcripts and rationale for AI decisions, mirroring professional practice',
+      5:'full documentation plus ethical analysis of the innovation itself'};
+    const cur = state.current, tgt = state.target, cmf = state.comfort;
+    const noAI = (tgt === 1);
+    const roadmap = [];
+    roadmap.push({d:'Day 1 — SAMR & Activity Inventory',
+      n: noAI ? 'Choosing '+SHORT[1]+' is a designed position, not a default. The Activity Inventory names the cognitive work your assignment develops — so your Level 1 choice becomes explicit and defensible, and you\'ll hear how colleagues across the continuum reason about the same decision. Confidence here starts with clarity about what your assignment actually asks students to think.'
+       : gap>0 ? 'Your placement gets confirmed with the cohort, and the Activity Inventory breaks your Level '+cur+' ('+SHORT[cur]+') assignment into tasks — the raw material for the climb to Level '+tgt+'. Confidence starts with seeing the assignment concretely; you can\'t feel ready to change what you haven\'t named.'
+       : gap===0 ? 'Confirm your Level '+cur+' ('+SHORT[cur]+') placement with the cohort, then use the Activity Inventory to see the assignment task-by-task. Confidence here is confirmation — hearing your reasoning hold up in the room.'
+       : 'Confirm your placement, then use the Activity Inventory on your Level '+cur+' ('+SHORT[cur]+') assignment to identify precisely which tasks carry the cognitive work you intend to protect at Level '+tgt+'. Naming what you\'re protecting, and why, is the first confidence move.'});
+    roadmap.push({d:'Day 2 — AI Stress Test & Gap Analysis',
+      n: noAI ? 'Essential for you — you can\'t design AI-resistance without seeing what you\'re resisting. The stress test shows exactly what generic AI produces for your assignment, and the Gap Analysis identifies where student reasoning must live. That evidence is what turns "no AI" from a policy into a design. Confidence here comes from replacing worry with specifics.'
+       : gap>1 ? 'Your heavy-lift day. With a '+gap+'-level climb to '+SHORT[tgt]+', expect the stress test to reassign several tasks — what AI already does well becomes your integration material, and what it can\'t becomes the human core your redesign protects. Confidence comes from evidence: you\'ll know what AI actually does with your assignment, not what you fear it might.'
+       : gap===1 ? 'Your heavy-lift day. The stress test shows what AI can already do with your assignment — those tasks are your candidates for '+SHORT[tgt]+'-style integration, one deliberate level up from today. Seeing the output firsthand replaces uncertainty with evidence, which is where confidence starts.'
+       : gap===0 ? 'The stress test may surprise you even holding steady at '+SHORT[tgt]+' — watch for tasks that no longer serve the learning objective; trimming them is refinement too. Confidence grows from knowing your design holds up against real AI output.'
+       : 'Your decisive day. The Gap Analysis separates at-risk tasks from human-essential ones — the evidence for moving from '+SHORT[cur]+' toward '+SHORT[tgt]+' and for exactly which tasks justify it. Evidence beats instinct for building confidence in a protective design.'});
+    roadmap.push({d:'Day 3 — Redesign & Rubric Building',
+      n: noAI ? 'Your build day, and here\'s the reframe: a well-designed AI-resistant assignment IS AI-literacy teaching. Task structures that keep reasoning with the student — process documentation, live or localized elements, oral components — develop exactly the critical thinking that professional bodies name as the durable human skill. You\'ll build a rubric that measures cognitive work AI can\'t replicate, with support in the room while you do it.'
+       : (gap>0 ? 'You\'ll draft the redesign that closes your stretch zone, with facilitators and peers in the room while you do it — confidence built by doing the work with support, not by reading about it. '
+        : gap===0 ? 'Your emphasis day: make '+SHORT[cur]+' explicit and defensible in the rubric rather than implicit — the confidence of having your expectations in writing. '
+        : 'You\'ll build the safeguards: rubric criteria that measure the cognitive work you\'re protecting, with integrity considerations made explicit. ')
+        + 'At your target — Level '+tgt+' ('+SHORT[tgt]+') — documentation expectations mean '+DOCS[tgt]+'; build that into the rubric on Day 3, not after.'});
+    roadmap.push({d:'Day 4 — Peer Review & Commitments',
+      n: (comfortGap>0 ? 'Especially important for you: your target ('+SHORT[tgt]+') sits '+comfortGap+' level'+(comfortGap>1?'s':'')+' beyond your comfort zone ('+SHORT[cmf]+'). Use the Commitment Card and consultation sign-up to name exactly what would close that gap — examples, practice, backup. '
+       : 'Peer review pressure-tests your '+(noAI ? 'AI-resistant' : SHORT[tgt])+' redesign, and the Commitment Card turns it into a dated plan — arrive ready to articulate your design decisions. ')
+       + 'This is where confidence becomes visible: explaining your choices to colleagues and hearing that they hold.'});
+
+    const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const roadTxt = roadmap.map(r => r.d.toUpperCase()+'\n'+r.n).join('\n\n');
+    summaryText =
+'AI LITERACY CONTINUUM — FACULTY SELF-EVALUATION\n'+
+'Teaching Forward: AI Fluency for Practitioners · Module 4\n'+
+'Date: '+date+'\n\n'+
+'Current instruction level:  '+LEVELS[state.current]+'\n'+
+'Comfort level:              '+LEVELS[state.comfort]+'\n'+
+'Redesign target level:      '+LEVELS[state.target]+'\n\n'+
+'PLACEMENT NOTE\n'+gapNote+comfortNote+'\n\n'+
+assignTxt+
+'WHAT I NEED TO FEEL READY\n'+ready+'\n\n'+
+'MY 4Ds REFLECTION (strongest / growth area)\n'+fourds+'\n\n'+
+'YOUR WORKSHOP ROADMAP — how each day builds your confidence\n(All four sessions build on each other; this is where to focus your attention given your placements.)\n\n'+roadTxt+'\n\n'+
+'NEXT STEP\nBring this summary to the synchronous workshops and your 1:1 consultation.\n';
+
+    document.getElementById('summaryBody').innerHTML =
+      '<div class="row"><b>Current practice:</b> '+LEVELS[state.current]+'</div>'+
+      '<div class="row"><b>Comfort level:</b> '+LEVELS[state.comfort]+'</div>'+
+      '<div class="row"><b>Redesign target:</b> '+LEVELS[state.target]+'</div>'+
+      '<div class="row gap-flag">'+gapNote+comfortNote+'</div>'+
+      assignHtml+
+      '<div class="row" style="margin-top:.8rem"><b>What I need to feel ready:</b><br>'+escapeHtml(ready)+'</div>'+
+      '<div class="row"><b>My 4Ds reflection:</b><br>'+escapeHtml(fourds)+'</div>'+
+      '<div class="row" style="margin-top:1rem"><b>Your workshop roadmap</b> — how each day builds your confidence <em style="font-weight:400;font-size:.85rem">(all four sessions build on each other; this is where to focus given your placements)</em></div>'+
+      roadmap.map(r => '<div class="row" style="padding-left:.75rem;border-left:3px solid var(--gold);margin-left:.15rem"><b>'+r.d+'</b><br>'+r.n+'</div>').join('');
+    document.getElementById('summary').style.display = 'block';
+    btnDownload.disabled = false;
+    btnPrint.disabled = false;
+    document.getElementById('summary').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+
+  document.getElementById('btnDownload').addEventListener('click', ()=>{
+    const blob = new Blob([summaryText], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ai-literacy-self-evaluation.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById('btnPrint').addEventListener('click', ()=>{
+    try { window.print(); } catch(e) {
+      const hint = document.getElementById('printHint');
+      if(hint) hint.style.display = 'block';
+    }
+  });
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+})();
+</script>
+</body>
+</html>
