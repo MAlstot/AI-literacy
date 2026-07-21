@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Do Professors Alvarez and Lin Land?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F2937; --ink-soft:#4B5563; --paper:#FCFCFA; --panel:#FFFFFF;
+    --line:#D8DCD3; --pine:#1D4E4A; --pine-soft:#EAF1EF; --gold:#B98A2E;
+    --gold-soft:#F7EFDD; --stretch:#C9B27F; --radius:10px;
+    --ok:#1D6E3C; --ok-soft:#E6F2E9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Source Sans 3',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;font-size:16.5px;padding:0}
+  .wrap{max-width:880px;margin:0 auto;padding:clamp(16px,4vw,40px)}
+  h1,h2,h3{font-family:'Bitter',Georgia,serif;color:var(--pine);line-height:1.25}
+  h1{font-size:clamp(1.4rem,3.2vw,1.85rem);font-weight:700}
+  .eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:.4rem}
+  header{margin-bottom:1.3rem;border-bottom:2px solid var(--pine);padding-bottom:1.05rem}
+  header p{color:var(--ink-soft);margin-top:.55rem;max-width:64ch}
+
+  /* continuum reminder strip */
+  .strip-wrap{margin:1.1rem 0 1.6rem}
+  .strip{height:7px;border-radius:4px;background:linear-gradient(90deg,#8A9BA8,#5F8A8B,#3D6F6B,#1D4E4A,#B98A2E)}
+  .strip-labels{display:flex;gap:.4rem;margin-top:.5rem}
+  .strip-labels span{flex:1;text-align:center;font-size:.72rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-soft);line-height:1.2}
+  .strip-labels span:first-child{text-align:left}.strip-labels span:last-child{text-align:right}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:1.05rem 1.1rem;margin-bottom:1.1rem}
+  .card .who{font-family:'Bitter',serif;font-weight:700;color:var(--pine);font-size:1.08rem;margin-bottom:.25rem}
+  .card .scenario{color:var(--ink);margin-bottom:.85rem}
+  .qlabel{font-weight:700;font-size:.92rem;margin-bottom:.45rem;display:block}
+  .choices{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:.9rem}
+  .choices label{border:1.5px solid var(--line);border-radius:999px;padding:.35rem .8rem;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--ink-soft);background:#fff;transition:all .15s ease;user-select:none}
+  .choices input{position:absolute;opacity:0;pointer-events:none}
+  .choices label:hover{border-color:var(--pine)}
+  .choices label:has(input:checked){background:var(--pine);border-color:var(--pine);color:#fff}
+  .choices label:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:2px}
+
+  button.reveal{font:inherit;font-weight:700;border-radius:8px;cursor:pointer;padding:.5rem 1.05rem;border:1.5px solid var(--pine);background:var(--pine);color:#fff;font-size:.92rem;transition:background .15s ease}
+  button.reveal:hover{background:#16403C}
+  button.reveal:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+  .answer{display:none;margin-top:.9rem;border-left:4px solid var(--gold);background:var(--gold-soft);border-radius:8px;padding:.8rem .9rem}
+  .answer.show{display:block}
+  .verdict{font-weight:700;margin-bottom:.35rem}
+  .verdict.correct{color:var(--ok)}
+  .badge{display:inline-block;font-family:'Bitter',serif;font-weight:700;color:#fff;font-size:.85rem;padding:.18rem .6rem;border-radius:5px;margin-bottom:.4rem}
+  .b2{background:#5F8A8B}.b3{background:#3D6F6B}
+  .answer p{font-size:.95rem;color:var(--ink)}
+
+  .footnote{font-size:.82rem;color:var(--ink-soft);margin-top:1.4rem;border-top:1px solid var(--line);padding-top:.75rem}
+  @media (max-width:560px){.choices label{font-size:.82rem;padding:.32rem .6rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Teaching Forward · Module 4 · Scenario Check</div>
+  <h1>Where Do Professors Alvarez and Lin Land?</h1>
+  <p>You met Dr. Alvarez and Dr. Lin in the overview. Using the levels you just reviewed, where does each one’s assignment sit on the continuum? Choose a level for each, then reveal the answer. It’s ungraded — just a quick check of your read.</p>
+</header>
+
+<div class="strip-wrap" aria-hidden="true">
+  <div class="strip"></div>
+  <div class="strip-labels"><span>No AI</span><span>Limited</span><span>Collaborative</span><span>Integrated</span><span>Innovation</span></div>
+</div>
+
+<div class="card" data-card="a">
+  <div class="who">Dr. Alvarez</div>
+  <p class="scenario">Students brainstorm campaign angles with AI, but the strategic analysis must be entirely their own.</p>
+  <span class="qlabel" id="lbl-a">Where does this assignment sit?</span>
+  <div class="choices" role="radiogroup" aria-labelledby="lbl-a">
+    <label><input type="radio" name="a" value="1">1 · No AI</label>
+    <label><input type="radio" name="a" value="2">2 · Limited</label>
+    <label><input type="radio" name="a" value="3">3 · Collaborative</label>
+    <label><input type="radio" name="a" value="4">4 · Integrated</label>
+    <label><input type="radio" name="a" value="5">5 · Innovation</label>
+  </div>
+  <button class="reveal" data-for="a" aria-expanded="false" aria-controls="ans-a">Reveal answer</button>
+  <div class="answer" id="ans-a" role="region" aria-live="polite"></div>
+</div>
+
+<div class="card" data-card="b">
+  <div class="who">Dr. Lin</div>
+  <p class="scenario">Students co-write the market analysis with AI, then defend, line by line, every suggestion they kept or rejected.</p>
+  <span class="qlabel" id="lbl-b">Where does this assignment sit?</span>
+  <div class="choices" role="radiogroup" aria-labelledby="lbl-b">
+    <label><input type="radio" name="b" value="1">1 · No AI</label>
+    <label><input type="radio" name="b" value="2">2 · Limited</label>
+    <label><input type="radio" name="b" value="3">3 · Collaborative</label>
+    <label><input type="radio" name="b" value="4">4 · Integrated</label>
+    <label><input type="radio" name="b" value="5">5 · Innovation</label>
+  </div>
+  <button class="reveal" data-for="b" aria-expanded="false" aria-controls="ans-b">Reveal answer</button>
+  <div class="answer" id="ans-b" role="region" aria-live="polite"></div>
+</div>
+
+<p class="footnote">Ungraded self-check · supports MLO A4.1 (place assignments on the IWU AI Literacy Continuum). Continuum adapted from the IWU 5-Level AI Literacy Continuum (Indiana Wesleyan University).</p>
+</div>
+
+<script>
+(function(){
+  const NAMES = {1:'No AI Use',2:'Limited AI Use',3:'Collaborative AI Use',4:'Integrated AI Use',5:'AI Innovation'};
+  const ITEMS = {
+    a:{answer:2,rationale:'AI helps with one bounded task — idea generation — while the core intellectual work stays the student’s. That bounded, on-the-edges help is the signature of Limited AI Use.'},
+    b:{answer:3,rationale:'AI is a thought partner throughout, and the real work is judging what to keep or reject with justification — the signature of Collaborative AI Use. If students simply accepted the AI’s draft, it would fall lower; the line-by-line defense is what makes it Level 3.'}
+  };
+
+  document.querySelectorAll('button.reveal').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const key = btn.getAttribute('data-for');
+      const item = ITEMS[key];
+      const box = document.getElementById('ans-'+key);
+      const picked = document.querySelector('input[name="'+key+'"]:checked');
+      const chosen = picked ? parseInt(picked.value,10) : null;
+      let verdict='';
+      if(chosen===item.answer){
+        verdict = '<div class="verdict correct">✓ You chose Level '+chosen+' — that’s it.</div>';
+      } else if(chosen){
+        verdict = '<div class="verdict">You chose Level '+chosen+' ('+NAMES[chosen]+'). The signature here is Level '+item.answer+' — see why:</div>';
+      }
+      box.innerHTML = verdict +
+        '<span class="badge b'+item.answer+'">Level '+item.answer+' · '+NAMES[item.answer]+'</span>'+
+        '<p>'+item.rationale+'</p>';
+      box.classList.add('show');
+      btn.setAttribute('aria-expanded','true');
+      btn.textContent = 'Answer shown';
+      btn.disabled = false;
+      setTimeout(sendHeight,60);
+    });
+  });
+
+  /* Canvas iframe auto-resize — measures the .wrap wrapper (viewport-independent) */
+  var lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight);
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){ var w=document.querySelector('.wrap'); if(w) new ResizeObserver(sendHeight).observe(w); }
+  setTimeout(sendHeight,120);
+})();
+</script>
+</body>
+</html>
