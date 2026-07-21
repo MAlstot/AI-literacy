@@ -71,6 +71,11 @@
   .tag.why{background:var(--gold-soft);color:#8a6410}
   .facet p{color:var(--ink);font-size:.96rem}
   .foundnote{font-size:.82rem;color:var(--ink-soft);margin-top:.15rem}
+  .tag.lit{background:var(--pine);color:#fff}
+  .litbox{background:var(--pine-soft);border-left:4px solid var(--pine);border-radius:8px;padding:.7rem .85rem}
+  .litbox ul{margin:.15rem 0 0 1.05rem}
+  .litbox li{font-size:.95rem;margin-bottom:.2rem}
+  .litbox .accrue{font-size:.82rem;color:var(--ink-soft);font-style:italic;margin-top:.5rem}
 
   .footnote{font-size:.82rem;color:var(--ink-soft);margin-top:1.8rem;border-top:1px solid var(--line);padding-top:.8rem}
   @media (max-width:560px){
@@ -84,8 +89,8 @@
 <div class="wrap">
 <header>
   <div class="eyebrow">Teaching Forward · Module 4 · The Continuum</div>
-  <h1>How the Levels Build</h1>
-  <p>The IWU AI Literacy Continuum is <strong>cumulative</strong>: each level assumes the judgment demanded by the levels beneath it and adds one more layer. "Higher" does not mean "better" — it means <em>more</em> AI integration, and more of the human oversight that makes it responsible. Open each level to see what it builds on and the cognitive payoff of placing an assignment there. Use the buttons to jump to a level.</p>
+  <h1>Explore the Continuum</h1>
+  <p>The IWU AI Literacy Continuum is <strong>cumulative</strong>: each level assumes the judgment of the levels beneath it and adds one more. Open each level to see three things — what it <strong>builds on</strong>, the <strong>cognitive payoff</strong> of placing an assignment there, and the <strong>AI literacy it develops</strong>. That last point is the heart of the framework: <em>every level develops AI literacy — even Level 1, No AI Use</em>, where the literacy comes from explaining to students why AI is set aside. "Higher" is not "better"; it is just more integrated.</p>
 </header>
 
 <div class="track-wrap" aria-hidden="true"><div class="track"></div></div>
@@ -103,7 +108,7 @@
 
 <div class="levels" id="levels"></div>
 
-<p class="footnote">Supports MLO A4.1 (describe the five levels and how they build cumulatively) and A4.2 (how the 4Ds intensify across the continuum). Continuum adapted from the IWU 5-Level AI Literacy Continuum (Indiana Wesleyan University).</p>
+<p class="footnote">Supports MLO A4.1–A4.2 (the five levels, how they build, and the AI literacy each develops). AI-literacy focus adapted from the IWU N&amp;G AI Literacy and Integration Scale (Bleistein &amp; Snyder, EDUCAUSE Review, 2026); continuum adapted from the IWU 5-Level AI Literacy Continuum (Indiana Wesleyan University).</p>
 </div>
 
 <script>
@@ -138,19 +143,29 @@
   const DATA = [
     {n:1,name:'No AI Use',sub:'Delegate nothing — by design',
       builds:'This is the foundation. Every level above assumes students can do this core cognitive work unaided when it matters.',
-      why:'Place an assignment here when the learning <em>is</em> the unaided effort — mastering a concept, building a skill to fluency, demonstrating individual competence. The cognitive payoff is durable foundational knowledge and genuine self-efficacy, secured before any tool can stand in for the thinking.'},
+      why:'Place an assignment here when the learning <em>is</em> the unaided effort — mastering a concept, building a skill to fluency, demonstrating individual competence. The cognitive payoff is durable foundational knowledge and genuine self-efficacy, secured before any tool can stand in for the thinking.',
+      lit:['Understand the limits of AI use','Recognize ethical boundaries','Identify AI-detection and plagiarism concerns'],
+      litnote:'Delivered by <em>you</em> — by explaining to students <em>why</em> AI is set aside and teaching these points alongside the task. This is exactly what makes an AI-resistant assignment (Module 5) still an AI-literacy assignment: the literacy is in the "why."'},
     {n:2,name:'Limited AI Use',sub:'Bounded, disclosed help at the edges',
       builds:'Builds on Level 1 by keeping the core work student-owned — while allowing narrow, disclosed AI help at the edges (brainstorming, feedback on a draft, cleanup).',
-      why:'Place an assignment here to offload low-value friction so students spend their effort on the skill that matters. The payoff is judgment about <em>where</em> help is appropriate, plus early habits of transparency — without surrendering the thinking.'},
+      why:'Place an assignment here to offload low-value friction so students spend their effort on the skill that matters. The payoff is judgment about <em>where</em> help is appropriate, plus early habits of transparency — without surrendering the thinking.',
+      lit:['Demonstrate transparency and disclosure of AI use','Recognize and evaluate bias and misinformation','Practice effective prompting for clarification or revision'],
+      litnote:'Disclosure becomes a taught habit here — the seed of the AI disclosure statement you write in Module 6.'},
     {n:3,name:'Collaborative AI Use',sub:'AI as a thought partner, critically judged',
       builds:'Builds on Level 2’s transparency by moving AI from the edges into the thinking itself — but now students must judge it, not just disclose it.',
-      why:'Place an assignment here when the target skill is critical evaluation. Students generate with AI, then adapt or reject its contributions <em>with justification</em> — and defending those calls is where discernment and deeper understanding actually form. The payoff is metacognition: you learn by critiquing.'},
+      why:'Place an assignment here when the target skill is critical evaluation. Students generate with AI, then adapt or reject its contributions <em>with justification</em> — and defending those calls is where discernment and deeper understanding actually form. The payoff is metacognition: you learn by critiquing.',
+      lit:['Develop prompt strategy and iterative refinement','Evaluate and edit AI-generated content critically','Identify AI’s limitations, biases, and reasoning gaps'],
+      litnote:'The 4Ds’ Discernment is now explicit, assessable literacy.'},
     {n:4,name:'Integrated AI Use',sub:'AI woven into a professional workflow',
       builds:'Builds on Level 3’s discernment by making AI a routine, strategically-selected part of the workflow — judgment becomes habitual and professional.',
-      why:'Place an assignment here when the outcome is authentic professional performance: choosing the right tool, orchestrating a workflow, and synthesizing several outputs into one coherent deliverable. The payoff is higher-order integration and transfer — cognition that mirrors how the discipline actually works.'},
+      why:'Place an assignment here when the outcome is authentic professional performance: choosing the right tool, orchestrating a workflow, and synthesizing several outputs into one coherent deliverable. The payoff is higher-order integration and transfer — cognition that mirrors how the discipline actually works.',
+      lit:['Apply ethical reasoning and responsible integration','Demonstrate domain-specific fluency and purposeful tool selection','Use iterative improvement and workflow integration'],
+      litnote:'Literacy becomes discipline-specific — the competencies your professional bodies name (Modules 7–8).'},
     {n:5,name:'AI Innovation',sub:'Create, evaluate, and steward the new',
       builds:'Builds on Level 4’s fluency by turning the student from a skilled user into an innovator and ethical steward.',
-      why:'Place an assignment here for capstone or innovation goals: using AI to create novel approaches, products, or insights, and taking responsibility for evaluating and advocating for responsible use. The payoff is the highest-order cognition — original creation paired with ethical ownership.'}
+      why:'Place an assignment here for capstone or innovation goals: using AI to create novel approaches, products, or insights, and taking responsibility for evaluating and advocating for responsible use. The payoff is the highest-order cognition — original creation paired with ethical ownership.',
+      lit:['Demonstrate literacy in AI policy, ethics, and governance','Lead or innovate in emerging AI applications','Evaluate and advocate for responsible AI practices'],
+      litnote:'Literacy widens from personal practice to policy, ethics, and advocacy.'}
   ];
   const wrap = document.getElementById('levels');
   DATA.forEach(d=>{
@@ -158,6 +173,7 @@
     det.className = 'level'; det.id = 'lvl'+d.n;
     let segs = '';
     for(let i=1;i<=5;i++){ segs += '<span class="seg" style="background:'+(i<=d.n?COLORS[i-1]:'#E7E9E3')+'"></span>'; }
+    const litItems = d.lit.map(x=>'<li>'+x+'</li>').join('');
     det.innerHTML =
       '<summary>'+
         '<span class="lvl-num l'+d.n+'">'+d.n+'</span>'+
@@ -172,6 +188,9 @@
         '</div>'+
         '<div class="facet"><span class="tag why">The cognitive payoff — why place an assignment here</span>'+
           '<p>'+d.why+'</p>'+
+        '</div>'+
+        '<div class="facet"><span class="tag lit">The AI literacy it develops</span>'+
+          '<div class="litbox"><ul>'+litItems+'</ul><p class="accrue">'+d.litnote+'</p></div>'+
         '</div>'+
       '</div>';
     wrap.appendChild(det);
