@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module A5 — Literacy, Resistant, or Task-Split?</title>
+<style>
+/* ============================================================
+   MODULE A5 — Part 1 of 2: Diagnose the Scenarios
+   AI Pedagogy: Literacy vs. AI-Resistant vs. Task-Split
+   Baylor Green #154734 · Baylor Gold #FFB81C
+   Self-contained. Host on GitHub Pages. Embed via iframe.
+   ============================================================ */
+:root{
+  --green:#154734;
+  --green-mid:#1d6349;
+  --green-tint:#e8efec;
+  --gold:#FFB81C;
+  --gold-tint:#fff6e2;
+  --ink:#1f2622;
+  --muted:#5d6b64;
+  --line:#dde3df;
+  --paper:#ffffff;
+  --wash:#f6f8f7;
+  --resist:#2c5f7c;
+  --resist-tint:#e7eff4;
+  --split:#7a4b8f;
+  --split-tint:#f1eaf5;
+  --ok:#1d6349;
+  --warn:#a8442a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  background:var(--wash);color:var(--ink);line-height:1.55;
+  padding:24px 16px 48px;
+  overflow-y:auto;              /* the interactive scrolls itself */
+  -webkit-overflow-scrolling:touch;
+}
+.wrap{max-width:900px;margin:0 auto}
+
+/* ---------- Header ---------- */
+.head{
+  background:var(--green);color:#fff;border-radius:10px 10px 0 0;
+  padding:26px 28px 24px;border-bottom:5px solid var(--gold);
+}
+.eyebrow{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;margin-bottom:8px;
+}
+.head h1{font-size:26px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.head p{font-size:15px;color:#cfe0d8;max-width:64ch}
+
+/* ---------- Legend ---------- */
+.legend{
+  background:var(--paper);border:1px solid var(--line);border-top:none;
+  padding:20px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+}
+.leg{border-left:4px solid;padding:10px 12px;border-radius:0 6px 6px 0}
+.leg.lit{border-color:var(--green);background:var(--green-tint)}
+.leg.res{border-color:var(--resist);background:var(--resist-tint)}
+.leg.spl{border-color:var(--split);background:var(--split-tint)}
+.leg h3{font-size:13px;font-weight:700;margin-bottom:4px}
+.leg p{font-size:12.5px;color:var(--muted);line-height:1.45}
+
+/* ---------- Progress ---------- */
+.bar{
+  background:var(--paper);border:1px solid var(--line);border-top:none;
+  padding:14px 28px;display:flex;align-items:center;gap:14px;
+  position:sticky;top:0;z-index:20;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.track{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--gold);border-radius:99px;transition:width .35s ease}
+.count{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+
+/* ---------- Cards ---------- */
+.deck{
+  background:var(--paper);border:1px solid var(--line);border-top:none;
+  border-radius:0 0 10px 10px;padding:26px 28px 30px;
+}
+.card{border:1px solid var(--line);border-radius:8px;margin-bottom:18px;overflow:hidden}
+.card.done{border-color:var(--green-mid)}
+.card-top{padding:18px 20px;background:var(--paper)}
+.meta{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.num{
+  width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;
+  display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;
+}
+.disc{
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  color:var(--green);background:var(--green-tint);padding:3px 9px;border-radius:99px;
+}
+.card-top h2{font-size:16px;font-weight:700;margin-bottom:8px}
+.card-top p{font-size:14.5px;color:var(--ink)}
+.card-top .obj{
+  font-size:13px;color:var(--muted);margin-top:10px;padding-top:10px;
+  border-top:1px dashed var(--line);
+}
+.obj strong{color:var(--green);font-weight:700}
+
+/* ---------- Choices ---------- */
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 20px 18px}
+.pick{
+  border:1.5px solid var(--line);background:var(--paper);border-radius:7px;
+  padding:11px 10px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);
+  cursor:pointer;text-align:center;transition:all .16s ease;
+}
+.pick:hover:not(:disabled){border-color:var(--green);background:var(--green-tint)}
+.pick:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.pick:disabled{cursor:default;opacity:.45}
+.pick.chosen{opacity:1}
+.pick.chosen.right{background:var(--green);border-color:var(--green);color:#fff}
+.pick.chosen.wrong{background:#fbeceA;border-color:var(--warn);color:var(--warn)}
+.pick.reveal{opacity:1;border-color:var(--green);border-style:dashed;color:var(--green)}
+
+/* ---------- Feedback ---------- */
+.fb{display:none;padding:0 20px 20px}
+.fb.show{display:block}
+.fb-in{border-left:4px solid var(--green);background:var(--wash);border-radius:0 7px 7px 0;padding:14px 16px}
+.fb-in.miss{border-color:var(--warn)}
+.verdict{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;color:var(--ok)}
+.verdict.miss{color:var(--warn)}
+.fb-in p{font-size:14px;color:var(--ink);margin-bottom:9px}
+.fb-in p:last-child{margin-bottom:0}
+.fb-in .lens{
+  font-size:13px;color:var(--muted);padding-top:9px;border-top:1px solid var(--line);
+}
+.fb-in .lens strong{color:var(--green)}
+
+/* ---------- Interstitial framing blocks ---------- */
+.interstitial{
+  border-left:4px solid var(--gold);background:var(--gold-tint);
+  border-radius:0 8px 8px 0;padding:20px 22px;margin:6px 0 20px;
+}
+.interstitial .eyebrow{color:var(--green);margin-bottom:7px}
+.interstitial h2{font-size:17px;font-weight:700;color:var(--green);margin-bottom:10px;line-height:1.35}
+.interstitial p{font-size:14.5px;margin-bottom:11px;max-width:72ch}
+.interstitial p:last-child{margin-bottom:0}
+.interstitial strong{color:var(--green)}
+.interstitial.bridge{border-color:var(--green);background:var(--green-tint)}
+.interstitial.bridge h2{color:var(--green)}
+
+/* ---------- Completion panel ---------- */
+.done-slot{margin-top:8px}
+
+@media (max-width:640px){
+  .legend,.choices{grid-template-columns:1fr}
+  .head,.legend,.bar,.deck{padding-left:20px;padding-right:20px}
+  .head h1{font-size:22px}
+}
+@media print{body{background:#fff}.choices,.bar{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ================= EDITABLE CONTENT ================= -->
+<div class="head">
+  <div class="eyebrow">Module A5 · Low-Stakes Activity · MLO A5.2 · Part 1 of 2</div>
+  <h1>Literacy, Resistant, or Task-Split?</h1>
+  <p>Five Hankamer assignments. For each one, decide which design response the <em>learning objective</em> calls for. In the next activity, you'll carry the same lens to your own redesign candidate.</p>
+</div>
+
+<div class="legend">
+  <div class="leg lit">
+    <h3>AI-Literacy</h3>
+    <p>AI is built in on purpose. Students build fluency by using it — and the objective is about judgment <em>with</em> the tool.</p>
+  </div>
+  <div class="leg res">
+    <h3>AI-Resistant</h3>
+    <p>The cognitive work stays with the student. The objective depends on struggle AI would short-circuit.</p>
+  </div>
+  <div class="leg spl">
+    <h3>Task-Split</h3>
+    <p>Some tasks are protected, others opened. Most real assignments live here — and the split is decided task by task.</p>
+  </div>
+</div>
+
+<div class="bar">
+  <span class="count" id="count">0 of 5 classified</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+</div>
+
+<div class="deck" id="deck"></div>
+<div class="done-slot" id="doneSlot"></div>
+
+</div>
+
+<script>
+/* ============ EDITABLE CONTENT — scenarios & feedback ============ */
+const SCENARIOS = [
+  {
+    disc: "Accounting",
+    title: "Prof. Nakamura — Audit Judgment Memo",
+    body: "Students receive a set of working papers with an embedded, non-obvious material misstatement. They must find it, decide whether it rises to the level of a reportable condition, and write a memo defending the judgment call — including the risk they'd be wrong.",
+    obj: "Learning objective: Exercise professional skepticism in an ambiguous audit context and defend a judgment under uncertainty.",
+    answer: "res",
+    right: "Professional skepticism is the whole objective — and it's built by sitting in the discomfort of an ambiguous call, not by receiving a confident answer. AI hands the student a clean verdict before the doubt has done its work. The struggle <em>is</em> the curriculum here.",
+    wrong: {
+      lit: "Tempting, because AI is genuinely used in audit practice. But the objective isn't <em>use AI to find misstatements</em> — it's <em>develop skepticism under uncertainty</em>. Integrating AI here removes the exact cognitive experience the memo exists to produce.",
+      spl: "Reasonable instinct — most assignments do split. But look at what's actually here: there's only one cognitive task, and it's the protected one. A split needs at least one task worth opening. This assignment doesn't have one."
+    },
+    lens: "The tell: when the objective names a <strong>disposition</strong> (skepticism, judgment, doubt) rather than a deliverable, the tool that removes the doubt removes the learning."
+  },
+  {
+    disc: "Marketing",
+    title: "Prof. Villanueva — Campaign Concept Sprint",
+    body: "Students must generate 20 campaign concepts for a client brief in 48 hours, then use a scoring rubric to defend the three they advance. Volume is the point — the rubric rewards range, not polish. Students submit a prompt log alongside the final three.",
+    obj: "Learning objective: Evaluate creative concepts against a strategic brief and defend a selection under time pressure.",
+    answer: "lit",
+    right: "The objective is <em>evaluation</em>, not <em>ideation</em>. AI is an ideation engine — so integrating it doesn't threaten the objective, it clears the runway for it. Twenty concepts by hand takes the whole 48 hours; twenty concepts with AI leaves time for the actual work of scoring and defending. The prompt log makes the use visible.",
+    wrong: {
+      res: "Understandable — creative generation feels like the sacred part. But read the rubric: it rewards <em>range</em> and the defense of a selection. That's an evaluation objective. Protecting the ideation step protects a task the assignment never claimed to assess.",
+      spl: "Close, and defensible. But the prompt log already handles the transparency concern, and the volume requirement is designed to make hand-generation impractical. This one leans clean-integration — the split is doing less work than it looks."
+    },
+    lens: "The tell: check whether the task AI would do is the task the <strong>rubric actually scores</strong>. Often it isn't."
+  },
+  {
+    disc: "Finance",
+    title: "Prof. Brennan — Valuation Project",
+    body: "Students build a DCF model for a public company from scratch, then write an investment recommendation for a skeptical portfolio committee. The model must be their own; the memo must anticipate three counterarguments the committee will raise.",
+    obj: "Learning objective: Construct a valuation model and communicate a defensible recommendation to a resistant audience.",
+    answer: "spl",
+    right: "Two objectives, two responses. Building the model is where the mechanics live — if AI assembles the DCF, the student never learns why the terminal value assumption breaks the whole thing. That task is protected. But <em>anticipating counterarguments</em> is exactly what an adversarial AI is good for: the student can stress-test the memo against a simulated skeptic before the committee ever sees it. Protect the model. Open the memo.",
+    wrong: {
+      res: "Half right — the model genuinely does need protecting. But you've locked the whole assignment to protect one task. The counterargument work is a place where AI makes the student <em>better</em>, and closing it costs you real learning for no integrity gain.",
+      lit: "Half right in the other direction. Opening the memo is a good call. But if AI builds the DCF, the mechanical fluency the model exists to develop simply doesn't happen — and every downstream judgment rests on mechanics the student never internalized."
+    },
+    lens: "The tell: when an assignment has <strong>two distinct cognitive tasks</strong> with different objectives, the classification is almost always a split — and naming which is which is the Gap Analysis in miniature."
+  },
+  {
+    disc: "Management / HR",
+    title: "Prof. Okonjo — Performance Conversation Simulation",
+    body: "Students prepare for a difficult termination conversation: research the legal constraints, draft talking points, then conduct the conversation live with a trained role-player while the class observes. A written reflection follows.",
+    obj: "Learning objective: Navigate a high-stakes interpersonal conversation under emotional and legal constraint.",
+    answer: "spl",
+    right: "The live conversation cannot be AI-assisted — it's synchronous, embodied, and observed. That protection is structural; you don't have to design it. But the <em>preparation</em> is a different story. Researching legal constraints and rehearsing talking points against an AI role-player is exactly how a competent HR professional would actually prepare. Open the prep. The performance protects itself.",
+    wrong: {
+      res: "The instinct is right about the conversation — but notice that it's <em>already</em> protected by being live and observed. You don't need to also close the prep. Doing so just means students rehearse less, and walk in colder.",
+      lit: "The prep is genuinely a good integration candidate. But calling the whole thing AI-Literacy misreads the assignment's center of gravity: the live conversation is the assessment, and it is untouched by AI by construction."
+    },
+    lens: "The tell: some tasks are <strong>already AI-resistant by format</strong> — live, oral, observed, in-person. Don't spend a design decision protecting what the format already protects."
+  },
+  {
+    disc: "Ops / Analytics",
+    title: "Prof. Sørensen — Supply Chain Diagnostic",
+    body: "Students receive a messy operational dataset and a vague executive prompt: \"Something is wrong with our fulfillment times — find it.\" They must clean the data, run the analysis, and present findings. They may use any tool. The rubric weights problem framing and the defense of analytical choices at 70%.",
+    obj: "Learning objective: Frame an ambiguous business problem and defend the analytical choices made in response.",
+    answer: "lit",
+    right: "One sentence decided it: <strong>70% on framing and defense.</strong> The cleaning and the running are the other 30% — and they are precisely what a working analyst delegates. Sørensen has already declared what this assignment is for, and AI does not threaten any of it. Integrate openly, require students to defend <em>why</em> they asked the model what they asked, and the assignment becomes more honest about what the profession actually rewards.<br><br>Now notice what just happened to you. You did not have to weigh anything. The rubric handed you the objective, and the classification fell out. Compare that to Brennan or Okonjo, where you had to excavate the objective yourself. <em>That difference is the lesson.</em>",
+    wrong: {
+      res: "This is the reflex to protect the technical steps — a real reflex, and often right. But go back and find the rubric sentence: 70% is framing and defense. Closing AI here protects 30% of the grade at the cost of teaching a workflow no employer uses.<br><br>The wider point: <strong>the rubric had already answered this for you.</strong> Sørensen wrote down what the assignment was for, and the classification followed. Most assignments will not do you that favor — but when one does, read the weights before you read anything else.",
+      spl: "Defensible, and if you'd argued for protecting the cleaning step you would not be wrong on the merits. But Sørensen already did the splitting for you and wrote it into the rubric: 70% framing and defense, 30% mechanics. Once the weighting is that explicit, the integration call is clean — you are confirming a decision, not making one.<br><br>Which is the point of putting this scenario last. <strong>It was easier than the four before it, on purpose.</strong> An assignment whose rubric already weights judgment over mechanics is an assignment that is half-redesigned."
+    },
+    lens: "The tell: a <strong>rubric that already weights judgment over mechanics</strong> is an assignment someone has half-redesigned already. Read the weights first. When they are explicit, your job shrinks to confirming — when they are silent, the excavation is yours."
+  }
+];
+
+const LABELS = {lit:"AI-Literacy", res:"AI-Resistant", spl:"Task-Split"};
+const ORDER = ["lit","res","spl"];
+
+/* --- Framing block shown BEFORE Scenario 5 --- */
+const PRE_5 = `
+  <div class="interstitial">
+    <div class="eyebrow">Before the last one — read this</div>
+    <h2>This next assignment is easier than the four before it. That is deliberate.</h2>
+    <p>The first four scenarios made you do the hard thing: read the cognitive work, decide what the objective was really made of, and place each task yourself. Nobody told you what mattered. You had to infer it.</p>
+    <p>Prof. Sørensen's assignment is different. Watch for one sentence in it — a sentence about how the rubric is <strong>weighted</strong>. When you find it, the classification will resolve almost on its own, and you should notice that happening.</p>
+    <p>Here is why that matters. <strong>An assignment whose rubric already weights judgment over mechanics is an assignment that is half-redesigned.</strong> Someone has already decided what the assessment is actually for, and written that decision down. When you meet an assignment like this, your job gets dramatically smaller — you are not deciding what to protect, you are confirming a decision that has already been made. Read the weights before you read anything else.</p>
+    <p>Most assignments do not do you this favor. Yours may not. But when one does, take it.</p>
+  </div>`;
+
+/* --- Completion panel shown AFTER all 5 are answered --- */
+const DONE = `
+  <div class="interstitial bridge">
+    <div class="eyebrow">Five for five — the lens is practiced</div>
+    <h2>Now the honest part: your assignment will not be this clean.</h2>
+    <p>Every scenario here arrived with its learning objective stated in a tidy italic line and its cognitive tasks already separated for you. That is not what an assignment looks like. That is what an assignment looks like <em>after someone has already done the analysis</em> — and here, that someone was us.</p>
+    <p>The next activity hands you your own assignment from Module 3, and it will be messy in the specific ways real assignments are messy: the stated objective will not match the real one, and the tasks will not come pre-separated. Nobody will have pulled them apart. You will.</p>
+    <p><strong>Continue to Part 2 — "Your Redesign Candidate — First Pass" — in Canvas.</strong> Bring the lens you just practiced.</p>
+  </div>`;
+/* ============ END EDITABLE CONTENT ============ */
+
+const state = {};
+const deck = document.getElementById('deck');
+
+SCENARIOS.forEach((s, i) => {
+  if (i === 4) {
+    const pre = document.createElement('div');
+    pre.innerHTML = PRE_5;
+    deck.appendChild(pre.firstElementChild);
+  }
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.id = 'card' + i;
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="meta">
+        <span class="num">${i+1}</span>
+        <span class="disc">${s.disc}</span>
+      </div>
+      <h2>${s.title}</h2>
+      <p>${s.body}</p>
+      <p class="obj">${s.obj.replace('Learning objective:','<strong>Learning objective:</strong>')}</p>
+    </div>
+    <div class="choices" role="group" aria-label="Classify scenario ${i+1}">
+      ${ORDER.map(k => `<button class="pick" data-s="${i}" data-k="${k}">${LABELS[k]}</button>`).join('')}
+    </div>
+    <div class="fb" id="fb${i}"></div>`;
+  deck.appendChild(card);
+});
+
+deck.addEventListener('click', e => {
+  const b = e.target.closest('.pick');
+  if (!b || b.disabled) return;
+  const i = +b.dataset.s, k = b.dataset.k, s = SCENARIOS[i];
+  if (state[i]) return;
+  state[i] = k;
+
+  const card = document.getElementById('card' + i);
+  const correct = (k === s.answer);
+  card.classList.add('done');
+
+  card.querySelectorAll('.pick').forEach(p => {
+    p.disabled = true;
+    if (p.dataset.k === k) p.classList.add('chosen', correct ? 'right' : 'wrong');
+    else if (!correct && p.dataset.k === s.answer) p.classList.add('reveal');
+  });
+
+  const fb = document.getElementById('fb' + i);
+  const body = correct ? s.right : s.wrong[k];
+  fb.innerHTML = `
+    <div class="fb-in ${correct ? '' : 'miss'}">
+      <div class="verdict ${correct ? '' : 'miss'}">
+        ${correct
+          ? LABELS[s.answer] + ' — that\'s the call'
+          : 'Not quite — the design response here is ' + LABELS[s.answer]}
+      </div>
+      <p>${body}</p>
+      <p class="lens">${s.lens}</p>
+    </div>`;
+  fb.classList.add('show');
+  progress();
+  setTimeout(sendHeight, 80);
+});
+
+function progress(){
+  const n = Object.keys(state).length;
+  document.getElementById('count').textContent = n + ' of 5 classified';
+  document.getElementById('fill').style.width = (n/5*100) + '%';
+  if (n === 5) finish();
+}
+
+function finish(){
+  const slot = document.getElementById('doneSlot');
+  if (slot.dataset.built) return;
+  slot.dataset.built = '1';
+  slot.innerHTML = DONE;
+  slot.querySelector('.interstitial').scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(sendHeight, 80);
+}
+
+/* --- Canvas iframe auto-resize (correct pattern) ---
+   Measures the .wrap wrapper, NOT scrollHeight — scrollHeight is never
+   smaller than the iframe, which creates a runaway grow loop once the
+   host resizes the frame. PAD = body padding top(24) + bottom(48) = 72. */
+var lastH = 0;
+function sendHeight(){
+  try{
+    var el = document.querySelector('.wrap');
+    var h = (el ? el.offsetHeight : document.body.offsetHeight) + 72;
+    if (Math.abs(h - lastH) < 4) return; /* no real change — don't re-send */
+    lastH = h;
+    var msg = {subject:'lti.frameResize', height:h};
+    window.parent.postMessage(msg,'*');
+    window.parent.postMessage(JSON.stringify(msg),'*');
+  }catch(e){}
+}
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+if(window.ResizeObserver){
+  new ResizeObserver(sendHeight).observe(document.querySelector('.wrap'));
+}
+</script>
+</body>
+</html>
