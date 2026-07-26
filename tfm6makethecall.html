@@ -45,12 +45,28 @@
   .finale ul{margin:8px 0;padding-left:20px;} .finale li{margin-bottom:5px;}
   .quote{border-left:4px solid var(--green);padding:6px 14px;font-style:italic;margin:10px 0;background:#fff;border-radius:0 8px 8px 0;}
   .small{font-size:.84rem;color:var(--mid);}
+  details.gallery{border:2px solid var(--line);border-radius:10px;margin:0 0 14px;background:#fdfdf9;}
+  details.gallery summary{cursor:pointer;list-style:none;user-select:none;font-weight:700;color:var(--green);padding:10px 14px;display:flex;align-items:center;gap:8px;}
+  details.gallery summary::-webkit-details-marker{display:none;}
+  details.gallery summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:8px;}
+  details.gallery .chev{margin-left:auto;transition:transform .15s;color:var(--green);}
+  details.gallery[open] summary .chev{transform:rotate(180deg);}
+  .galnote{margin:0;padding:0 14px 8px;font-size:.88rem;color:var(--mid);}
+  .galframe{padding:0 14px 14px;}
+  .galframe iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;display:block;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Make the Call: Ownership &amp; Disclosure</h1>
   <p class="sub">Teach Forward · Module 6 · Ten business scenarios. Choose your verdict, then see the ruling. Ungraded; every answer gets the reasoning.</p>
+  <details class="gallery">
+    <summary>Case Studies Gallery: the slides behind Deck 1 <span class="chev">&#9662;</span></summary>
+    <p class="galnote">Browse the five scenarios as slides before (or after) you make your calls. Use the arrows inside the frame to move through them.</p>
+    <div class="galframe">
+      <iframe title="AI Copyright and Ownership Case Studies Gallery slides" src="https://docs.google.com/presentation/d/e/2PACX-1vQU1nxSVcdNApG8RPhJEi_UgBPYINw8Bjl_OMeDl5BDAhpJTB3I7xiFSeXdjdKW34oAYKYJQjLJX_IB/pubembed?start=false&amp;loop=false&amp;delayms=60000" loading="lazy" allowfullscreen></iframe>
+    </div>
+  </details>
   <div class="decks" role="group" aria-label="Choose a deck">
     <button type="button" id="d0" aria-pressed="true">Deck 1 · Who Owns It?</button>
     <button type="button" id="d1" aria-pressed="false">Deck 2 · Disclose or Not?</button>
@@ -116,6 +132,32 @@ $("nextBtn").addEventListener("click",function(){ var D=DECKS[deck]; if(idx<D.ca
   });
 });
 render();
+})();
+</script>
+<script>
+/* Canvas iframe auto-resize — measures the .wrap wrapper (viewport-independent); PAD = body padding 16+16.
+   Uses wrapper offsetHeight (not scrollHeight) to avoid the runaway grow loop; matches the M4 widgets. */
+(function(){
+  var PAD = 32, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+  document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
+  setTimeout(sendHeight, 120);
 })();
 </script>
 </body>
