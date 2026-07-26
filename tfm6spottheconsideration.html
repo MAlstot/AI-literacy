@@ -61,10 +61,10 @@ var C=[
 var S=[
  {t:"The Eerily Fluent Essays",f:"A take-home essay assignment returns a batch of submissions more polished than anything the class produced all term. A colleague suggests buying an AI-detection tool and grading accordingly.",a:3,also:[0],fb:"The temptation is an integrity response, but the *move* is an assessment-ethics failure: detectors err in both directions, and grading on their say-so risks false accusations. The design answer lives on the Teaching for Integrity page: expectations, process, and disclosure norms set before the work begins."},
  {t:"The Hiring Screen",f:"A student team builds a résumé-screening prototype for a class project, training it on a decade of a partner company’s past hires. It keeps surfacing the same kind of candidate.",a:1,also:[],fb:"Bias: the model learned who *used to* get hired and reproduces it. The Amazon case from the Bias page, rebuilt by students who did not intend it. Ten years of skewed data needs no bad intent."},
- {t:"The Exclusive License",f:"A student generates a logo entirely with AI and sells a client exclusive rights to it. Nobody mentions AI at any point in the deal.",a:2,also:[],fb:"Intellectual property and disclosure, both halves at once: a wholly AI-generated logo is effectively public domain, so the exclusive license oversells, and the silence about AI compounds it. Make the Call, card 1, in the wild."},
+ {t:"The Exclusive License",f:"A student generates a logo entirely with AI and sells a client exclusive rights to it. Nobody mentions AI at any point in the deal.",a:2,also:[],fb:"Intellectual property and disclosure, both halves at once: a wholly AI-generated logo is effectively public domain, so the exclusive license oversells, and the silence about AI compounds it. The IP &amp; Disclosure page walks through both halves, and the statement you will draft in this module is what prevents it."},
  {t:"The Grading Assistant",f:"An instructor quietly uses AI to draft feedback on every student submission. The syllabus requires students to disclose any AI use in their own work.",a:0,also:[3,2],fb:"Academic integrity, from the faculty side: an asymmetry students read as hypocrisy. It also brushes assessment ethics (is the feedback sound?) and disclosure. Modeling the norm you require is the cheapest integrity intervention there is."},
- {t:"The Image-Heavy Assignment",f:"A department adopts a new assignment requiring students to generate dozens of AI images each, the same semester campus debates AI’s footprint.",a:4,also:[],fb:"Environmental impact: image generation was the most energy-intensive task measured in the research on the Backyard page. The assignment may still be worth it; the consideration is weighing cost against learning value on purpose, not by accident."},
- {t:"The Recommendation Letters",f:"A well-meaning professor pastes recommendation-letter drafts, student names and stories included, into a free chatbot to polish the prose.",a:5,also:[],fb:"Privacy and security: identifiable student information in a consumer tool that may retain and train on it. Dr. Reyes with different paperwork. The fix is on the Privacy page: licensed tools, de-identification, and disclosure."}
+ {t:"The Opt-Out Email",f:"Midway through the term, a student emails you: she has read about data centers’ water and energy use and asks to complete the course’s AI-integrated work without using generative AI. Your syllabus has nothing to say about it.",a:4,also:[3],fb:"Environmental impact, and she is not wrong to ask: the footprint is real, though in constant flux and hard to measure objectively. The Environmental Considerations page’s point is that informed design decides on purpose: know the key factors, and have a no-GenAI pathway ready, like policy analysis or civic engagement, so opting out still builds AI literacy. It also brushes assessment ethics: the alternative path must assess the same learning."},
+ {t:"The Recommendation Letters",f:"A well-meaning professor pastes recommendation-letter drafts, student names and stories included, into a free chatbot to polish the prose.",a:5,also:[],fb:"Privacy and security: identifiable student information in a consumer tool that may retain and train on it. Dr. Reyes with different paperwork. The fix is on the Safety, Privacy &amp; FERPA page: licensed tools, de-identification, and disclosure."}
 ];
 var idx=0, picks=new Array(S.length).fill(null);
 var $=function(id){return document.getElementById(id);};
@@ -93,12 +93,47 @@ function fb(s,p){
 }
 function finale(){
   var hits=0; picks.forEach(function(p,i){ if(p===S[i].a||S[i].also.indexOf(p)>=0) hits++; });
-  $("stage").innerHTML='<div class="finale"><h2>Rehearsal complete</h2><p>You matched the design intent (or a defensible neighbor) on '+hits+" of 6 scenarios. More important than the score: you just did, six times, exactly what the discussion asks you to do once more, for real. <strong>Prompt 1 of the discussion asks which consideration is most relevant to <em>your</em> assignment or syllabus statement.</strong> You are warmed up. Go write it.</p><p class=\"small\">Ungraded and unrecorded; run it again anytime.</p></div>";
+  var mode=""; try{ mode=new URLSearchParams(window.location.search).get("mode")||""; }catch(e){}
+  var body;
+  if(mode==="pre"){
+    body='<p>You matched the design intent (or a defensible neighbor) on '+hits+' of 6 scenarios. However you scored, you have now met the six ethical considerations this module works through. They are the lens for everything ahead: watch for them as you move through the pages. You will run these scenarios again at the end of the module and see the difference.</p>';
+  } else if(mode==="post"){
+    body='<p>'+hits+' of 6 on the second pass. Think back to your first run at the start of the module: which considerations do you name with confidence now, and which are still fuzzy? Anything still fuzzy is a good candidate for your discussion post, this module\u2019s knowledge check.</p>';
+  } else {
+    body='<p>You matched the design intent (or a defensible neighbor) on '+hits+' of 6 scenarios. More important than the score: you practiced naming the consideration in play, the exact move the discussion asks you to make for your own course.</p>';
+  }
+  $("stage").innerHTML='<div class="finale"><h2>'+(mode==="pre"?"Baseline set":"Rehearsal complete")+'</h2>'+body+'<p class="small">Ungraded and unrecorded; run it again anytime.</p></div>';
   $("nextBtn").disabled=true;
 }
 $("prevBtn").addEventListener("click",function(){ if(idx>0){ idx--; render(); }});
 $("nextBtn").addEventListener("click",function(){ if(idx<S.length){ idx++; render(); }});
 render();
+})();
+</script>
+<script>
+/* Canvas iframe auto-resize — measures the .wrap wrapper (viewport-independent); PAD = body padding 16+16.
+   Uses wrapper offsetHeight (not scrollHeight) to avoid the runaway grow loop; matches the M4 widgets. */
+(function(){
+  var PAD = 32, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+  document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
+  setTimeout(sendHeight, 120);
 })();
 </script>
 </body>
