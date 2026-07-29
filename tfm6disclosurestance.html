@@ -300,5 +300,31 @@ $("copyBtn").addEventListener("click",function(){ $("copyOut").value=fullText();
 renderQ();
 })();
 </script>
+<script>
+/* Canvas iframe auto-resize — measures the .wrap wrapper (viewport-independent); PAD = body padding 16+16.
+   Uses wrapper offsetHeight (not scrollHeight) to avoid the runaway grow loop; matches the M4 widgets. */
+(function(){
+  var PAD = 32, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+  document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
+  setTimeout(sendHeight, 120);
+})();
+</script>
 </body>
 </html>
