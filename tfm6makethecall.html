@@ -54,17 +54,18 @@
   .galnote{margin:0;padding:0 14px 8px;font-size:.88rem;color:var(--mid);}
   .galframe{padding:0 14px 14px;}
   .galframe iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:8px;display:block;}
+  .galframe img{width:100%;height:auto;border-radius:8px;display:block;border:1px solid #c9d6cf;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Make the Call: Ownership &amp; Disclosure</h1>
   <p class="sub">Teach Forward · Module 6 · Ten business scenarios. Choose your verdict, then see the ruling. Ungraded; every answer gets the reasoning.</p>
-  <details class="gallery">
-    <summary>Case Studies Gallery: the slides behind Deck 1 <span class="chev">&#9662;</span></summary>
-    <p class="galnote">Browse the five scenarios as slides before (or after) you make your calls. Use the arrows inside the frame to move through them.</p>
+  <details class="gallery" id="galpanel">
+    <summary>Case gallery: the slide for this card <span class="chev">&#9662;</span></summary>
+    <p class="galnote" id="galnote">The slide advances with the cards: click Next and the matching scenario slide appears here.</p>
     <div class="galframe">
-      <iframe title="AI Copyright and Ownership Case Studies Gallery slides" src="https://docs.google.com/presentation/d/e/2PACX-1vQU1nxSVcdNApG8RPhJEi_UgBPYINw8Bjl_OMeDl5BDAhpJTB3I7xiFSeXdjdKW34oAYKYJQjLJX_IB/pubembed?start=false&amp;loop=false&amp;delayms=60000" loading="lazy" allowfullscreen></iframe>
+      <img id="galimg" src="tfm6gallery1.jpg" alt="Slide: Marketing: Images. The Campaign Image. A student generates a striking visual via prompts and licenses it exclusively to a client. What do you think is required?">
     </div>
   </details>
   <div class="decks" role="group" aria-label="Choose a deck">
@@ -100,8 +101,26 @@ var DECKS=[
  ],fin:'<h2>The Honest Paradox</h2><p>Disclosing AI use can reduce trust in the moment (thirteen experiments, 4,000+ participants: Schilke &amp; Reimann, 2025), while transparency is among the most consistent foundations of trust in AI over time (systematic review of 300+ studies: Afroogh et al., 2024). And concealment discovered costs the most of all.</p><p><strong>Disclosure has a price. Concealment has a bigger one. That is the honest case, and the honest version is the one worth teaching.</strong></p>'}
 ];
 var deck=0, idx=0, picks=[[],[]];
+var GAL=[
+ {src:"tfm6gallery1.jpg", alt:"Slide: Marketing: Images. The Campaign Image. A student generates a striking visual via prompts and licenses it exclusively to a client. What do you think is required?"},
+ {src:"tfm6gallery2.jpg", alt:"Slide: Rewritten Report. Amanda, a financial analyst, has AI draft a market summary from de-identified data, then rewrites sections, restructures the layout, adds her own analysis, and builds Excel visualizations. Who does the work belong to, Amanda or AI?"},
+ {src:"tfm6gallery3.jpg", alt:"Slide: Ownership. Entrepreneurship: 600 Prompts. A founder iterates through more than 600 prompts to perfect a brand image, then files for copyright. Who owns the image?"},
+ {src:"tfm6gallery4.jpg", alt:"Slide: Account Policy: Enterprise or Personal. Two employees analyze company financial statements with AI, one through a personal AI subscription and one through an enterprise AI subscription. Does it matter which account?"},
+ {src:"tfm6gallery5.jpg", alt:"Slide: Accounting Disclosure. A high-value client provides a massive, messy ledger needing a tax anomaly risk assessment by tomorrow morning. Employee 1 copies the raw transaction sheet with client names and bank IDs into a public AI chatbot and presents the output as his own expert memo. Employee 2 checks the engagement letter for an AI clause, finds none, asks before proceeding, uses the firm's secure enterprise portal, and adds a disclosure footnote. The engagement letter did not mention AI. Is there a problem here?"}
+];
+function syncGallery(){
+  var panel=document.getElementById("galpanel");
+  if(!panel) return;
+  if(deck!==0){ panel.style.display="none"; return; }
+  panel.style.display="";
+  var D=DECKS[0], img=document.getElementById("galimg");
+  var i=Math.min(idx, GAL.length-1);
+  if(idx>=D.cards.length){ i=GAL.length-1; }
+  if(img.getAttribute("src")!==GAL[i].src){ img.setAttribute("src",GAL[i].src); img.setAttribute("alt",GAL[i].alt); }
+}
 var $=function(id){return document.getElementById(id);};
 function render(){
+  syncGallery();
   var D=DECKS[deck];
   var dots=""; for(var i=0;i<=D.cards.length;i++){ dots+='<span class="dot'+(i<idx?" done":(i===idx?" here":""))+'"></span>'; }
   $("dots").innerHTML=dots;
