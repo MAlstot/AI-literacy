@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rail Your Prompt — AI Guardrail Builder</title>
+<style>
+  :root{
+    --green:#154734; --gold:#FFB81C; --tint:#E9F1EC; --tint2:#EEF3F1;
+    --edge:#C8D2CE; --ink:#222222; --muted:#595959; --goldtint:#FFE9B8;
+    --serif:'Cambria','Georgia',serif;
+    --sans:'Calibri','Segoe UI',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.5;}
+  .wrap{max-width:780px;margin:0 auto;padding:20px 18px 40px;}
+  h1{font-family:var(--serif);color:var(--green);font-size:1.7rem;margin:0 0 2px;}
+  .tagline{color:var(--muted);font-style:italic;margin:0 0 14px;font-size:.98rem;}
+  .lede{background:var(--tint);border-radius:12px;padding:14px 16px;margin:0 0 22px;font-size:.96rem;}
+  .lede b{color:var(--green);}
+  .rails2{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .rails2 .r{flex:1 1 300px;background:#fff;border:1px solid var(--edge);border-radius:10px;padding:10px 12px;font-size:.9rem;}
+  .rails2 .r span{display:block;font-weight:700;color:var(--green);margin-bottom:2px;}
+  fieldset{border:none;background:var(--tint2);border-radius:12px;padding:16px 16px 18px;margin:0 0 16px;}
+  legend{font-family:var(--serif);font-weight:700;color:var(--green);font-size:1.08rem;padding:0 6px;margin-left:-6px;}
+  .step{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:.8rem;font-weight:700;margin-right:8px;font-family:var(--sans);}
+  label.q{display:block;font-weight:600;margin:10px 0 5px;}
+  .hint{color:var(--muted);font-size:.85rem;font-weight:400;}
+  select,input[type=text],textarea{width:100%;font-family:var(--sans);font-size:.95rem;padding:9px 11px;border:1px solid var(--edge);border-radius:8px;background:#fff;color:var(--ink);}
+  textarea{min-height:54px;resize:vertical;}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green);}
+  .opts{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .opt{display:flex;gap:9px;align-items:flex-start;background:#fff;border:1px solid var(--edge);border-radius:9px;padding:9px 11px;cursor:pointer;}
+  .opt:hover{border-color:var(--green);}
+  .opt input{margin-top:3px;flex:none;}
+  .opt .t{font-weight:600;}
+  .opt .d{color:var(--muted);font-size:.85rem;display:block;font-weight:400;}
+  .subgate{margin:8px 0 0 4px;padding-left:12px;border-left:3px solid var(--gold);display:none;}
+  .subgate.show{display:block;}
+  .chk{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+  .chk label{display:flex;gap:6px;align-items:center;background:#fff;border:1px solid var(--edge);border-radius:20px;padding:6px 12px;cursor:pointer;font-size:.9rem;}
+  .chk label:hover{border-color:var(--green);}
+  .gen{background:var(--green);color:#fff;border:none;border-radius:10px;padding:13px 20px;font-family:var(--serif);font-size:1.08rem;font-weight:700;cursor:pointer;width:100%;margin:4px 0 6px;}
+  .gen:hover{background:#0f3527;}
+  #out{display:none;margin-top:22px;}
+  #out.show{display:block;}
+  .toolbanner{border-radius:10px;padding:12px 15px;margin-bottom:16px;font-size:.95rem;}
+  .toolbanner.secure{background:var(--green);color:#fff;}
+  .toolbanner.open{background:var(--goldtint);color:var(--ink);}
+  .toolbanner b{font-weight:700;}
+  .toolbanner.secure b{color:var(--gold);}
+  .card{border:1px solid var(--edge);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+  .card h3{font-family:var(--serif);color:var(--green);font-size:1.12rem;margin:0;padding:13px 16px 4px;}
+  .card .sub{color:var(--muted);font-size:.86rem;padding:0 16px 10px;margin:0;}
+  .promptbox{white-space:pre-wrap;font-family:'Consolas','Calibri',monospace;font-size:.9rem;background:var(--tint);margin:0 16px;padding:13px 14px;border-radius:8px;color:var(--ink);line-height:1.55;}
+  .copy{margin:11px 16px 15px;background:#fff;border:1.5px solid var(--green);color:var(--green);border-radius:8px;padding:8px 15px;font-weight:700;font-family:var(--sans);font-size:.9rem;cursor:pointer;}
+  .copy:hover{background:var(--green);color:#fff;}
+  .copy.done{background:var(--green);color:#fff;}
+  .caveat{background:var(--tint);border-radius:10px;padding:13px 15px;font-size:.9rem;margin-top:6px;}
+  .caveat b{color:var(--green);}
+  .foot{color:var(--muted);font-size:.8rem;margin-top:22px;text-align:center;border-top:1px solid var(--edge);padding-top:12px;}
+  .err{color:#8B2860;font-size:.88rem;margin:2px 0 8px;display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Rail Your Prompt</h1>
+  <p class="tagline">An AI guardrail builder — delegate the task, never the accountability.</p>
+
+  <div class="lede">
+    A guardrail sets two kinds of rails before you ask AI for anything.
+    <div class="rails2">
+      <div class="r"><span>1 · Guard your thinking</span>Protect the cognition your degree exists to build — the part only you can grow.</div>
+      <div class="r"><span>2 · Steward the data</span>Protect the people you serve — their data, dignity, and fair treatment.</div>
+    </div>
+  </div>
+
+  <form id="f" onsubmit="return false">
+    <fieldset>
+      <legend><span class="step">1</span>Your task &amp; goal</legend>
+      <label class="q" for="task">What are you working on? <span class="hint">Pick the closest, or choose "Something else."</span></label>
+      <select id="task">
+        <option value="literature review">Literature review</option>
+        <option value="theory-application paper">Theory-application paper</option>
+        <option value="program assessment or evaluation">Program assessment / evaluation (apprenticeship)</option>
+        <option value="discussion post or seminar argument">Discussion post / seminar argument</option>
+        <option value="reflective or apprenticeship writing">Reflective / apprenticeship writing</option>
+        <option value="presentation">Presentation</option>
+        <option value="studying or understanding readings">Studying / understanding readings</option>
+        <option value="__other">Something else…</option>
+      </select>
+      <input type="text" id="taskother" placeholder="Describe your task" style="margin-top:8px;display:none;">
+      <label class="q" for="goal" style="margin-top:12px;">What are you here to get better at? <span class="hint">Your learning goal — the upstream position.</span></label>
+      <textarea id="goal" placeholder="e.g., building my own argument from the literature; interpreting assessment data"></textarea>
+      <div class="err" id="goalerr">Add a learning goal so the rails can protect it.</div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="step">2</span>The data gate</legend>
+      <label class="q">Does this touch secure or sensitive data? <span class="hint">Student records, participant data, anything identifiable.</span></label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="gate" value="secure" onclick="toggleGate()"><span><span class="t">Yes — it involves other people's data</span><span class="d">Routes you to Baylor's secure tools.</span></span></label>
+        <label class="opt"><input type="radio" name="gate" value="open" checked onclick="toggleGate()"><span><span class="t">No — public info or my own coursework</span><span class="d">You have latitude in which tool to use.</span></span></label>
+      </div>
+      <div class="subgate" id="subgate">
+        <label class="q" style="margin-top:8px;">Are you asking questions <em>of stored files or a dataset</em>?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="secmode" value="box" checked><span><span class="t">Yes — querying documents</span><span class="d">→ Box AI (secure, and you can pick the model).</span></span></label>
+          <label class="opt"><input type="radio" name="secmode" value="copilot"><span><span class="t">No — drafting/thinking help</span><span class="d">→ Copilot Chat (signed in with Baylor credentials).</span></span></label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="step">3</span>What you keep, and the mode</legend>
+      <label class="q">What thinking stays fully yours? <span class="hint">Check all that apply.</span></label>
+      <div class="chk" id="keep">
+        <label><input type="checkbox" value="my writing voice" checked> my writing voice</label>
+        <label><input type="checkbox" value="my argument / thesis" checked> my argument / thesis</label>
+        <label><input type="checkbox" value="my analysis / interpretation"> my analysis / interpretation</label>
+        <label><input type="checkbox" value="my conclusions"> my conclusions</label>
+      </div>
+      <label class="q" style="margin-top:14px;">What mode do you want AI in?</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="mode" value="coach" checked><span><span class="t">Coach / tutor</span><span class="d">Asks me questions and gives feedback — never hands me answers.</span></span></label>
+        <label class="opt"><input type="radio" name="mode" value="augment"><span><span class="t">Thinking partner (augment)</span><span class="d">I draft first; AI checks my thinking. The cognitive lift stays mine.</span></span></label>
+        <label class="opt"><input type="radio" name="mode" value="automate"><span><span class="t">Assistant for a low-stakes task (automate)</span><span class="d">AI does clerical work; I verify every output. No kernel to protect here.</span></span></label>
+      </div>
+    </fieldset>
+
+    <button class="gen" onclick="generate()">Build my guardrails →</button>
+  </form>
+
+  <div id="out">
+    <div class="toolbanner" id="toolbanner"></div>
+
+    <div class="card">
+      <h3>① Your RADAR prompt</h3>
+      <p class="sub">Paste this into your tool to set the rails before you start.</p>
+      <div class="promptbox" id="radarbox"></div>
+      <button class="copy" onclick="copyBox('radarbox',this)">Copy RADAR prompt</button>
+    </div>
+
+    <div class="card">
+      <h3>② The rails self-interview</h3>
+      <p class="sub">Prefer to be walked through it? Paste this first — the AI interviews <em>you</em> to set the rails together.</p>
+      <div class="promptbox" id="selfbox"></div>
+      <button class="copy" onclick="copyBox('selfbox',this)">Copy self-interview prompt</button>
+    </div>
+
+    <div class="caveat">
+      <b>Secure ≠ exempt.</b> A protected tool guards the data, never your thinking. Whatever the tool, the 4Ds still apply: <b>discern</b> the output, <b>verify</b> it against the source, <b>disclose</b> how you used it — and you own the result.
+    </div>
+  </div>
+
+  <p class="foot">Rail Your Prompt · Baylor MSEd HESA · Built on the 4D AI Fluency Framework (Dakan, Feller &amp; Anthropic, 2025, CC BY-NC-SA 4.0). "Kernel of cognition" — C. H. Major (2026).</p>
+</div>
+
+<script>
+  var TASK = document.getElementById('task');
+  TASK.addEventListener('change', function(){
+    document.getElementById('taskother').style.display = (TASK.value==='__other') ? 'block' : 'none';
+  });
+  function toggleGate(){
+    var secure = document.querySelector('input[name=gate]:checked').value==='secure';
+    document.getElementById('subgate').classList.toggle('show', secure);
+  }
+  function taskText(){
+    if(TASK.value==='__other'){ return (document.getElementById('taskother').value.trim()||'my task'); }
+    return TASK.value;
+  }
+  // per-task default action to delegate
+  var ACTIONS = {
+    'literature review':'List the major themes and debates across the sources I give you, so I can map the landscape.',
+    'theory-application paper':'Point me to where my application of the theory is thin or unsupported — from my draft only.',
+    'program assessment or evaluation':'Cluster the responses I paste into first-pass themes and flag outliers.',
+    'discussion post or seminar argument':'Flag leading language, unstated assumptions, and gaps in my claim — do not rewrite it.',
+    'reflective or apprenticeship writing':'Ask me questions that push my reflection deeper; do not write it for me.',
+    'presentation':'Suggest engaging, non-lecture formats that serve my stated learning outcome.',
+    'studying or understanding readings':'Quiz me and check my understanding; explain concepts when I am stuck, without doing the work for me.'
+  };
+  function keptList(){
+    var xs=[].slice.call(document.querySelectorAll('#keep input:checked')).map(function(c){return c.value;});
+    return xs;
+  }
+  function joinNice(a){
+    if(a.length===0) return '';
+    if(a.length===1) return a[0];
+    return a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  }
+  function generate(){
+    var goal=document.getElementById('goal').value.trim();
+    if(!goal){ document.getElementById('goalerr').style.display='block'; document.getElementById('goal').focus(); return; }
+    document.getElementById('goalerr').style.display='none';
+
+    var task=taskText();
+    var gate=document.querySelector('input[name=gate]:checked').value;
+    var mode=document.querySelector('input[name=mode]:checked').value;
+    var kept=keptList();
+    var keptStr=kept.length? joinNice(kept) : 'my own thinking';
+    var taskAction=ACTIONS[TASK.value] || 'Help with the specific step I name — and only that step.';
+    var action=(mode==='coach') ? 'Ask me questions and give feedback that move my own thinking forward — don’t produce the output for me.' : taskAction;
+
+    // tool recommendation
+    var tb=document.getElementById('toolbanner');
+    var toolName, toolLine, dataRail='';
+    if(gate==='secure'){
+      var sm=document.querySelector('input[name=secmode]:checked').value;
+      toolName = (sm==='box') ? 'Box AI' : 'Copilot Chat';
+      var why = (sm==='box') ? 'to query your files/dataset securely (you can even pick the model)' : 'signed in with your Baylor credentials';
+      tb.className='toolbanner secure';
+      tb.innerHTML='<b>Use '+toolName+'</b> — '+why+'. This involves other people’s data, so it stays in Baylor’s secure lane. <b>Never</b> a personal/consumer AI account.';
+      dataRail=' This involves sensitive data, so I am working only in Baylor '+toolName+'. Do not ask me to paste identifiable personal or student data, and remind me if I try.';
+    } else {
+      toolName='Copilot Chat';
+      tb.className='toolbanner open';
+      tb.innerHTML='<b>You have latitude</b> — no sensitive data here. Copilot Chat is a solid default; the 4Ds still apply whatever you pick.';
+    }
+
+    // AI's role + rails by mode
+    var aiRole, railsMode;
+    if(mode==='coach'){
+      aiRole='Act as a learning coach.';
+      railsMode='Do not write, solve, summarize, or revise my work for me, and do not give final answers. Help me think by asking questions, pointing out issues, giving feedback, and suggesting next steps.';
+    } else if(mode==='augment'){
+      aiRole='Act as a thinking partner / reviewer.';
+      railsMode='I will draft first; you check my thinking. Only '+action.charAt(0).toLowerCase()+action.slice(1)+' Do not write it for me. Ask before you recommend — I decide.';
+    } else {
+      aiRole='Act as an assistant for a clearly-scoped, low-stakes task.';
+      railsMode='Do only the task I name. I will verify every output against the source before I use it.';
+    }
+
+    var radar =
+      'R · ROLE — I’m a master’s student in Baylor’s HESA program, working on a '+task+'.\n'+
+      'A · AI’S ROLE — '+aiRole+'\n'+
+      'D · DESCRIBE — What I’m here to get better at: '+goal+'. Use only the sources, notes, or data I provide.\n'+
+      'A · ACTION — '+action+'\n'+
+      'R · RAILS — '+railsMode+' Keep '+keptStr+' fully mine.'+dataRail;
+
+    var self =
+      'Before we start on my '+task+', don’t help me with it yet. First, interview me so we set the guardrails together. Ask these one at a time, wait for my answer, and adapt as you go:\n'+
+      '1. What is the task, and what is the learning goal behind it — what am I here to get better at?\n'+
+      '2. Which thinking do I want to stay fully mine (my voice, argument, analysis), and which parts can you help with?\n'+
+      '3. What mode do you want to be in: coach me by asking questions, think alongside me, or do a low-stakes task while I verify?\n'+
+      '4. What should you NOT do — even if I get tired later and ask?\n'+
+      '5. How will I verify your output, and is any of this data I should only handle in a secure tool?\n'+
+      'Then summarise the rails back to me as a short “contract” and ask me to confirm or edit before we begin. If I later ask you to cross a rail we set, pause and remind me of it first.';
+
+    document.getElementById('radarbox').textContent=radar;
+    document.getElementById('selfbox').textContent=self;
+    document.getElementById('out').classList.add('show');
+    document.getElementById('out').scrollIntoView({behavior:'smooth',block:'start'});
+    reportHeight();
+  }
+  function copyBox(id,btn){
+    var el=document.getElementById(id);
+    var text=el.textContent;
+    var orig=btn.getAttribute('data-orig');
+    if(!orig){ orig=btn.textContent; btn.setAttribute('data-orig',orig); }
+    function ok(){ btn.textContent='Copied ✓'; btn.classList.add('done'); setTimeout(function(){btn.textContent=orig; btn.classList.remove('done');},1600); }
+    function manual(){
+      var r=document.createRange(); r.selectNodeContents(el);
+      var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent='Selected — press Ctrl/Cmd+C'; btn.classList.remove('done');
+      setTimeout(function(){btn.textContent=orig;},2800);
+    }
+    function legacy(){
+      try{
+        var ta=document.createElement('textarea');
+        ta.value=text; ta.setAttribute('readonly','');
+        ta.style.position='fixed'; ta.style.top='0'; ta.style.left='-9999px';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        try{ ta.setSelectionRange(0,text.length); }catch(e){}
+        var done=false; try{ done=document.execCommand('copy'); }catch(e){ done=false; }
+        document.body.removeChild(ta);
+        if(done){ ok(); } else { manual(); }
+      }catch(e){ manual(); }
+    }
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(ok, legacy);
+    } else {
+      legacy();
+    }
+  }
+  // Canvas/iframe auto-height handshake
+  function reportHeight(){
+    var h=document.documentElement.scrollHeight;
+    if(window.parent){ window.parent.postMessage({type:'resize-iframe',height:h,frameHeight:h},'*'); }
+  }
+  window.addEventListener('load',reportHeight);
+  window.addEventListener('resize',reportHeight);
+  new ResizeObserver(reportHeight).observe(document.body);
+</script>
+</body>
+</html>
