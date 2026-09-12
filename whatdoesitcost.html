@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Does It Cost?</title>
+<style>
+  :root{
+    --green:#154734; --gold:#FFB81C; --amber:#D99A1C;
+    --accent:#5E8A93; --accent-dk:#2F5A62;
+    --cream:#FAF6EC; --sage:#E7EFE9; --palegold:#FBF3DC;
+    --char:#2B2B2B; --gray:#6F6F6F; --line:#D6D2C8; --brick:#9C3F2C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{padding:12px;background:var(--cream);color:var(--char);
+       font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
+  .wrap{max-width:820px;margin:0 auto}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  .hdr{background:var(--green);color:#fff;border-radius:10px 10px 0 0;padding:16px 20px;
+       border-bottom:5px solid var(--accent)}
+  .eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+           color:var(--gold);margin:0 0 4px}
+  .hdr h1{margin:0;font-size:1.32rem;font-weight:700}
+  .hdr p{margin:6px 0 0;font-size:.94rem;color:#E3EDE7}
+
+  .body{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:20px}
+
+  .qlabel{font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+          color:var(--gray);margin:0 0 8px}
+  .row{display:grid;gap:8px;margin:0 0 18px}
+  @media(min-width:560px){.row.three{grid-template-columns:repeat(3,1fr)}
+                          .row.four{grid-template-columns:repeat(4,1fr)}}
+  .opt{width:100%;font:inherit;font-weight:700;font-size:.92rem;color:var(--green);cursor:pointer;
+       background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:12px 10px;
+       text-align:center;transition:border-color .13s,background .13s}
+  .opt:hover{border-color:var(--accent);background:#F7FAFA}
+  .opt:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+  .opt[aria-pressed="true"]{border-color:var(--green);background:var(--sage)}
+  .opt small{display:block;font-weight:400;font-size:.76rem;color:var(--gray);margin-top:2px}
+  .opt[aria-pressed="true"] small{color:var(--accent-dk)}
+
+  .result{background:var(--green);color:#fff;border-radius:10px;padding:18px 20px;margin:4px 0 0}
+  .result .big{font-size:1.8rem;font-weight:800;line-height:1.15;color:var(--gold);margin:0}
+  .result .unit{font-size:.95rem;color:#E3EDE7;margin:2px 0 12px}
+  .bar{height:14px;background:rgba(255,255,255,.16);border-radius:7px;overflow:hidden;margin:0 0 12px}
+  .bar span{display:block;height:100%;background:var(--gold);border-radius:7px;
+            transition:width .35s ease;min-width:3px}
+  .equiv{margin:0;font-size:1rem;color:#fff}
+  .equiv b{color:var(--gold)}
+
+  .note{background:var(--sage);border-left:5px solid var(--accent);border-radius:0 8px 8px 0;
+        padding:13px 15px;margin:16px 0 0;font-size:.94rem}
+  .note b{color:var(--accent-dk)}
+
+  details{border:1px solid var(--line);border-radius:9px;margin:16px 0 0;background:#FCFBF7}
+  summary{cursor:pointer;padding:13px 15px;font-weight:700;color:var(--green);
+          list-style:none;display:flex;align-items:center;gap:9px}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"+";font-weight:800;color:var(--accent);font-size:1.15rem;line-height:1}
+  details[open] summary::before{content:"\2212"}
+  summary:focus-visible{outline:3px solid var(--green);outline-offset:-3px;border-radius:9px}
+  .dbody{padding:0 15px 15px}
+  .dbody p{margin:0 0 10px}
+  .dbody p:last-child{margin:0}
+
+  .src{margin:16px 0 0;font-size:.8rem;color:var(--gray);line-height:1.45}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <p class="eyebrow">Module 2 &middot; Evaluate the Ethics</p>
+    <h1>What Does It Cost?</h1>
+    <p>Two choices change the answer more than anything else you do. Try them.</p>
+  </div>
+
+  <div class="body">
+
+    <p class="qlabel">1. What are you asking it to make?</p>
+    <div class="row three" role="group" aria-label="What are you asking it to make">
+      <button class="opt" type="button" data-task="0" aria-pressed="true">Sort or label<small>Is this email spam?</small></button>
+      <button class="opt" type="button" data-task="1" aria-pressed="false">Write text<small>Draft or summarize</small></button>
+      <button class="opt" type="button" data-task="2" aria-pressed="false">Make images<small>Generate a picture</small></button>
+    </div>
+
+    <p class="qlabel">2. How many times?</p>
+    <div class="row four" role="group" aria-label="How many times">
+      <button class="opt" type="button" data-n="10" aria-pressed="true">10</button>
+      <button class="opt" type="button" data-n="50" aria-pressed="false">50</button>
+      <button class="opt" type="button" data-n="200" aria-pressed="false">200</button>
+      <button class="opt" type="button" data-n="1000" aria-pressed="false">1,000</button>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <p class="big" id="kwh">0.00002 kWh</p>
+      <p class="unit" id="what">10 sorting tasks</p>
+      <div class="bar"><span id="fill" style="width:0.1%"></span></div>
+      <p class="equiv" id="equiv">Less than <b>one</b> phone charge.</p>
+    </div>
+
+    <div class="note" id="punch">
+      <b>Notice:</b> pick "Make images" and watch the bar. Image generation is not a little more expensive than text. It is about <b>1,450 times</b> the cost of sorting, and about 46 times the next-highest task.
+    </div>
+
+    <details>
+      <summary>But what about training the model? Isn't that the real cost?</summary>
+      <div class="dbody">
+        <p>It is an enormous cost, and it happens once. Training GPT-3 used about 1,287 megawatt-hours. Training BLOOM used 433, and Gopher 1,066.</p>
+        <p>Here is the part that surprises people. BLOOM used more energy in training than OPT (433 versus 324 MWh) but produced far less carbon (25 versus 70 tonnes), because it was trained on a cleaner electricity grid. Where the electricity comes from matters as much as how much you use.</p>
+        <p>Your individual prompt is tiny next to training. But training happens once and prompting happens billions of times a day, which is why both numbers are real and neither one settles the question by itself.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Does this mean I should not use AI?</summary>
+      <div class="dbody">
+        <p>No. It means decide before you generate.</p>
+        <p>Sketch what you want first, then ask. Explore at a lower quality setting and save the high-quality run for the version you are actually going to use. Ask for four images because you thought about it, instead of two hundred because you were scrolling until something felt right.</p>
+        <p>Nothing on this page tells you what to conclude. It tells you what your choices cost, so the deciding is yours.</p>
+      </div>
+    </details>
+
+    <p class="src">
+      Energy figures from Luccioni, A. S., Jernite, Y., &amp; Strubell, E. (2024). Means across representative open models on standardized hardware. Image generation varies widely by model. Smartphone charge figure from the same study; laptop and fan comparisons are standard electrical calculations shown for scale, not measured in the study.
+    </p>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* kWh per 1,000 uses */
+  var TASKS = [
+    {name:"sorting tasks",  kwh1k:0.002, label:"Sort or label"},
+    {name:"text requests",  kwh1k:0.047, label:"Write text"},
+    {name:"images",         kwh1k:2.907, label:"Make images"}
+  ];
+  var PHONE = 0.022;           /* kWh, one smartphone charge */
+  var MAXK  = 2.907;           /* kWh for 1,000 images, the scale ceiling */
+
+  var task = 0, n = 10;
+
+  var elK = document.getElementById("kwh");
+  var elW = document.getElementById("what");
+  var elF = document.getElementById("fill");
+  var elE = document.getElementById("equiv");
+
+  function fmt(x){
+    if (x >= 100) return x.toFixed(0);
+    if (x >= 10)  return x.toFixed(1);
+    if (x >= 1)   return x.toFixed(2);
+    if (x >= 0.01) return x.toFixed(3);
+    return x.toFixed(5);
+  }
+  function words(v){
+    if (v < 0.5) return "Less than <b>one</b> phone charge.";
+    if (v < 1.5) return "About <b>one</b> phone charge.";
+    return "About <b>" + Math.round(v) + "</b> phone charges.";
+  }
+
+  function render(){
+    var t = TASKS[task];
+    var kwh = t.kwh1k * (n / 1000);
+    var phones = kwh / PHONE;
+
+    elK.textContent = fmt(kwh) + " kWh";
+    elW.textContent = n.toLocaleString() + " " + t.name;
+    elF.style.width = Math.max(0.4, (kwh / MAXK) * 100) + "%";
+    elE.innerHTML = words(phones);
+    bump();
+  }
+
+  function wireGroup(attr, apply){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-" + attr + "]"), function(b){
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(document.querySelectorAll("[data-" + attr + "]"), function(o){
+          o.setAttribute("aria-pressed", o === b ? "true" : "false");
+        });
+        apply(parseInt(b.getAttribute("data-" + attr), 10));
+        render();
+      });
+    });
+  }
+  wireGroup("task", function(v){ task = v; });
+  wireGroup("n",    function(v){ n = v; });
+
+  /* --- Canvas iframe auto-resize (canonical pattern) --- */
+  var PAD = 24, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  function bump(){ setTimeout(sendHeight, 80); }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+  document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
+
+  render();
+})();
+</script>
+</body>
+</html>
