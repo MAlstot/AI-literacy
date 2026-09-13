@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where Does It Go? A Data Destination Decision</title>
+<style>
+  :root{
+    --green:#154734; --gold:#FFB81C; --amber:#D99A1C;
+    --accent:#5E8A93; --accent-dk:#2F5A62;
+    --cream:#FAF6EC; --sage:#E7EFE9; --palegold:#FBF3DC;
+    --char:#2B2B2B; --gray:#6F6F6F; --line:#D6D2C8;
+    --brick:#9C3F2C; --teal:#3E6E78;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    padding:12px;
+    background:var(--cream);
+    color:var(--char);
+    font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.55;
+  }
+  .dd{max-width:820px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  .hdr{
+    background:var(--green); color:#fff;
+    border-radius:10px 10px 0 0; padding:16px 20px;
+    border-bottom:5px solid var(--accent);
+  }
+  .eyebrow{
+    font-size:.72rem; font-weight:800; letter-spacing:.11em;
+    text-transform:uppercase; color:var(--gold); margin:0 0 4px;
+  }
+  .hdr h1{margin:0;font-size:1.32rem;line-height:1.25;font-weight:700}
+  .hdr p{margin:6px 0 0;font-size:.94rem;color:#E3EDE7}
+
+  /* ---------- shell ---------- */
+  .body{
+    background:#fff;border:1px solid var(--line);border-top:0;
+    border-radius:0 0 10px 10px;padding:20px;
+  }
+
+  .progress{
+    display:flex;align-items:center;gap:8px;
+    font-size:.75rem;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--accent-dk);
+    margin:0 0 16px;
+  }
+  .pips{display:flex;gap:5px;margin-left:auto}
+  .pip{width:26px;height:5px;border-radius:3px;background:var(--line)}
+  .pip.on{background:var(--accent)}
+  .pip.done{background:var(--green)}
+
+  /* ---------- scenario ---------- */
+  .scene{
+    background:var(--sage);
+    border-left:5px solid var(--accent);
+    border-radius:0 8px 8px 0;
+    padding:14px 16px;margin:0 0 18px;
+  }
+  .scene h2{
+    margin:0 0 8px;font-size:1.05rem;color:var(--green);font-weight:700;
+  }
+  .scene p{margin:0 0 9px}
+  .scene p:last-child{margin-bottom:0}
+  .scene em{font-style:italic;color:var(--accent-dk)}
+
+  .ask{
+    font-weight:700;color:var(--green);font-size:1.02rem;
+    margin:0 0 10px;
+  }
+
+  /* ---------- options ---------- */
+  .opts{display:grid;gap:9px;margin:0 0 4px}
+  .opt{
+    display:flex;gap:11px;align-items:flex-start;width:100%;
+    text-align:left;font:inherit;color:inherit;cursor:pointer;
+    background:#fff;border:1.5px solid var(--line);border-radius:8px;
+    padding:12px 14px;transition:border-color .13s,background .13s;
+  }
+  .opt:hover{border-color:var(--accent);background:#F7FAFA}
+  .opt:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+  .opt .k{
+    flex:0 0 auto;width:25px;height:25px;border-radius:50%;
+    background:var(--accent);color:#fff;font-weight:800;font-size:.83rem;
+    display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .opt[aria-pressed="true"]{border-color:var(--green);background:var(--sage)}
+  .opt[aria-pressed="true"] .k{background:var(--green)}
+  .opt[disabled]{cursor:default;opacity:.62}
+  .opt[disabled][aria-pressed="true"]{opacity:1}
+
+  /* ---------- feedback ---------- */
+  .fb{
+    margin-top:16px;border:1px solid var(--line);border-radius:9px;
+    overflow:hidden;
+  }
+  .fb-top{
+    padding:11px 15px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+    border-bottom:1px solid var(--line);
+  }
+  .verdict{
+    font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    color:#fff;padding:4px 10px;border-radius:20px;
+  }
+  .v-best{background:var(--green)}
+  .v-part{background:var(--amber)}
+  .v-risk{background:var(--brick)}
+  .v-side{background:var(--teal)}
+  .v-cond{background:var(--accent-dk)}
+  .fb-top .lbl{font-weight:700;font-size:.95rem;color:var(--char)}
+  .t-best{background:var(--sage)}
+  .t-part{background:var(--palegold)}
+  .t-risk{background:#F7E9E5}
+  .t-side{background:#EBF1F3}
+  .t-cond{background:#E9F0F1}
+
+  .chips{display:grid;gap:7px;padding:13px 15px;border-bottom:1px solid var(--line);background:#FCFBF7}
+  @media(min-width:560px){.chips{grid-template-columns:1fr 1fr}}
+  .chip{
+    display:flex;gap:9px;align-items:flex-start;
+    font-size:.87rem;line-height:1.42;
+    border:1px solid var(--line);border-radius:7px;padding:8px 10px;background:#fff;
+  }
+  .chip .m{
+    flex:0 0 auto;width:20px;height:20px;border-radius:50%;color:#fff;
+    font-size:.74rem;font-weight:800;display:flex;align-items:center;justify-content:center;
+  }
+  .m-ok{background:var(--green)}
+  .m-warn{background:var(--amber)}
+  .m-no{background:var(--brick)}
+  .chip b{display:block;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--gray);font-weight:800}
+
+  .fb-body{padding:14px 16px}
+  .fb-body p{margin:0 0 10px}
+  .fb-body p:last-child{margin-bottom:0}
+
+  /* ---------- actions ---------- */
+  .acts{margin-top:15px;display:flex;flex-wrap:wrap;gap:9px}
+  .btn{
+    font:inherit;font-weight:700;font-size:.93rem;cursor:pointer;
+    border-radius:7px;padding:10px 18px;border:2px solid var(--green);
+    background:var(--green);color:#fff;
+  }
+  .btn:hover{background:#0F3627;border-color:#0F3627}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .btn.ghost{background:#fff;color:var(--green)}
+  .btn.ghost:hover{background:var(--sage)}
+
+  /* ---------- recap ---------- */
+  .recap{
+    margin-top:4px;border:2px solid var(--green);border-radius:10px;overflow:hidden;
+  }
+  .recap h2{
+    margin:0;background:var(--green);color:#fff;padding:12px 16px;
+    font-size:1.05rem;font-weight:700;
+  }
+  .recap-in{padding:16px}
+  .lens{display:grid;gap:11px;margin:0 0 14px}
+  @media(min-width:560px){.lens{grid-template-columns:1fr 1fr}}
+  .lensq{
+    border:1.5px solid var(--accent);border-radius:8px;padding:12px 14px;background:var(--sage);
+  }
+  .lensq h3{
+    margin:0 0 6px;font-size:1rem;color:var(--green);font-weight:700;
+  }
+  .lensq p{margin:0;font-size:.9rem;line-height:1.5}
+  .kicker{
+    background:var(--palegold);border-left:5px solid var(--gold);
+    padding:12px 14px;border-radius:0 8px 8px 0;font-size:.96rem;
+  }
+  .kicker strong{color:var(--accent-dk)}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="dd">
+
+  <div class="hdr">
+    <p class="eyebrow">Module 2 · Evaluate the Ethics</p>
+    <h1>Where Does It Go?</h1>
+    <p>Two decisions. No trick questions, but more than one option is defensible.</p>
+  </div>
+
+  <div class="body">
+    <div class="progress">
+      <span id="ptext">Round 1 of 2</span>
+      <span class="pips" aria-hidden="true">
+        <span class="pip on" id="pip1"></span><span class="pip" id="pip2"></span>
+      </span>
+    </div>
+    <div id="stage" aria-live="polite"></div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var ROUNDS = [
+    {
+      title: "The group doc",
+      scene: [
+        "SOC 2310, week four. Your four-person group has a semester project, and you ended up as the organizer, mostly because nobody else volunteered.",
+        "You have a shared doc with everyone’s info: full names, cell numbers, Baylor emails, which residence hall each person lives in, work shifts, class schedules. Somebody added a line at the bottom after your first group dinner: Maya’s gluten‑free, Deshawn has a peanut allergy.",
+        "It’s 11:40 p.m. You need a meeting schedule that threads four class schedules and two jobs. You open an AI chatbot, logged into your own free account, and put your cursor in the box."
+      ],
+      ask: "What do you paste?",
+      opts: [
+        {
+          k:"A",
+          label:"The whole doc. It’s just scheduling info, and you all shared it with each other anyway.",
+          verdict:"risk", vlabel:"Risky, and this is the most common choice",
+          chips:[
+            {m:"no", t:"Whose data", d:"Shared with you, not yours to forward"},
+            {m:"no", t:"Where it lands", d:"Consumer terms you didn’t read"}
+          ],
+          body:[
+            "Your intent is fine. You’re trying to get four busy people into a room. But two things are true at once here.",
+            "First, the doc isn’t yours. Your groupmates handed it to <em>the group</em>. That is not the same as handing it to a company.",
+            "Second, look at what’s actually in it. A full name plus a phone number plus a residence hall is enough for a stranger to find someone in person. A peanut allergy is health information. None of it felt sensitive when you copied it, because it was already familiar to you. Familiar is not the same as safe.",
+            "Free‑tier tools commonly reserve the right to use what you submit to improve future versions unless you go find the setting and switch it off. Most people never do."
+          ]
+        },
+        {
+          k:"B",
+          label:"The whole doc, but into Baylor’s licensed AI tool instead of your personal account.",
+          verdict:"part", vlabel:"Better, but only half the problem",
+          chips:[
+            {m:"warn", t:"Whose data", d:"Still theirs, still no heads‑up"},
+            {m:"ok", t:"Where it lands", d:"Covered by a Data Processing Agreement"}
+          ],
+          body:[
+            "Real improvement, and here’s exactly what it bought you. Baylor’s licensed tools run under a <strong>Data Processing Agreement</strong>: a contract that limits what the vendor may do with what you enter, including not training on it. That is a genuine legal difference, not a marketing one.",
+            "But a DPA governs the <em>vendor</em>. It doesn’t answer the other half of the question: did your groupmates agree to have their phone numbers and dorm assignments typed into any tool at all?",
+            "A secure destination plus a quick heads‑up in the group chat is the complete version of this answer."
+          ]
+        },
+        {
+          k:"C",
+          label:"Strip it down first. Paste only the availability blocks, labeled Person 1 through 4. No names, numbers, halls, or allergies.",
+          verdict:"best", vlabel:"The strongest choice",
+          chips:[
+            {m:"ok", t:"Whose data", d:"You sent only what was yours to send"},
+            {m:"ok", t:"Where it lands", d:"Nothing identifying ever left the doc"}
+          ],
+          body:[
+            "This is the move. It has a name, <strong>data minimization</strong>, and it means sending only what the task actually requires. A scheduler doesn’t need to know that Person 3 lives in Brooks or that Person 2 can’t eat gluten. It needs four sets of free hours.",
+            "An AI tool cannot leak what it never received. That’s the whole idea, and it cost you about ninety seconds.",
+            "Notice this works on <em>any</em> tool, licensed or not. That’s why it’s the habit worth building. You’ll still have it when you’re using something Baylor never vetted."
+          ]
+        },
+        {
+          k:"D",
+          label:"Close the tab. Build the schedule grid yourself in a spreadsheet.",
+          verdict:"side", vlabel:"Safe, but you skipped the decision",
+          chips:[
+            {m:"ok", t:"Whose data", d:"Nothing left your device"},
+            {m:"ok", t:"Where it lands", d:"Nowhere"}
+          ],
+          body:[
+            "Nothing unethical here, and sometimes this is the right call.",
+            "But notice what you did: you avoided the decision rather than making one. This module isn’t trying to talk you out of using AI. The question it wants you holding is narrower and more useful: <em>what am I handing over, and to whom?</em>",
+            "Go back and look at the other three. One of them is a habit you’ll use for the next four years."
+          ]
+        }
+      ]
+    },
+    {
+      title: "The second rater",
+      scene: [
+        "Same class, six weeks later. Your group’s project is on food insecurity among Baylor undergraduates. You interviewed twelve students.",
+        "They told you things they haven’t told their parents. Skipping meals to make rent. Which pantry they use and on what day. How they decide between a textbook and groceries. Your group told every one of them the same thing: <em>the recordings and transcripts stay with the four of us and Dr. Alvarez.</em>",
+        "You’ve done the work. You read all twelve transcripts twice and built a coding sheet with six themes, notes on which participants land where, and two passages you genuinely can’t decide about. You meet with Dr. Alvarez and your group on Tuesday.",
+        "Before then, you want a check on your own thinking. <em>Did I miss a theme? Am I seeing a connection that isn’t really there?</em> In research this is a second rater’s job, and you don’t have one."
+      ],
+      ask: "How do you get that check?",
+      opts: [
+        {
+          k:"A",
+          label:"Paste all twelve transcripts into your personal AI account, ask it to code them independently, and compare its themes to yours.",
+          verdict:"risk", vlabel:"Right instinct, two failures stacked",
+          chips:[
+            {m:"no", t:"Whose data", d:"Given in confidence, under a promise"},
+            {m:"no", t:"Where it lands", d:"Consumer terms, possibly training data"}
+          ],
+          body:[
+            "The method is sound. Comparing your coding against an independent pass is exactly what a second rater does. The destination is the problem, and there are two.",
+            "The first is the same as round one: a personal free account, with terms that may allow your input to train future versions.",
+            "The second is one that no tool setting can fix. <strong>You made a promise.</strong> Those twelve students consented to <em>your group</em>. Not to a company. Consent doesn’t transfer. You can’t quietly widen the circle afterward and call it the same agreement.",
+            "And be careful with the word “anonymous.” Stripping a name doesn’t do much when a transcript says <em>I work the night shift at the H‑E‑B on Valley Mills and my roommate doesn’t know I use the pantry.</em> Details identify people. Sometimes better than names do."
+          ]
+        },
+        {
+          k:"B",
+          label:"Same idea, but paste all twelve into Baylor’s licensed AI tool, the secure one.",
+          verdict:"part", vlabel:"You fixed the destination, not the promise",
+          chips:[
+            {m:"no", t:"Whose data", d:"A fifth party they never agreed to"},
+            {m:"ok", t:"Where it lands", d:"Covered by a Data Processing Agreement"}
+          ],
+          body:[
+            "A DPA protects the data <em>from the vendor</em>. It says nothing about whether your participants agreed to anyone beyond your group reading their words.",
+            "If they were told “this stays with the four of us and Dr. Alvarez,” then adding another party, however contractually well‑behaved that party is, is a change they didn’t agree to.",
+            "This is the distinction the module keeps returning to. A secure platform answers the <strong>policy</strong> question: am I allowed to? It does not answer the <strong>ethical</strong> one: should I?"
+          ]
+        },
+        {
+          k:"C",
+          label:"Send no transcripts at all. Share your own theme list and coding notes, and ask the tool to pressure‑test your reasoning: what a skeptical second rater would challenge, and what categories this kind of research commonly surfaces that you haven’t named.",
+          verdict:"best", vlabel:"The strongest choice, and it’s available to you right now",
+          chips:[
+            {m:"ok", t:"Whose data", d:"Your own analysis, yours to share"},
+            {m:"ok", t:"Where it lands", d:"No participant ever left the room"}
+          ],
+          body:[
+            "Look at what you kept and what you gave up. Your participants’ words never leave your group. What you sent is <em>your</em> work: your themes, your reasoning, your two uncertain passages described in your own summary.",
+            "And you still get the thing you actually wanted. A challenge to your categories. A list of themes this literature usually finds, so you can go back to the transcripts and check whether you missed one. A push on the connection you weren’t sure about.",
+            "Notice the sequence: <strong>you analyzed first, then asked for the check.</strong> That order is what makes this a second rater instead of a substitute. The comparison is only meaningful because you have something of your own to compare.",
+            "This is the version that needs no permission, no de‑identification pass, and no foresight from week three. It works on any tool, in any class, today."
+          ]
+        },
+        {
+          k:"D",
+          label:"De‑identify all twelve transcripts, then use the licensed tool, because back in week three your consent form told participants AI would assist with analysis.",
+          verdict:"cond", vlabel:"Also defensible, but only because of week three",
+          chips:[
+            {m:"ok", t:"Whose data", d:"Theirs, and they agreed in advance"},
+            {m:"ok", t:"Where it lands", d:"Protected, and stripped before it got there"}
+          ],
+          body:[
+            "Secure destination: yes. Minimized data: yes. And the piece that makes it legitimate is the last clause. Participants were told before they said a word, so they consented to the thing you were actually going to do.",
+            "This gives you something option C can’t: a genuinely independent pass over the raw material, which is a stronger reliability check than a critique of your own summary.",
+            "But look at what it cost. It’s only available because of a decision made six weeks ago. You cannot get consent in week nine for interviews you collected in week three, and de‑identifying twelve transcripts well is slow, careful work.",
+            "That’s the real lesson here. The best option in a research setting is usually one you had to set up before you needed it."
+          ]
+        }
+      ]
+    }
+  ];
+
+  var VNAME = {best:"v-best", part:"v-part", risk:"v-risk", side:"v-side", cond:"v-cond"};
+  var TNAME = {best:"t-best", part:"t-part", risk:"t-risk", side:"t-side", cond:"t-cond"};
+  var VTEXT = {best:"Best choice", part:"Partly there", risk:"Risky", side:"Sidestep", cond:"Conditional"};
+  var MNAME = {ok:"m-ok", warn:"m-warn", no:"m-no"};
+  var MGLYPH = {ok:"✓", warn:"!", no:"✕"};
+  /* Screen-reader equivalent of the glyph. The glyph itself is aria-hidden,
+     so without this a non-sighted user gets the chip text with no verdict. */
+  var MWORD = {ok:"Good.", warn:"Caution.", no:"Problem."};
+
+  var stage = document.getElementById("stage");
+  var ptext = document.getElementById("ptext");
+  var pip1  = document.getElementById("pip1");
+  var pip2  = document.getElementById("pip2");
+
+  var idx = 0;      /* current round */
+  var picked = [null, null];
+
+  function esc(s){ return s; }
+
+  function chipHTML(c){
+    return '<span class="chip"><span class="m '+MNAME[c.m]+'" aria-hidden="true">'+MGLYPH[c.m]+'</span>'
+         + '<span><b>'+c.t+'</b><span class="sr">'+MWORD[c.m]+' </span>'+c.d+'</span></span>';
+  }
+
+  function render(){
+    var r = ROUNDS[idx];
+    var html = '';
+
+    html += '<section class="scene"><h2>'+r.title+'</h2>';
+    r.scene.forEach(function(p){ html += '<p>'+p+'</p>'; });
+    html += '</section>';
+
+    html += '<p class="ask">'+r.ask+'</p>';
+    html += '<div class="opts" role="group" aria-label="'+r.ask+'">';
+    r.opts.forEach(function(o,i){
+      var chosen = picked[idx] === i;
+      var dis = picked[idx] !== null ? ' disabled' : '';
+      html += '<button class="opt" type="button" data-i="'+i+'" aria-pressed="'+(chosen?'true':'false')+'"'+dis+'>'
+            + '<span class="k" aria-hidden="true">'+o.k+'</span>'
+            + '<span>'+o.label+'</span></button>';
+    });
+    html += '</div>';
+
+    if (picked[idx] !== null){
+      var o = r.opts[picked[idx]];
+      html += '<div class="fb">'
+            + '<div class="fb-top '+TNAME[o.verdict]+'">'
+            + '<span class="verdict '+VNAME[o.verdict]+'">'+VTEXT[o.verdict]+'</span>'
+            + '<span class="lbl">'+o.vlabel+'</span></div>'
+            + '<div class="chips">'+o.chips.map(chipHTML).join('')+'</div>'
+            + '<div class="fb-body">'+o.body.map(function(p){return '<p>'+p+'</p>';}).join('')+'</div>'
+            + '</div>';
+
+      html += '<div class="acts">';
+      html += '<button class="btn ghost" type="button" id="again">Try a different choice</button>';
+      if (idx === 0){
+        html += '<button class="btn" type="button" id="next">Continue to round 2 →</button>';
+      } else {
+        html += '<button class="btn" type="button" id="wrap">See the takeaway →</button>';
+      }
+      html += '</div>';
+    }
+
+    stage.innerHTML = html;
+    wire();
+    ptext.textContent = "Round " + (idx+1) + " of 2";
+    pip1.className = "pip " + (idx===0 ? "on" : "done");
+    pip2.className = "pip " + (idx===1 ? "on" : "");
+    bump();
+  }
+
+  function renderWrap(){
+    stage.innerHTML =
+      '<div class="recap">'
+      + '<h2>Two questions, every single time</h2>'
+      + '<div class="recap-in">'
+      + '<div class="lens">'
+      + '<div class="lensq"><h3>1. Whose data is this?</h3><p>If the answer is anything other than “only mine,” you need the other person’s agreement, and you need it <em>before</em> you collect, not after you’re stuck.</p></div>'
+      + '<div class="lensq"><h3>2. Where is it going?</h3><p>A licensed tool under a Data Processing Agreement is a different destination from a personal account with terms you scrolled past. Same prompt, different landing place.</p></div>'
+      + '</div>'
+      + '<div class="kicker"><p style="margin:0 0 9px">Worth noticing: in neither round was the ethical answer <strong>“don’t use AI.”</strong> It was <strong>send less, and send it somewhere that has to protect it.</strong> Those two moves are available to you on every tool you will ever open.</p>'
+      + '<p style="margin:0">And in round 2, the strongest option only worked because <strong>you did the analysis first.</strong> AI made a good second rater. It would have made a terrible first one.</p></div>'
+      + '<div class="acts"><button class="btn ghost" type="button" id="restart">Start over</button></div>'
+      + '</div></div>';
+    ptext.textContent = "Takeaway";
+    pip1.className = "pip done"; pip2.className = "pip done";
+    var rs = document.getElementById("restart");
+    if (rs) rs.addEventListener("click", function(){
+      idx = 0; picked = [null,null]; render();
+      stage.scrollIntoView({block:"nearest"});
+    });
+    bump();
+  }
+
+  function wire(){
+    Array.prototype.forEach.call(stage.querySelectorAll(".opt"), function(b){
+      b.addEventListener("click", function(){
+        picked[idx] = parseInt(b.getAttribute("data-i"), 10);
+        render();
+      });
+    });
+    var a = document.getElementById("again");
+    if (a) a.addEventListener("click", function(){ picked[idx] = null; render(); });
+    var n = document.getElementById("next");
+    if (n) n.addEventListener("click", function(){ idx = 1; render(); });
+    var w = document.getElementById("wrap");
+    if (w) w.addEventListener("click", renderWrap);
+  }
+
+  /* --- Canvas iframe auto-resize (canonical pattern) ---
+     Measures the widget wrapper, NOT scrollHeight. PAD = body padding top+bottom. */
+  var PAD = 24;
+  var lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.dd');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  function bump(){ setTimeout(sendHeight, 80); }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    new ResizeObserver(sendHeight).observe(document.querySelector('.dd'));
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
