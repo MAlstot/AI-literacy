@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Policy Clarity Tool</title>
+<style>
+  :root{--green:#154734;--gold:#FFB81C;--lgreen:#e9f1ec;--sgold:#fdf3dc;--ink:#222;--mid:#5a5a5a;--line:#c9d6cf;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--lgreen);padding:16px;}
+  .wrap{max-width:820px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px;}
+  h1{color:var(--green);font-size:1.3rem;margin:0 0 6px;}
+  .sub{color:var(--mid);font-size:.92rem;margin:0 0 20px;line-height:1.5;}
+  .note{background:var(--sgold);border-left:4px solid var(--gold);padding:9px 13px;border-radius:0 8px 8px 0;font-size:.9rem;margin:14px 0;}
+
+  /* Step indicator */
+  .stepline{display:flex;align-items:center;gap:8px;margin:16px 0 24px;flex-wrap:wrap;}
+  .sdot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--mid);background:#fff;font-size:.85rem;}
+  .sdot.done{background:var(--green);border-color:var(--green);color:#fff;}
+  .sdot.here{background:var(--gold);border-color:var(--gold);color:var(--green);}
+  .sbar{flex:1;height:2px;background:var(--line);min-width:20px;}
+
+  /* Main content */
+  fieldset{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0;}
+  legend{font-weight:700;color:var(--green);padding:0 6px;font-size:.95rem;}
+  .help{font-size:.9rem;color:var(--mid);line-height:1.55;margin:0 0 12px;}
+
+  .opt{margin:8px 0;}
+  .opt input{position:absolute;opacity:0;pointer-events:none;}
+  .opt label{display:block;border:2px solid var(--line);border-radius:8px;padding:9px 13px;cursor:pointer;font-size:.95rem;background:#fff;transition:all .2s;}
+  .opt label:hover{border-color:var(--green);}
+  .opt input:checked + label{background:var(--green);border-color:var(--green);color:#fff;font-weight:600;}
+  .opt input:focus-visible + label{outline:3px solid var(--gold);outline-offset:2px;}
+
+  .tool-row{display:flex;align-items:center;gap:16px;padding:12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
+  .tool-name{flex:1;font-size:.95rem;font-weight:500;}
+  .tool-buttons{display:flex;gap:8px;}
+  .tool-btn{padding:6px 12px;border:2px solid var(--line);background:#fff;color:var(--mid);border-radius:6px;font-size:.8rem;cursor:pointer;font-weight:600;transition:all .2s;}
+  .tool-btn:hover{border-color:var(--green);}
+  .tool-btn.active{background:var(--green);border-color:var(--green);color:#fff;}
+  .tool-btn.not-allowed{background:#c84c4c;border-color:#c84c4c;color:#fff;}
+
+  .disclosure-item{margin:10px 0;padding:10px;background:var(--lgreen);border-radius:6px;}
+  .disclosure-core{font-weight:600;color:var(--green);}
+  .disclosure-optional{color:var(--mid);font-weight:500;}
+
+  textarea{width:100%;min-height:130px;font:inherit;padding:10px;border:2px solid var(--line);border-radius:8px;font-size:.95rem;}
+  textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .small{font-size:.82rem;color:var(--mid);}
+
+  button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 18px;border:2px solid var(--green);font-weight:600;transition:all .2s;}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .primary{background:var(--green);color:#fff;}
+  .primary:hover{background:#0e3324;}
+  .secondary{background:#fff;color:var(--green);}
+  .secondary:hover{background:var(--lgreen);}
+  button:disabled{opacity:.4;cursor:default;}
+
+  .nav{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .hidden{display:none;}
+
+  /* Output */
+  .draft{border:2px solid var(--green);border-radius:12px;padding:16px 20px;background:#fdfdf9;}
+  .draft h2{color:var(--green);font-size:1.05rem;margin:0 0 12px;font-weight:700;}
+  .draft h3{color:var(--green);font-size:.95rem;margin:16px 0 8px;font-weight:700;}
+  .draft p{margin:0 0 12px;line-height:1.65;font-size:.95rem;}
+  .draft p:last-child{margin-bottom:0;}
+  .draft-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
+  .draft-section:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .draft-label{font-weight:700;color:var(--green);font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+  .draft ul{margin:8px 0;padding-left:20px;}
+  .draft li{margin:4px 0;font-size:.95rem;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Help Your Students Understand Your AI Expectations</h1>
+  <p class="sub">This tool helps you clarify your AI policy so students know what you expect and why. By being clear about what counts as AI and why certain boundaries matter, you help prevent misunderstandings.</p>
+
+  <!-- Step counter -->
+  <div class="stepline" id="stepline" aria-hidden="true"></div>
+
+  <!-- Main form -->
+  <div id="stage"></div>
+
+  <div class="nav" id="navrow">
+    <button type="button" class="secondary" id="backBtn">Back</button>
+    <button type="button" class="primary" id="nextBtn" disabled>Next</button>
+  </div>
+
+  <!-- Output -->
+  <div id="result" class="hidden" style="margin-top:30px;">
+    <h2 style="color:var(--green);margin-bottom:16px;font-size:1.1rem;">Your AI Policy Statement (draft)</h2>
+    <div class="note">This is a warm, clear draft that helps students understand your expectations and your reasoning. Edit it to match your voice, and it becomes a syllabus statement or assignment note. Nothing here is stored anywhere.</div>
+
+    <div class="draft" id="draftBody"></div>
+
+    <div class="nav" style="margin-top:20px;">
+      <button type="button" class="primary" id="copyBtn">Copy for syllabus</button>
+      <button type="button" class="secondary" id="downloadBtn">Download as .txt</button>
+      <button type="button" class="secondary" id="viewTextBtn">View as text</button>
+      <button type="button" class="secondary" id="restartBtn">Change my answers</button>
+    </div>
+
+    <div id="textView" class="hidden" style="margin-top:30px;">
+      <h2 style="color:var(--green);margin-bottom:16px;font-size:1.1rem;">Plain Text Version</h2>
+      <textarea id="textOutput" readonly style="min-height:400px;background:#fafafa;color:#333;"></textarea>
+      <div class="nav" style="margin-top:14px;">
+        <button type="button" class="primary" id="copyTextBtn">Copy this text</button>
+        <button type="button" class="secondary" id="hideTextBtn">Hide text view</button>
+      </div>
+    </div>
+
+    <textarea id="copyArea" class="hidden" aria-label="Policy statement as plain text"></textarea>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var TOOLS = [
+  {label: "Generative AI (ChatGPT, Claude, Copilot)", key: "genai"},
+  {label: "AI that rewrites or restyles your own sentences (Grammarly, QuillBot)", key: "grammar"},
+  {label: "Basic spell check and grammar check (built into Word, Google Docs, browsers)", key: "spellcheck"},
+  {label: "Predictive text and autocomplete (phone keyboard, Gmail Smart Compose)", key: "predictive"},
+  {label: "Translation tools (Google Translate, DeepL)", key: "translation"},
+  {label: "AI search and answer engines (Perplexity, Google's AI Overviews)", key: "search"},
+  {label: "AI search within library databases to find and filter results", key: "libdb"},
+  {label: "AI research assistants in library tools (Scopus AI, ProQuest AI)", key: "libai"}
+];
+
+var FACULTY_USES = [
+  "Develop presentation slides",
+  "Clarify assignment directions",
+  "Draft grading rubrics",
+  "Brainstorm in-class activities"
+];
+
+var QS = [
+  {
+    q: "What may students do with AI in this course?",
+    help: "Pick the stance that best matches your thinking. This frames everything that follows.",
+    type: "radio",
+    options: [
+      {label: "Not on graded work"},
+      {label: "Yes, with disclosure"},
+      {label: "Yes, freely"},
+      {label: "It depends on the assignment"},
+      {label: "I'm still deciding"}
+    ],
+    key: "stance"
+  },
+  {
+    q: "Which uses of AI are allowed, and which are not?",
+    help: "For each tool, mark whether it's allowed or not on graded work. This clarifies your stance so students understand what you mean.",
+    type: "tools",
+    key: "tools_stance"
+  },
+  {
+    q: "What disclosure will you ask students to provide?",
+    help: "A clear disclosure asks for specific things, not a vague 'I used AI.' Keep, trim, or add to fit your course.",
+    type: "disclosure",
+    key: "student_disclosure"
+  },
+  {
+    q: "Do you use AI as you prepare and teach this course?",
+    help: "Check the ways you use AI, then add any other ways in the text box.",
+    type: "faculty_uses",
+    key: "faculty_uses"
+  },
+  {
+    q: "How will you disclose your AI use to students?",
+    help: "Tell students how and where you'll share your AI use. Your transparency models the honesty you ask of them.",
+    type: "textarea",
+    starter: "I will disclose my use of AI in a footnote or caption on assignments and/or course content developed with AI.",
+    key: "faculty_disclosure"
+  }
+];
+
+var state = {
+  stance: "",
+  tools_stance: {},
+  student_disclosure: {},
+  guidance_text: "",
+  disclosure_placement: "",
+  faculty_uses: [],
+  faculty_use_text: "",
+  faculty_disclosure: ""
+};
+
+var step = 0, N = QS.length;
+var $ = function(id){ return document.getElementById(id); };
+
+function renderSteps(){
+  var h = "";
+  for(var i = 0; i < N; i++){
+    h += '<span class="sdot ' + (i < step ? 'done' : (i === step ? 'here' : '')) + '">' + (i + 1) + '</span>';
+    if(i < N - 1) h += '<span class="sbar"></span>';
+  }
+  $("stepline").innerHTML = h;
+}
+
+function renderQ(){
+  renderSteps();
+  var Q = QS[step];
+  var h = '<fieldset><legend>Step ' + (step + 1) + ' of ' + N + ': ' + Q.q + '</legend>';
+
+  if(Q.help) h += '<p class="help">' + Q.help + '</p>';
+
+  if(Q.type === "textarea"){
+    var val = state[Q.key] || "";
+    if(Q.starter && !val) val = Q.starter;
+    h += '<textarea id="input_' + Q.key + '" placeholder="' + (Q.starter || "") + '">' + escapeHtml(val) + '</textarea>';
+  } else if(Q.type === "radio"){
+    Q.options.forEach(function(opt, i){
+      var on = state[Q.key] === opt.label;
+      h += '<div class="opt"><input type="radio" id="o' + i + '" name="stance_radio" value="' + opt.label + '"' + (on ? ' checked' : '') + '><label for="o' + i + '">' + opt.label + '</label></div>';
+    });
+  } else if(Q.type === "tools"){
+    TOOLS.forEach(function(tool, i){
+      var stance = state.tools_stance[tool.key];
+      h += '<div class="tool-row">';
+      h += '<div class="tool-name">' + tool.label + '</div>';
+      h += '<div class="tool-buttons">';
+      h += '<button type="button" class="tool-btn' + (stance === "not-allowed" ? " active not-allowed" : "") + '" data-tool="' + tool.key + '" data-stance="not-allowed">Not allowed</button>';
+      h += '<button type="button" class="tool-btn' + (stance === "still-fine" ? " active" : "") + '" data-tool="' + tool.key + '" data-stance="still-fine">Still fine</button>';
+      h += '</div>';
+      h += '</div>';
+    });
+    h += '<div style="margin-top:20px;"><div style="font-weight:600;color:var(--green);margin-bottom:10px;">Your guidance on these tools (optional)</div>';
+    h += '<textarea id="guidance_text" placeholder="Add anything students should know. For example: for anything still to decide, check with me first. Basic spell check is fine; a tool that rewrites your sentences is not." style="margin-bottom:12px;">' + escapeHtml(state.guidance_text || "") + '</textarea>';
+    h += '</div>';
+  } else if(Q.type === "disclosure"){
+    h += '<div class="disclosure-item"><div class="disclosure-core">(core)</div>The name of the tool you used</div>';
+    h += '<div class="disclosure-item"><div class="disclosure-core">(core)</div>How you used it</div>';
+    h += '<div class="disclosure-item"><div class="disclosure-core">(core)</div>What you did with the output it provided</div>';
+    h += '<div class="disclosure-item"><div class="disclosure-optional">(optional)</div>What you verified or changed yourself</div>';
+    h += '<div class="disclosure-item"><div class="disclosure-optional">(optional)</div>Why it was useful, or where it fell short</div>';
+    h += '<div style="margin-top:16px;font-size:.9rem;color:var(--mid);">Check the items you will ask students to disclose:</div>';
+    var disclosure_options = [
+      {label: "The name of the tool you used", core: true},
+      {label: "How you used it", core: true},
+      {label: "What you did with the output it provided", core: true},
+      {label: "What you verified or changed yourself", core: false},
+      {label: "Why it was useful, or where it fell short", core: false}
+    ];
+    disclosure_options.forEach(function(opt, i){
+      var on = state.student_disclosure[opt.label];
+      h += '<div class="opt"><input type="checkbox" id="d' + i + '" value="' + opt.label + '"' + (on ? ' checked' : '') + '><label for="d' + i + '">' + opt.label + '</label></div>';
+    });
+    h += '<div style="margin-top:20px;"><div style="font-weight:600;color:var(--green);margin-bottom:12px;">Where should the statement go?</div>';
+    var placement_options = [
+      "before your references",
+      "at the end of the assignment",
+      "in a footnote or appendix"
+    ];
+    placement_options.forEach(function(place, i){
+      var on = state.disclosure_placement === place;
+      h += '<div class="opt"><input type="radio" id="p' + i + '" name="placement_radio" value="' + place + '"' + (on ? ' checked' : '') + '><label for="p' + i + '">' + place + '</label></div>';
+    });
+    h += '</div>';
+  } else if(Q.type === "faculty_uses"){
+    h += '<div style="font-size:.9rem;color:var(--mid);margin-bottom:12px;">Check the ways you use AI:</div>';
+    FACULTY_USES.forEach(function(use, i){
+      var on = state.faculty_uses.indexOf(use) >= 0;
+      h += '<div class="opt"><input type="checkbox" id="f' + i + '" value="' + use + '"' + (on ? ' checked' : '') + '><label for="f' + i + '">' + use + '</label></div>';
+    });
+    h += '<textarea id="faculty_use_text" placeholder="Other ways I use AI..." style="margin-top:12px;">' + escapeHtml(state.faculty_use_text) + '</textarea>';
+  }
+
+  h += '</fieldset>';
+  $("stage").innerHTML = h;
+
+  // Attach listeners
+  if(Q.type === "textarea"){
+    var ta = $("input_" + Q.key);
+    if(ta) ta.addEventListener("input", function(){ state[Q.key] = this.value; });
+  } else if(Q.type === "radio"){
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=stance_radio]'), function(inp){
+      inp.addEventListener("change", function(){
+        state.stance = this.value;
+      });
+    });
+  } else if(Q.type === "tools"){
+    Array.prototype.forEach.call(document.querySelectorAll('.tool-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        var tool = btn.getAttribute('data-tool');
+        var stance = btn.getAttribute('data-stance');
+        state.tools_stance[tool] = state.tools_stance[tool] === stance ? null : stance;
+        renderQ();
+      });
+    });
+    var gt = $("guidance_text");
+    if(gt) gt.addEventListener("input", function(){ state.guidance_text = this.value; });
+  } else if(Q.type === "disclosure"){
+    var opts = [
+      "The name of the tool you used",
+      "How you used it",
+      "What you did with the output it provided",
+      "What you verified or changed yourself",
+      "Why it was useful, or where it fell short"
+    ];
+    Array.prototype.forEach.call(document.querySelectorAll('input[type=checkbox]'), function(inp){
+      inp.addEventListener("change", function(){
+        state.student_disclosure[inp.value] = inp.checked;
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('input[name=placement_radio]'), function(inp){
+      inp.addEventListener("change", function(){
+        state.disclosure_placement = this.value;
+      });
+    });
+  } else if(Q.type === "faculty_uses"){
+    Array.prototype.forEach.call(document.querySelectorAll('input[type=checkbox]'), function(inp){
+      inp.addEventListener("change", function(){
+        var arr = state.faculty_uses;
+        if(!Array.isArray(arr)) arr = [];
+        if(inp.checked){ if(arr.indexOf(inp.value) < 0) arr.push(inp.value); }
+        else { arr = arr.filter(function(x){ return x !== inp.value; }); }
+        state.faculty_uses = arr;
+      });
+    });
+    var ta = $("faculty_use_text");
+    if(ta) ta.addEventListener("input", function(){ state.faculty_use_text = this.value; });
+  }
+
+  $("backBtn").disabled = step === 0;
+  $("nextBtn").disabled = false;
+  $("nextBtn").textContent = step === N - 1 ? "Build my policy" : "Next";
+}
+
+function buildOutput(){
+  var out = [];
+
+  out.push('<p>I\'ve included an AI policy to help you understand what I mean by AI, my expectations, and what you can expect from me. I understand you may have different policies and expectations in each course. Please ask me for clarification or share how you plan to use AI so we can confirm it aligns with this policy. I encourage and appreciate your questions, and I am here to answer them.</p>');
+
+  if(state.stance){
+    out.push('<h3>My Stance on AI in This Course</h3>');
+    out.push('<p>' + state.stance + '</p>');
+    out.push('<h3>Here\'s What My Stance Means</h3>');
+    var meanings = [];
+    Object.keys(state.tools_stance).forEach(function(key){
+      var tool = TOOLS.find(function(t){ return t.key === key; });
+      if(state.tools_stance[key]){
+        var status = state.tools_stance[key] === "still-fine" ? "is allowed" : "is not allowed";
+        meanings.push(tool.label + " " + status + " on graded work.");
+      }
+    });
+    if(meanings.length){
+      out.push('<ul>');
+      meanings.forEach(function(m){ out.push('<li>' + m + '</li>'); });
+      out.push('</ul>');
+    }
+    if(state.guidance_text){
+      out.push('<p><strong>A few more things:</strong> ' + state.guidance_text + '</p>');
+    }
+  }
+
+  var disclosure_items = [];
+  Object.keys(state.student_disclosure).forEach(function(key){
+    if(state.student_disclosure[key]) disclosure_items.push(key);
+  });
+  if(disclosure_items.length){
+    out.push('<h3>My Expectations for Disclosure</h3>');
+    out.push('<h3>What I Expect of You</h3>');
+    out.push('<p>If you use AI on an assignment in this course, please tell me:</p>');
+    out.push('<ul>');
+    disclosure_items.forEach(function(item){ out.push('<li>' + item + '</li>'); });
+    out.push('</ul>');
+    if(state.disclosure_placement){
+      out.push('<p><strong>Where to tell me:</strong> Please include your disclosure ' + state.disclosure_placement + '.</p>');
+    }
+  }
+
+  var faculty_items = state.faculty_uses.slice();
+  if(state.faculty_use_text){
+    faculty_items.push(state.faculty_use_text);
+  }
+  if(faculty_items.length || state.faculty_disclosure){
+    out.push('<h3>What You Can Expect From Me</h3>');
+    if(faculty_items.length){
+      out.push('<p>I use AI in this course to:</p>');
+      out.push('<ul>');
+      faculty_items.forEach(function(item){ out.push('<li>' + item + '</li>'); });
+      out.push('</ul>');
+    }
+    if(state.faculty_disclosure){
+      out.push('<p>' + state.faculty_disclosure + '</p>');
+    }
+  }
+
+  return '<div class="draft-section">' + out.join('') + '</div>';
+}
+
+function buildText(){
+  var lines = [];
+  lines.push("AI POLICY FOR YOUR COURSE");
+  lines.push("");
+  lines.push("I've included an AI policy to help you understand what I mean by AI, my expectations, and what you can expect from me. I understand you may have different policies and expectations in each course. Please ask me for clarification or share how you plan to use AI so we can confirm it aligns with this policy. I encourage and appreciate your questions, and I am here to answer them.");
+  lines.push("");
+
+  if(state.stance){
+    lines.push("MY STANCE ON AI IN THIS COURSE");
+    lines.push(state.stance);
+    lines.push("");
+    lines.push("HERE'S WHAT MY STANCE MEANS");
+    var meanings = [];
+    Object.keys(state.tools_stance).forEach(function(key){
+      var tool = TOOLS.find(function(t){ return t.key === key; });
+      if(state.tools_stance[key]){
+        var status = state.tools_stance[key] === "still-fine" ? "is allowed" : "is not allowed";
+        meanings.push("- " + tool.label + " " + status + " on graded work.");
+      }
+    });
+    meanings.forEach(function(m){ lines.push(m); });
+    lines.push("");
+  }
+
+  var disclosure_items = [];
+  Object.keys(state.student_disclosure).forEach(function(key){
+    if(state.student_disclosure[key]) disclosure_items.push("- " + key);
+  });
+  if(disclosure_items.length){
+    lines.push("MY EXPECTATIONS FOR DISCLOSURE");
+    lines.push("WHAT I EXPECT OF YOU");
+    lines.push("If you use AI on an assignment in this course, please tell me:");
+    disclosure_items.forEach(function(item){ lines.push(item); });
+    if(state.guidance_text){
+      lines.push("");
+      lines.push("A few more things: " + state.guidance_text);
+    }
+    if(state.disclosure_placement){
+      lines.push("");
+      lines.push("Where to tell me: Please include your disclosure " + state.disclosure_placement + ".");
+    }
+    lines.push("");
+  }
+
+  var faculty_items = state.faculty_uses.slice();
+  if(state.faculty_use_text){
+    faculty_items.push(state.faculty_use_text);
+  }
+  if(faculty_items.length || state.faculty_disclosure){
+    lines.push("WHAT YOU CAN EXPECT FROM ME");
+    if(faculty_items.length){
+      lines.push("I use AI in this course to:");
+      faculty_items.forEach(function(item){ lines.push("- " + item); });
+      lines.push("");
+    }
+    if(state.faculty_disclosure){
+      lines.push(state.faculty_disclosure);
+      lines.push("");
+    }
+  }
+
+  lines.push("---");
+  lines.push("This is a draft. Edit it, add specifics for your course, and it becomes a syllabus statement or assignment brief. Nothing here is stored.");
+
+  return lines.join("\n");
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+
+// Navigation
+$("nextBtn").addEventListener("click", function(){
+  if(step < N - 1){ step++; renderQ(); }
+  else {
+    $("stage").classList.add("hidden");
+    $("navrow").classList.add("hidden");
+    $("stepline").classList.add("hidden");
+    $("draftBody").innerHTML = buildOutput();
+    $("result").classList.remove("hidden");
+    $("result").scrollIntoView({behavior: "smooth"});
+  }
+});
+
+$("backBtn").addEventListener("click", function(){
+  if(step > 0){ step--; renderQ(); }
+});
+
+$("restartBtn").addEventListener("click", function(){
+  step = 0;
+  state = {stance: "", tools_stance: {}, student_disclosure: {}, guidance_text: "", disclosure_placement: "", faculty_uses: [], faculty_use_text: "", faculty_disclosure: ""};
+  $("result").classList.add("hidden");
+  $("stage").classList.remove("hidden");
+  $("navrow").classList.remove("hidden");
+  $("stepline").classList.remove("hidden");
+  renderQ();
+  window.scrollTo({top: 0, behavior: "smooth"});
+});
+
+$("copyBtn").addEventListener("click", function(){
+  var text = buildText();
+  $("copyArea").value = text;
+  $("copyArea").select();
+  document.execCommand('copy');
+  alert('Copied to clipboard. Paste into your syllabus.');
+});
+
+$("downloadBtn").addEventListener("click", function(){
+  try{
+    var text = buildText();
+    var blob = new Blob([text], {type: 'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'my-ai-policy.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }catch(e){
+    alert('Download failed; use Copy instead.');
+  }
+});
+
+$("viewTextBtn").addEventListener("click", function(){
+  var text = buildText();
+  $("textOutput").value = text;
+  $("textView").classList.remove("hidden");
+  $("textView").scrollIntoView({behavior: "smooth"});
+});
+
+$("hideTextBtn").addEventListener("click", function(){
+  $("textView").classList.add("hidden");
+});
+
+$("copyTextBtn").addEventListener("click", function(){
+  $("textOutput").select();
+  document.execCommand('copy');
+  alert('Copied to clipboard. Paste anywhere you need it.');
+});
+
+renderQ();
+})();
+</script>
+</body>
+</html>
