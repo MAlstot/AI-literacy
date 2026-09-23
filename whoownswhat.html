@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Paths to a Finished Piece of Work</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{padding:0;background:transparent;
+       font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif}
+  .wrap{max-width:660px;margin:0 auto;
+        background:#FAF6EC;border:1px solid #D6D2C8;border-radius:9px;padding:14px 12px 12px}
+  .cap{font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+       color:#2F5A62;text-align:center;margin:0 0 10px}
+  svg{display:block;width:100%;height:auto;max-width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="cap">Two paths to a finished piece of work</p>
+
+  <svg viewBox="0 0 640 262" role="img"
+       aria-label="A diagram showing two paths from making something. Path 1, all human: you write it, draw it, or build it, and the result is one unbroken bar labeled all of it is yours. Path 2, AI helps make it: the result is a bar of the same length but split into two parts. A smaller part is the AI-generated material, which nobody owns because there is no human author. The larger part is what you wrote, arranged, or changed, and that part is yours.">
+
+    <!-- ===== START ===== -->
+    <rect x="8" y="98" width="112" height="66" rx="9" fill="#154734"/>
+    <text x="64" y="126" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff">You make</text>
+    <text x="64" y="144" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff">something</text>
+
+    <!-- ===== FORK ===== -->
+    <path d="M124 118 C 156 118, 158 78, 186 78" fill="none" stroke="#154734"
+          stroke-width="4.5" stroke-linecap="round"/>
+    <polygon points="198,78 184,71 184,85" fill="#154734"/>
+
+    <path d="M124 144 C 156 144, 158 196, 186 196" fill="none" stroke="#9C3F2C"
+          stroke-width="4.5" stroke-linecap="round"/>
+    <polygon points="198,196 184,189 184,203" fill="#9C3F2C"/>
+
+    <!-- ===== PATH 1: ALL HUMAN ===== -->
+    <text x="208" y="32" font-size="11.5" font-weight="bold" fill="#154734" letter-spacing="1">PATH 1 &#183; ALL HUMAN</text>
+    <text x="208" y="50" font-size="11.5" fill="#6F6F6F">You write it, draw it, build it.</text>
+
+    <rect x="208" y="60" width="418" height="40" rx="6" fill="#E7EFE9" stroke="#154734" stroke-width="2"/>
+    <text x="417" y="78" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#154734">All of it is yours</text>
+    <text x="417" y="93" text-anchor="middle" font-size="11" fill="#154734">one work, one author, no question</text>
+
+    <!-- ===== DIVIDER ===== -->
+    <path d="M208 126 L626 126" stroke="#D6D2C8" stroke-width="1.4" stroke-dasharray="4 5"/>
+
+    <!-- ===== PATH 2: AI INVOLVED ===== -->
+    <text x="208" y="152" font-size="11.5" font-weight="bold" fill="#9C3F2C" letter-spacing="1">PATH 2 &#183; AI HELPS MAKE IT</text>
+    <text x="208" y="170" font-size="11.5" fill="#6F6F6F">Same length of work. It arrives in two pieces.</text>
+
+    <!-- split bar: same total span as Path 1 (208 to 626) -->
+    <rect x="208" y="180" width="124" height="40" rx="6" fill="#F7E9E5" stroke="#9C3F2C" stroke-width="2"/>
+    <text x="270" y="198" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#9C3F2C">AI-generated</text>
+    <text x="270" y="213" text-anchor="middle" font-size="11" fill="#9C3F2C">nobody owns it</text>
+
+    <rect x="340" y="180" width="286" height="40" rx="6" fill="#E7EFE9" stroke="#154734" stroke-width="2"/>
+    <text x="483" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#154734">What you rewrote, arranged, changed</text>
+    <text x="483" y="213" text-anchor="middle" font-size="11" fill="#154734">this part is yours</text>
+
+    <!-- seam marker -->
+    <path d="M336 176 L336 224" stroke="#9C3F2C" stroke-width="2" stroke-dasharray="3 3"/>
+
+    <text x="417" y="246" text-anchor="middle" font-size="11.5" fill="#2F5A62">The more of it you actually made, the more of it you hold.</text>
+  </svg>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var PAD = 4, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+  sendHeight();
+})();
+</script>
+</body>
+</html>
