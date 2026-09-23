@@ -5,72 +5,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Two Paths to a Finished Piece of Work</title>
 <style>
+  :root{
+    --green:#154734; --brick:#9C3F2C; --slate:#2F5A62;
+    --cream:#FAF6EC; --sage:#E7EFE9; --pink:#F7E9E5;
+    --gray:#6F6F6F; --line:#B9B3A6;
+  }
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{padding:0;background:transparent;
-       font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif}
-  .wrap{max-width:660px;margin:0 auto;
-        background:#FAF6EC;border:1px solid #D6D2C8;border-radius:9px;padding:14px 12px 12px}
-  .cap{font-size:.74rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-       color:#2F5A62;text-align:center;margin:0 0 10px}
-  svg{display:block;width:100%;height:auto;max-width:100%}
+  body{
+    padding:0;background:transparent;color:#2B2B2B;
+    font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:100%;line-height:1.5;
+  }
+  .wrap{
+    max-width:660px;margin:0 auto;background:var(--cream);
+    border:1px solid var(--line);border-radius:9px;padding:16px 14px 14px;
+  }
+  figure{margin:0}
+
+  .cap{
+    font-size:.75rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--slate);text-align:center;margin:0 0 14px;
+  }
+
+  .start{
+    background:var(--green);color:#fff;border-radius:8px;
+    padding:10px 14px;font-weight:700;font-size:.95rem;
+    text-align:center;margin:0 0 4px;
+  }
+  .startnote{
+    text-align:center;font-size:.8rem;color:var(--gray);margin:0 0 14px;
+  }
+
+  .path{margin:0 0 16px}
+  .path:last-of-type{margin-bottom:12px}
+
+  .plabel{
+    font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    margin:0 0 2px;
+  }
+  .p1 .plabel{color:var(--green)}
+  .p2 .plabel{color:var(--brick)}
+  .psub{font-size:.85rem;color:var(--gray);margin:0 0 7px}
+
+  .bar{display:flex;gap:6px;align-items:stretch}
+  .seg{
+    border-radius:6px;padding:9px 10px;text-align:center;
+    display:flex;flex-direction:column;justify-content:center;min-height:62px;
+  }
+  .seg .t{font-weight:700;font-size:.9rem;line-height:1.25}
+  .seg .s{font-size:.8rem;line-height:1.3;margin-top:2px}
+
+  .whole{flex:1 1 100%;background:var(--sage);border:2px solid var(--green);color:var(--green)}
+  .ai   {flex:3 1 0;background:var(--pink);border:2px dashed var(--brick);color:var(--brick)}
+  .mine {flex:7 1 0;background:var(--sage);border:2px solid var(--green);color:var(--green)}
+
+  .kicker{
+    text-align:center;font-size:.88rem;color:var(--slate);
+    margin:0;padding-top:10px;border-top:1px solid var(--line);
+  }
+
+  .desc{
+    margin:12px 0 0;font-size:.85rem;line-height:1.5;color:#2B2B2B;
+  }
+  .desc summary{
+    cursor:pointer;font-weight:700;color:var(--green);font-size:.85rem;
+    padding:4px 0;
+  }
+  .desc summary:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
+  .desc p{margin:8px 0 0}
+
+  @media (max-width:430px){
+    .bar{flex-direction:column}
+    .seg{min-height:0}
+    .ai, .mine, .whole{flex:1 1 auto}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <p class="cap">Two paths to a finished piece of work</p>
+<figure>
+  <figcaption class="cap">Two paths to a finished piece of work</figcaption>
 
-  <svg viewBox="0 0 640 262" role="img"
-       aria-label="A diagram showing two paths from making something. Path 1, all human: you write it, draw it, or build it, and the result is one unbroken bar labeled all of it is yours. Path 2, AI helps make it: the result is a bar of the same length but split into two parts. A smaller part is the AI-generated material, which nobody owns because there is no human author. The larger part is what you wrote, arranged, or changed, and that part is yours.">
+  <p class="start">You make something</p>
+  <p class="startnote">Both paths below produce the same amount of finished work.</p>
 
-    <!-- ===== START ===== -->
-    <rect x="8" y="98" width="112" height="66" rx="9" fill="#154734"/>
-    <text x="64" y="126" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff">You make</text>
-    <text x="64" y="144" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#fff">something</text>
+  <div class="path p1">
+    <p class="plabel">Path 1 &middot; All human</p>
+    <p class="psub">You write it, draw it, build it.</p>
+    <div class="bar">
+      <div class="seg whole">
+        <span class="t">All of it is yours</span>
+        <span class="s">one work, one author, no question</span>
+      </div>
+    </div>
+  </div>
 
-    <!-- ===== FORK ===== -->
-    <path d="M124 118 C 156 118, 158 78, 186 78" fill="none" stroke="#154734"
-          stroke-width="4.5" stroke-linecap="round"/>
-    <polygon points="198,78 184,71 184,85" fill="#154734"/>
+  <div class="path p2">
+    <p class="plabel">Path 2 &middot; AI helps make it</p>
+    <p class="psub">Same length of work. It arrives in two pieces.</p>
+    <div class="bar">
+      <div class="seg ai">
+        <span class="t">AI-generated</span>
+        <span class="s">nobody owns it</span>
+      </div>
+      <div class="seg mine">
+        <span class="t">What you rewrote, arranged, changed</span>
+        <span class="s">this part is yours</span>
+      </div>
+    </div>
+  </div>
 
-    <path d="M124 144 C 156 144, 158 196, 186 196" fill="none" stroke="#9C3F2C"
-          stroke-width="4.5" stroke-linecap="round"/>
-    <polygon points="198,196 184,189 184,203" fill="#9C3F2C"/>
+  <p class="kicker">The more of it you actually made, the more of it you hold.</p>
 
-    <!-- ===== PATH 1: ALL HUMAN ===== -->
-    <text x="208" y="32" font-size="11.5" font-weight="bold" fill="#154734" letter-spacing="1">PATH 1 &#183; ALL HUMAN</text>
-    <text x="208" y="50" font-size="11.5" fill="#6F6F6F">You write it, draw it, build it.</text>
-
-    <rect x="208" y="60" width="418" height="40" rx="6" fill="#E7EFE9" stroke="#154734" stroke-width="2"/>
-    <text x="417" y="78" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#154734">All of it is yours</text>
-    <text x="417" y="93" text-anchor="middle" font-size="11" fill="#154734">one work, one author, no question</text>
-
-    <!-- ===== DIVIDER ===== -->
-    <path d="M208 126 L626 126" stroke="#D6D2C8" stroke-width="1.4" stroke-dasharray="4 5"/>
-
-    <!-- ===== PATH 2: AI INVOLVED ===== -->
-    <text x="208" y="152" font-size="11.5" font-weight="bold" fill="#9C3F2C" letter-spacing="1">PATH 2 &#183; AI HELPS MAKE IT</text>
-    <text x="208" y="170" font-size="11.5" fill="#6F6F6F">Same length of work. It arrives in two pieces.</text>
-
-    <!-- split bar: same total span as Path 1 (208 to 626) -->
-    <rect x="208" y="180" width="124" height="40" rx="6" fill="#F7E9E5" stroke="#9C3F2C" stroke-width="2"/>
-    <text x="270" y="198" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#9C3F2C">AI-generated</text>
-    <text x="270" y="213" text-anchor="middle" font-size="11" fill="#9C3F2C">nobody owns it</text>
-
-    <rect x="340" y="180" width="286" height="40" rx="6" fill="#E7EFE9" stroke="#154734" stroke-width="2"/>
-    <text x="483" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#154734">What you rewrote, arranged, changed</text>
-    <text x="483" y="213" text-anchor="middle" font-size="11" fill="#154734">this part is yours</text>
-
-    <!-- seam marker -->
-    <path d="M336 176 L336 224" stroke="#9C3F2C" stroke-width="2" stroke-dasharray="3 3"/>
-
-    <text x="417" y="246" text-anchor="middle" font-size="11.5" fill="#2F5A62">The more of it you actually made, the more of it you hold.</text>
-  </svg>
+  <details class="desc">
+    <summary>Text description of this diagram</summary>
+    <p>Everything starts from one box: you make something. From there the diagram compares two routes to the same finished work.</p>
+    <p>Path 1 is all human. You write it, draw it, or build it. The result is a single unbroken block labeled &ldquo;All of it is yours,&rdquo; with the note &ldquo;one work, one author, no question.&rdquo;</p>
+    <p>Path 2 is AI helps make it. The same amount of finished work arrives in two pieces rather than one. The smaller piece, outlined with a dashed border, is labeled &ldquo;AI-generated, nobody owns it.&rdquo; The larger piece is labeled &ldquo;What you rewrote, arranged, changed. This part is yours.&rdquo;</p>
+    <p>Both paths span the same total width, so they represent the same finished work. The difference is that the human path stays whole while the AI-assisted path is divided, and only the part you made is yours.</p>
+  </details>
+</figure>
 </div>
 
 <script>
 (function(){
   "use strict";
+  /* --- Canvas iframe auto-resize (canonical pattern) --- */
   var PAD = 4, lastH = 0;
   function sendHeight(){
     try{
@@ -85,6 +146,7 @@
   }
   window.addEventListener('load', sendHeight);
   window.addEventListener('resize', sendHeight);
+  document.addEventListener('toggle', function(){ setTimeout(sendHeight, 60); }, true);
   if(window.ResizeObserver){
     var w = document.querySelector('.wrap');
     if(w) new ResizeObserver(sendHeight).observe(w);
