@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spot the Consideration</title>
+<style>
+  :root{
+    --green:#154734; --gold:#FFB81C; --amber:#D99A1C;
+    --accent:#5E8A93; --accent-dk:#2F5A62;
+    --cream:#FAF6EC; --sage:#E7EFE9; --palegold:#FBF3DC;
+    --char:#2B2B2B; --gray:#6F6F6F; --line:#D6D2C8; --brick:#9C3F2C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{padding:12px;background:var(--cream);color:var(--char);
+       font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
+  .wrap{max-width:820px;margin:0 auto}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  .hdr{background:var(--green);color:#fff;border-radius:10px 10px 0 0;padding:16px 20px;
+       border-bottom:5px solid var(--accent)}
+  .eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+           color:var(--gold);margin:0 0 4px}
+  .hdr h1{margin:0;font-size:1.32rem;font-weight:700}
+  .hdr p{margin:6px 0 0;font-size:.94rem;color:#E3EDE7}
+
+  .body{background:#fff;border:1px solid var(--line);border-top:0;
+        border-radius:0 0 10px 10px;padding:20px}
+
+  .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+  .count{font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--gray)}
+  .dots{display:flex;gap:5px}
+  .dot{width:26px;height:5px;border-radius:3px;background:var(--line)}
+  .dot.on{background:var(--accent)}
+  .dot.done{background:var(--green)}
+
+  .scen{background:var(--sage);border-left:5px solid var(--accent);border-radius:0 9px 9px 0;
+        padding:14px 17px;margin:0 0 16px}
+  .scen h2{margin:0 0 8px;font-size:1.05rem;color:var(--green)}
+  .scen p{margin:0 0 9px;font-size:.95rem}
+  .scen p:last-child{margin:0}
+
+  .qlabel{font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+          color:var(--gray);margin:0 0 9px}
+  .opts{display:grid;gap:8px;margin:0 0 4px}
+  @media(min-width:640px){.opts{grid-template-columns:1fr 1fr}}
+  .opt{width:100%;font:inherit;font-weight:700;font-size:.92rem;color:var(--green);cursor:pointer;
+       background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;
+       text-align:left;transition:border-color .13s,background .13s}
+  .opt:hover{border-color:var(--accent);background:#F7FAFA}
+  .opt:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+  .opt[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green)}
+  .opt small{display:block;font-weight:400;font-size:.78rem;color:var(--gray);margin-top:2px;line-height:1.35}
+  .opt[aria-pressed="true"] small{color:#CFE0D6}
+
+  .fb{margin:16px 0 0;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .fb-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:11px 15px;
+          border-bottom:1px solid var(--line)}
+  .t-right{background:var(--sage)}
+  .t-part {background:var(--palegold)}
+  .t-wrong{background:var(--palegold)}
+  .stamp{display:inline-block;font-size:.74rem;font-weight:800;letter-spacing:.07em;
+         text-transform:uppercase;color:#fff;border-radius:20px;padding:5px 12px;white-space:nowrap}
+  .c-right{background:var(--green)}
+  .c-part {background:#7A5A10}
+  .c-wrong{background:#7A5A10}
+  .lbl{font-size:.9rem;color:var(--char)}
+  .lbl b{color:var(--green)}
+  .fb-body{background:#FCFBF7;padding:15px 17px;border-left:5px solid var(--green)}
+  .fb-body h3{margin:0 0 8px;font-size:1.05rem;color:var(--green)}
+  .fb-body p{margin:0 0 9px;font-size:.95rem}
+  .fb-body p:last-child{margin:0}
+  .tag{margin:9px 0 0;font-size:.95rem}
+  .tag b{color:var(--accent-dk);font-style:italic}
+  .mark{font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+        display:block;margin-top:3px}
+  .m-right{color:var(--green)}
+  .m-other{color:#7A5A10}
+
+  .nav{display:flex;gap:10px;justify-content:space-between;margin:18px 0 0}
+  .btn{font:inherit;font-weight:700;font-size:.92rem;cursor:pointer;border-radius:8px;
+       padding:11px 20px;border:1.5px solid var(--line);background:#fff;color:var(--green)}
+  .btn:hover:not(:disabled){border-color:var(--accent)}
+  .btn:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+  .btn.primary:hover:not(:disabled){background:#0F3527}
+
+  /* summary */
+  .sum h2{margin:0 0 4px;font-size:1.15rem;color:var(--green)}
+  .sum .lead{margin:0 0 14px;font-size:.95rem;color:var(--gray)}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  caption{text-align:left;font-size:.78rem;font-weight:800;letter-spacing:.07em;
+          text-transform:uppercase;color:var(--gray);padding:0 0 8px}
+  th,td{text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:var(--gray);
+     border-bottom:2px solid var(--line)}
+  td.sit{font-weight:700;color:var(--green)}
+  td.none{color:var(--gray);font-style:italic}
+  .closer{background:var(--green);color:#fff;border-radius:10px;padding:16px 20px;margin:18px 0 0}
+  .closer p{margin:0;font-size:.98rem;color:#E3EDE7}
+  @media(max-width:560px){
+    table, thead, tbody, tr, th, td{display:block}
+    thead{display:none}
+    tr{border-bottom:1px solid var(--line);padding:10px 0}
+    td{border:0;padding:2px 0}
+    td::before{content:attr(data-l);display:block;font-size:.72rem;font-weight:800;
+               letter-spacing:.06em;text-transform:uppercase;color:var(--gray)}
+    td.sit::before{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <p class="eyebrow">Module 2 &middot; Evaluate the Ethics</p>
+    <h1>Spot the Consideration</h1>
+    <p>Five situations. Name the consideration each one raises most.</p>
+  </div>
+
+  <div class="body" id="body"></div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var C = [
+    {k:"integrity", n:"Academic integrity",       d:"Course policy, citation, disclosure, records"},
+    {k:"privacy",   n:"Data privacy and security", d:"What happens to information you put in"},
+    {k:"ip",        n:"Intellectual property",     d:"Who made it, who owns it, what you may upload"},
+    {k:"bias",      n:"Bias and accuracy",         d:"Who the output leaves out, and whether it is true"},
+    {k:"env",       n:"Environmental impact",      d:"The energy and water behind the request"}
+  ];
+  var NAME = {};
+  C.forEach(function(c){ NAME[c.k] = c.n; });
+
+  var S = [
+    {
+      t:"The Outline",
+      p:["Your syllabus says you may use AI to plan and organize your writing, but the writing itself has to be yours, and any AI use has to be transparent.",
+         "A week out, you describe your argument to a chatbot and ask what structures might work. You take two of its suggestions, throw out the rest, and write every paragraph yourself.",
+         "You turn it in. None of the AI's words are in the paper, so you do not add a citation."],
+      a:"integrity", also:[],
+      fh:"Academic integrity.",
+      fp:["You followed the policy, and you were right not to cite. There is no AI text in your paper to cite.",
+          "But AI shaped how you built it, and that is what a disclosure is for."],
+      ft:[["One sentence does it:","the tool, what you asked it, what you did with it."]]
+    },
+    {
+      t:"The Family History",
+      p:["Your seminar assigns a family history project. You spend a weekend collecting it: full names, birthdates, hometowns, current addresses, where everyone works, who is related to whom.",
+         "It is a mess of notes, so you paste the whole document into a free chatbot and ask it to help you organize the information by family member."],
+      a:"privacy", also:[],
+      fh:"Data privacy.",
+      fp:["Organizing is a fine thing to hand off. The problem is where you sent it.",
+          "Full names, birthdates, and addresses are what someone needs to open an account in a person's name. Your relatives were never asked."],
+      ft:[["Better:","Copilot or Box AI, which are covered."],
+          ["Or:","initials and cities. It organizes just as well."]]
+    },
+    {
+      t:"The Reading Load",
+      p:["Six journal articles assigned for Thursday's seminar. You pull all six PDFs from the Baylor Libraries database, upload them to Copilot, and ask for summaries so you can go in with the main arguments in hand.",
+         "Copilot is licensed by Baylor, so you figure it is covered."],
+      a:"ip", also:[],
+      fh:"Intellectual property.",
+      fp:["Copilot being licensed protects your data. It does not cover the articles.",
+          "Baylor's agreement with publishers says library readings do not go into any AI tool."],
+      ft:[["Instead:","upload your notes, not the PDFs."]]
+    },
+    {
+      t:"The Presentation",
+      p:["A group presentation on health care careers. You need images, so you ask a generator for a nurse and for a surgeon, running it a few dozen times each until the style matches.",
+         "Every nurse it produced is a woman. Every surgeon is a man. They look professional, so you use them, and you present to the class."],
+      a:"bias", also:["env"],
+      fh:"Bias and accuracy.",
+      fp:["Every nurse a woman, every surgeon a man. That is the model's pattern, and you just put it on a screen in front of the class."],
+      ft:[["Ask first:","who is missing?"],
+          ["Also:","environmental impact. Images are expensive."]]
+    },
+    {
+      t:"The Final Project",
+      p:["Your course's final project is a short video your team will shoot and edit yourselves. First you want to settle the look and feel: color palette, title cards, background style.",
+         "You spend an evening generating images to test options. A few hundred of them, at the highest quality setting, scrolling until something clicks."],
+      a:"env", also:["ip"],
+      fh:"Environmental impact.",
+      fp:["Images are the most resource-hungry thing you can ask AI for. A few hundred at top quality is the costliest call in this activity.",
+          "Nobody is saying do not explore. Decide on purpose instead of by default."],
+      ft:[["Better:","scroll videos already online to settle the style, then generate three thumbnails and pick one."],
+          ["Also:","intellectual property, if a generated frame lands in the final cut."]]
+    }
+  ];
+
+  /* Shuffle scenario order so it never matches the order the topics were taught.
+     Without this, situation 1 is always academic integrity, situation 2 is always
+     privacy, and a student can answer by position instead of by reading. */
+  function shuffle(){
+    for (var i = S.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = S[i]; S[i] = S[j]; S[j] = t;
+    }
+  }
+
+  var idx = 0;                                   /* 0..4 scenarios, 5 = summary */
+  var picks = new Array(S.length).fill(null);
+  var body = document.getElementById("body");
+
+  function esc(s){ return s; }
+
+  function dots(){
+    var h = '<div class="dots" role="presentation">';
+    for (var i = 0; i < S.length; i++){
+      var cls = (i === idx) ? "dot on" : (picks[i] ? "dot done" : "dot");
+      h += '<span class="' + cls + '"></span>';
+    }
+    return h + '</div>';
+  }
+
+  function atStake(s){
+    var out = NAME[s.a];
+    if (s.also.length) out += ", and " + s.also.map(function(k){ return NAME[k].toLowerCase(); }).join(", ");
+    return out;
+  }
+
+  function renderScenario(){
+    var s = S[idx], picked = picks[idx];
+    var h = '<div class="topline"><span class="count">Situation ' + (idx+1) + ' of ' + S.length + '</span>' + dots() + '</div>';
+
+    h += '<div class="scen"><h2>' + s.t + '</h2>';
+    s.p.forEach(function(par){ h += '<p>' + par + '</p>'; });
+    h += '</div>';
+
+    h += '<p class="qlabel" id="qlab">Which consideration does this raise most?</p>';
+    h += '<div class="opts" role="group" aria-labelledby="qlab">';
+    C.forEach(function(c){
+      h += '<button class="opt" type="button" data-k="' + c.k + '" aria-pressed="'
+         + (picked === c.k ? "true" : "false") + '">' + c.n
+         + '<small>' + c.d + '</small></button>';
+    });
+    h += '</div>';
+
+    h += '<div id="fbslot" aria-live="polite">';
+    if (picked) h += feedbackHTML(s, picked);
+    h += '</div>';
+
+    h += '<div class="nav">'
+       + '<button class="btn" type="button" id="prev"' + (idx === 0 ? ' disabled' : '') + '>Previous</button>'
+       + '<button class="btn primary" type="button" id="next"' + (picked ? '' : ' disabled') + '>'
+       + (idx === S.length - 1 ? 'See your answers' : 'Next situation') + '</button>'
+       + '</div>';
+
+    body.innerHTML = h;
+
+    Array.prototype.forEach.call(body.querySelectorAll("[data-k]"), function(b){
+      b.addEventListener("click", function(){
+        picks[idx] = b.getAttribute("data-k");
+        renderScenario();
+        var f = document.getElementById("fbslot");
+        if (f && f.firstChild && f.firstChild.scrollIntoView) { /* no autoscroll inside an iframe */ }
+      });
+    });
+    document.getElementById("prev").addEventListener("click", function(){
+      if (idx > 0){ idx--; renderScenario(); }
+    });
+    document.getElementById("next").addEventListener("click", function(){
+      idx++;
+      if (idx >= S.length) renderSummary(); else renderScenario();
+    });
+    bump();
+  }
+
+  function verdict(s, picked){
+    if (picked === s.a)              return {cls:"right", stamp:"✓ You had it",
+              lbl:"<b>" + NAME[picked] + "</b> is the one this raises most."};
+    if (s.also.indexOf(picked) > -1) return {cls:"part",  stamp:"Partly",
+              lbl:"<b>" + NAME[picked] + "</b> is in here too. The bigger one is <b>"
+                  + NAME[s.a].toLowerCase() + "</b>."};
+    return {cls:"wrong", stamp:"Not quite",
+              lbl:"You picked <b>" + NAME[picked] + "</b>. Look at <b>"
+                  + NAME[s.a].toLowerCase() + "</b>."};
+  }
+
+  function feedbackHTML(s, picked){
+    var v = verdict(s, picked);
+    var h = '<div class="fb">'
+          + '<div class="fb-top t-' + v.cls + '">'
+          + '<span class="stamp c-' + v.cls + '">' + v.stamp + '</span>'
+          + '<span class="lbl">' + v.lbl + '</span>'
+          + '</div><div class="fb-body"><h3>' + s.fh + '</h3>';
+    s.fp.forEach(function(par){ h += '<p>' + par + '</p>'; });
+    s.ft.forEach(function(t){ h += '<p class="tag"><b>' + t[0] + '</b> ' + t[1] + '</p>'; });
+    return h + '</div></div>';
+  }
+
+  function renderSummary(){
+    var h = '<div class="sum">';
+    h += '<h2>Where your answers landed</h2>';
+    h += '<p class="lead">Not a grade. A map of what each situation was carrying.</p>';
+    h += '<table><caption>Your five calls</caption><thead><tr>'
+       + '<th scope="col">Situation</th><th scope="col">You picked</th><th scope="col">At stake</th>'
+       + '</tr></thead><tbody>';
+    S.forEach(function(s, i){
+      var k = picks[i], cell;
+      if (!k) {
+        cell = '<td data-l="You picked" class="none">No answer</td>';
+      } else {
+        var m = (k === s.a)
+              ? '<span class="mark m-right">✓ You had it</span>'
+              : (s.also.indexOf(k) > -1
+                  ? '<span class="mark m-other">Partly</span>'
+                  : '<span class="mark m-other">Not quite</span>');
+        cell = '<td data-l="You picked">' + NAME[k] + m + '</td>';
+      }
+      h += '<tr><td class="sit" data-l="Situation">' + s.t + '</td>'
+         + cell + '<td data-l="At stake">' + atStake(s) + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    var WORD = ["None","One","Two","Three","Four","Five"];
+    var multi = S.filter(function(x){ return x.also.length > 0; }).length;
+    h += '<div class="closer"><p>' + WORD[multi] + ' of these five raise more than one consideration. '
+       + 'That is normal. Most real situations do.</p></div>';
+    h += '<div class="nav">'
+       + '<button class="btn" type="button" id="back">Back to the last situation</button>'
+       + '<button class="btn primary" type="button" id="again">Start over</button>'
+       + '</div></div>';
+    body.innerHTML = h;
+
+    document.getElementById("back").addEventListener("click", function(){
+      idx = S.length - 1; renderScenario();
+    });
+    document.getElementById("again").addEventListener("click", function(){
+      idx = 0; picks = new Array(S.length).fill(null); shuffle(); renderScenario();
+    });
+    bump();
+  }
+
+  /* --- Canvas iframe auto-resize (canonical pattern) --- */
+  var PAD = 24, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  function bump(){ setTimeout(sendHeight, 80); }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+
+  shuffle();
+  renderScenario();
+})();
+</script>
+</body>
+</html>
