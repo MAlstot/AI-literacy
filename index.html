@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI for Teaching &amp; Learning: Prompts</title>
+<style>
+:root{--navy:#0E2841;--orange:#E97132;--teal:#156082;--green:#196B24;--ink:#141414;--gray:#5F6368;--line:#E3E6EB;--tint:#F5F6F8;--ot:#FCE4D6;--tt:#D9EAF2;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:Calibri,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.5}
+header{background:#000;color:#fff;padding:36px 20px 28px}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header .kicker{color:var(--orange);font-weight:700;letter-spacing:.18em;font-size:13px;text-transform:uppercase}
+header h1{margin:6px 0 6px;font-size:34px;line-height:1.15}
+header p{margin:0;color:#D9D9D9;font-size:15px}
+.howto{background:var(--tint);border-bottom:1px solid var(--line);padding:16px 0;font-size:15px}
+.howto ol{margin:0;padding-left:22px}
+.howto b{color:var(--navy)}
+nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:5}
+nav .wrap{display:flex;gap:6px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+nav a{font-size:14px;font-weight:700;color:var(--navy);text-decoration:none;padding:6px 12px;border-radius:999px;background:var(--tint)}
+nav a:hover{background:var(--tt)}
+section{padding:28px 0 8px}
+h2{color:var(--navy);font-size:26px;margin:0 0 4px}
+.sub{color:var(--gray);margin:0 0 18px;font-size:15px}
+h3.group{color:var(--orange);font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin:26px 0 10px}
+.card{border:1px solid var(--line);border-radius:12px;margin:0 0 16px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--tint)}
+.card-head h4{margin:0;font-size:18px;color:var(--navy)}
+.card-head .note{font-size:13px;color:var(--gray);font-weight:400}
+.prompt{padding:14px 16px;white-space:pre-wrap;font-size:16px}
+.br{background:var(--ot);color:#8A3A10;border-radius:3px;padding:0 2px;font-weight:600}
+button.copy{flex:none;border:0;background:var(--orange);color:#fff;font:700 15px Calibri,"Segoe UI",Arial,sans-serif;padding:9px 16px;border-radius:8px;cursor:pointer;min-width:92px}
+button.copy:hover{background:#C95A1F}
+button.copy.done{background:var(--green)}
+.four{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:8px 0 6px}
+.four div{background:var(--tint);border-radius:10px;padding:12px 14px}
+.four b{color:var(--navy);display:block}
+.four .lim{background:var(--ot)}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.three div{border-radius:10px;padding:12px 14px;background:var(--tint)}
+.three b{color:var(--navy);display:block;margin-bottom:4px}
+footer{margin-top:30px;padding:22px 0 40px;border-top:1px solid var(--line);color:var(--gray);font-size:14px}
+@media (max-width:640px){.four,.three{grid-template-columns:1fr}header h1{font-size:27px}.card-head{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="kicker">Session 1 · Prompts</div>
+<h1>AI for Teaching &amp; Learning</h1>
+<p>Truett Seminary Faculty Workshop · October 7, 2026 · Megan Alstot, Ph.D., Academy for Teaching &amp; Learning</p>
+</div></header>
+<div class="howto"><div class="wrap"><ol>
+<li><b>Copy</b> a prompt with its orange button.</li>
+<li><b>Paste</b> it into Copilot or any AI tool.</li>
+<li><b>Replace</b> every <span class="br">[highlighted bracket]</span> with your own details. Never include student names or identifying information.</li>
+</ol></div></div>
+<nav><div class="wrap">
+<a href="#try">Try it</a><a href="#design">Design assistant</a><a href="#rounds">Rounds 1 &amp; 2</a><a href="#students">Roles for students</a><a href="#ask">Before you prompt</a>
+</div></nav>
+<main class="wrap" id="main"></main>
+<div class="wrap"><footer>
+AI drafts. You decide what is accurate and what fits. Prompts are starting points: test them in your tool, and adjust the limits to your course.<br>
+© 2026 Megan Alstot, Academy for Teaching &amp; Learning, Baylor University. CC BY-NC-SA 4.0.
+</footer></div>
+<script>
+const S=[
+{id:'try',title:'Part 1: AI to support instructional design',sub:'How can it help me teach?',groups:[
+ {name:'Try it',items:[
+  {t:'A concept students struggle with',n:'8 minutes in the workshop',p:`I am a professor teaching [course] at [institution]. The course meets [in person, asynchronously, virtually, hybrid]. I have [number] students who are earning their [degree type]. In my class it is essential that students learn/understand that [objective/topic/concept/skill]. I typically teach this through [include type of content and when/how you present this in your course]. We spend [number of class sessions, weeks, etc.] on this topic. Student learning is assessed through [an exam, a paper, a presentation, etc.]. A common challenge/misconception is that [explain where students struggle or conflate].
+
+Drawing on cognitive psychology and active learning, suggest three ideas for addressing this teaching challenge. For each idea, name the learning principle behind it and describe what students would actually do. Do not cite specific studies. Ask me questions if you need more information. When you finish, ask me which idea best fits my students and why.`}]},
+ {name:'More roles for your teaching',items:[
+  {t:'Learning Experience Designer',p:`I teach [course] at [institution] to [number] students earning their [degree type]. The course meets [format]. I want students to be able to [learning objective]. Right now I teach this by [current approach], and students struggle with [what goes wrong].
+
+Act as a learning experience designer. Before suggesting anything, ask me up to two questions about my students and goals, one at a time. Then propose two contrasting active learning activities, each in no more than four sentences. For each, name the learning principle behind it and describe what students would actually do. Do not write full lesson plans, and do not cite specific studies. End by asking me which activity fits my students and what would need to change for it to work in my classroom.`},
+  {t:'Content Consultant',p:`I teach [course] to students earning their [degree type]. Below are my [assignment directions / lecture outline / reading guide] and the course outcomes they support.
+
+Course outcomes: [paste outcomes]
+
+Material: [paste material]
+
+Act as a content consultant. Work only from the material I provided.
+1. Flag directions or wording a student might misread, and explain why.
+2. Identify concepts a novice might find confusing, and name the prior knowledge they assume.
+3. If I ask, draft a rubric aligned to my outcomes, with no more than four criteria.
+
+Do not rewrite my material. Label anything you add from outside my text so I can verify it. Ask me which issue I want to address first.`}]}
+]},
+{id:'design',title:'AI as your design assistant',sub:'Each prompt drafts something that builds a fortified-mind strategy. You review it for accuracy and fit.',groups:[{name:'',items:[
+  {t:'Scenarios and case studies to evaluate',n:'Application',p:`Using [concept] from my [course], write two short, realistic scenarios (under 150 words each) that students would evaluate using [framework or criteria]. Include one ambiguity that requires judgment. Do not include the answer in the scenarios. Give me a separate list of the key issues a strong response would address, so I can check them.`},
+  {t:'A lecture segment turned into an activity',n:'Generation',p:`Here is a [10-minute] segment of my lecture on [topic]: [paste segment]
+
+Turn it into an activity where students generate or construct the key idea before I explain it. Give me two options, each with steps and timing, in under 150 words each. Work only from the material I provided.`},
+  {t:'Low-stakes quiz questions, spaced across weeks',n:'Retrieval and spacing',p:`Based on this material on [topic]: [paste reading or notes]
+
+Write [5] low-stakes retrieval questions that require students to recall and explain, not just recognize. Include at least one "explain why" question. Suggest which questions to reuse in [2] and [4] weeks. Use only the material I provided.`},
+  {t:'Discussion questions that ask why',n:'Self-explanation',p:`For [reading or topic] in [course], write [5] discussion questions that ask students to explain why or how, connect the idea to [prior concept], or apply it to [context]. Avoid questions with a single factual answer.`},
+  {t:'Role plays',n:'Application',p:`Create a role play for [course] in which students practice [skill, e.g., a hard conversation]. Give a brief scenario, two role cards (under 100 words each), and three debrief questions. Keep all details fictional and do not use real names.`},
+  {t:'Flawed examples to critique',n:'Judgment',p:`Write a short [argument, outline, or paragraph] on [topic] that contains [3] errors students in [course] should be able to find, such as [types of errors]. List the errors and explanations separately so I can check them.`},
+  {t:'Exit tickets and muddiest point prompts',n:'Reflection',p:`Write [3] exit ticket prompts for a class session on [topic] that ask students to identify what is still unclear to them, plus one "muddiest point" prompt. Keep each under 25 words.`},
+  {t:'Varied examples and analogies',n:'Understanding',p:`My students struggle to understand [concept]. Suggest [4] varied examples or analogies drawn from [contexts familiar to my students]. For each, note where the analogy breaks down.`}]}]},
+{id:'rounds',title:'Part 2: Guiding students',sub:'How can it help my students fortify learning? Start a new chat for each round.',groups:[{name:'',items:[
+  {t:'Round 1: Just ask',n:'3 minutes',p:`Explain [concept from your course] so that [audience, e.g., a youth group, an adult Bible study] can understand it.`},
+  {t:'Round 2: Set the role. Establish limits.',n:'4 minutes, new chat',p:`I am a seminary student learning to articulate the Christian faith in the context where I minister.
+
+What I'm trying to do: practice explaining [concept] to [audience].
+
+The purpose: I need to be able to explain this myself, accurately and in words my audience understands.
+
+What I need: Play a member of that audience. After I explain, ask me one honest question at a time that a real person in that setting might ask. If any of my words would lose someone in that setting, tell me which ones. If none did, say so.
+
+Limits: Do not explain [concept] yourself or correct my theology. I will work on the gaps with my professor and my sources. Stay in role. If I ask you for the answer, remind me of these rules.
+
+When we finish, list the questions I struggled to answer and the words that lost you, without answering them. Include only questions you actually asked and words I actually used in this conversation.
+
+Start by asking me to explain [concept] to you.`}]}]},
+{id:'students',title:'Roles AI can take for students',sub:'Prompts students can use to get feedback on their own work without AI doing it for them.',groups:[{name:'',items:[
+  {t:'Academic Writing Coach',n:'Limited writing experience',p:`I am a student in [course] at [institution]. I am writing [assignment type, e.g., an exegesis paper] that asks me to [what the assignment requires]. My professor will assess it using [paste the rubric or key criteria]. Here is my draft: [paste draft or one section].
+
+Act as an academic writing coach. Do not rewrite my sentences or add content. Instead:
+1. Tell me in one sentence what you think my main argument is, so I can check whether it comes through.
+2. Identify up to three places where my reasoning, evidence, or organization is weakest, and explain why using the rubric.
+3. Ask me one question at a time to help me decide how to revise.
+
+If I ask you to fix it for me, remind me of these limits. When we finish, ask me to list the revisions I plan to make, in my own words.`},
+  {t:'Project Manager',n:'Time management and organization',p:`I am a student in [degree program] balancing [courses, work, ministry, family, or other commitments]. My upcoming assignments and due dates are [list them]. I usually have about [number] hours per week for coursework, and my hardest weeks are [dates or times].
+
+Act as a project manager. Before you build anything, ask me questions one at a time about each assignment and how I work best. Then help me break each assignment into steps, estimate how long each step will take, and place the steps on a weekly plan.
+
+Do not complete any part of the assignments. Do not ask for personal details about other people. When we finish, ask me which step I will start today.`},
+  {t:'Thinking Partner: compare and contrast',n:'Critical thinking with theories and positions',p:`I am a student in [course] preparing a compare-and-contrast [paper, presentation, or exam answer] on [position or thinker A] and [position or thinker B] regarding [topic]. I have read [sources].
+
+Act as a thinking partner who tests my understanding. Ask me to explain each position in my own words, one at a time. Then ask me one question at a time that tests whether I understand where they differ, why they differ, and what is at stake. Tell me where my explanation is vague or one-sided.
+
+Do not tell me what [A] or [B] believed, and do not correct my theology. I will check my understanding against [primary sources] and with my professor. If I ask you for the answer, remind me of these limits. When we finish, list the questions I struggled to answer and the places I was vague, without answering them.`}]}]}
+];
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const hl=s=>esc(s).replace(/\[([^\]]+)\]/g,'<span class="br">[$1]</span>');
+const main=document.getElementById('main');let html='';
+S.forEach(sec=>{html+=`<section id="${sec.id}"><h2>${sec.title}</h2><p class="sub">${sec.sub}</p>`;
+ sec.groups.forEach(g=>{if(g.name)html+=`<h3 class="group">${g.name}</h3>`;
+  g.items.forEach(it=>{const k=window.__P=(window.__P||[]);k.push(it.p);
+   html+=`<div class="card"><div class="card-head"><h4>${it.t}${it.n?` <span class="note">· ${it.n}</span>`:''}</h4><button class="copy" data-i="${k.length-1}" aria-label="Copy prompt: ${it.t}">Copy</button></div><div class="prompt">${hl(it.p)}</div></div>`;});});
+ html+='</section>';});
+html+=`<section id="ask"><h2>What students need to ask before they prompt</h2><p class="sub">The same four questions sit inside every prompt on this page.</p>
+<div class="four"><div><b>1. What am I trying to do?</b>The task in front of me</div><div><b>2. What is the purpose?</b>What the task is for</div><div><b>3. What do I need?</b>The kind of help, practice, or pushback, not the answer</div><div class="lim"><b>4. What limits keep me in control?</b>What AI should and should not do</div></div>
+<h3 class="group">Guardrails for students</h3>
+<div class="three"><div><b>Before</b>Know your purpose. Attempt it first: explain, draft, or plan before AI responds.</div><div><b>During</b>Give AI a role that asks, not answers. Set limits: no explaining, no rewriting.</div><div><b>After</b>Check what AI gives back against your sources. Take the gaps to your professor, sources, and peers. Decline offers to do the work for you.</div></div></section>`;
+main.innerHTML=html;
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}a.remove();return ok}}
+main.addEventListener('click',async e=>{const b=e.target.closest('button.copy');if(!b)return;const ok=await copyText(window.__P[+b.dataset.i]);b.textContent=ok?'Copied':'Select and copy';b.classList.toggle('done',ok);setTimeout(()=>{b.textContent='Copy';b.classList.remove('done')},1800);});
+</script>
+</body>
+</html>
