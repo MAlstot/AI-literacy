@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Check-Up</title>
+<style>
+  :root{
+    --green:#154734; --gold:#FFB81C;
+    --accent:#D38B6A; --accent-dk:#9A4F30;
+    --cream:#FAF6EC; --sage:#E7EFE9; --palegold:#FBF3DC; --paleterra:#FBEDE6;
+    --char:#2B2B2B; --gray:#6F6F6F; --line:#D6D2C8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{padding:12px;background:var(--cream);color:var(--char);
+       font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
+  .wrap{max-width:820px;margin:0 auto}
+
+  .hdr{background:var(--green);color:#fff;border-radius:10px 10px 0 0;padding:16px 20px;
+       border-bottom:5px solid var(--accent)}
+  .eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+           color:var(--gold);margin:0 0 4px}
+  .hdr h1{margin:0;font-size:1.32rem;font-weight:700}
+  .hdr p{margin:6px 0 0;font-size:.94rem;color:#E3EDE7}
+
+  .body{background:#fff;border:1px solid var(--line);border-top:0;
+        border-radius:0 0 10px 10px;padding:20px}
+  .body:focus{outline:none}
+
+  .progress{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;
+            letter-spacing:.08em;text-transform:uppercase;color:var(--accent-dk);margin:0 0 14px}
+  .pips{display:flex;gap:5px;margin-left:auto}
+  .pip{width:24px;height:5px;border-radius:3px;background:var(--line)}
+  .pip.on{background:var(--accent)}
+  .pip.done{background:var(--green)}
+
+  .intro{background:var(--sage);border-left:5px solid var(--accent);border-radius:0 8px 8px 0;
+         padding:16px 18px;margin:0 0 16px}
+  .intro h2{margin:0 0 6px;font-size:1.25rem;color:var(--green)}
+  .intro p{margin:0 0 8px}
+  .intro p:last-child{margin:0}
+
+  fieldset{border:0;margin:0;padding:0;min-width:0}
+  legend{font-size:1.1rem;font-weight:700;color:var(--green);padding:0;margin:0 0 4px}
+  .help{font-size:.9rem;color:var(--gray);margin:0 0 12px}
+
+  .opts{display:grid;gap:8px}
+  @media(min-width:620px){.opts.two{grid-template-columns:1fr 1fr}}
+  .opt{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1.5px solid var(--line);
+       border-radius:8px;padding:11px 13px;cursor:pointer;transition:border-color .13s,background .13s}
+  .opt:hover{border-color:var(--accent)}
+  .opt input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--green);cursor:pointer}
+  .opt input:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+  .opt.sel{border-color:var(--green);background:var(--sage)}
+  .opt span{font-size:.97rem}
+
+  .acts{margin-top:18px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+  .btn{font:inherit;font-weight:700;font-size:.93rem;cursor:pointer;border-radius:7px;
+       padding:10px 18px;border:2px solid var(--green);background:var(--green);color:#fff}
+  .btn:hover{background:#0F3627}
+  .btn:focus-visible{outline:3px solid var(--accent-dk);outline-offset:2px}
+  .btn.ghost{background:#fff;color:var(--green)}
+  .btn.ghost:hover{background:var(--sage)}
+  .btn[disabled]{opacity:.45;cursor:default}
+  .hint{font-size:.85rem;color:var(--gray)}
+
+  .report h2{margin:0 0 14px;font-size:1.2rem;color:var(--green)}
+  .sec{border:1px solid var(--line);border-radius:9px;margin:0 0 14px;overflow:hidden}
+  .sec h3{margin:0;padding:10px 15px;font-size:.8rem;font-weight:800;letter-spacing:.08em;
+          text-transform:uppercase;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+  .sec h3 .ic{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+              border-radius:50%;font-size:.8rem;color:#fff;flex:0 0 auto}
+  .sec.work h3{background:var(--sage);color:var(--green)}
+  .sec.work .ic{background:var(--green)}
+  .sec.frag h3{background:var(--paleterra);color:var(--accent-dk)}
+  .sec.frag .ic{background:var(--accent-dk)}
+  .sec.next h3{background:var(--palegold);color:#7A5A10}
+  .sec.next .ic{background:#7A5A10}
+  .sec ul{margin:0;padding:12px 15px 12px 34px}
+  .sec li{margin:0 0 9px}
+  .sec li:last-child{margin:0}
+
+  .closing{background:var(--green);color:#fff;border-radius:10px;padding:16px 20px;margin:4px 0 0}
+  .closing p{margin:0;color:#E3EDE7}
+  .closing b{color:var(--gold)}
+
+  .copybox{margin-top:12px}
+  .copybox label{display:block;font-size:.85rem;color:var(--gray);margin:0 0 4px}
+  .copybox textarea{width:100%;height:160px;font:inherit;font-size:.85rem;border:1px solid var(--line);
+                    border-radius:6px;padding:8px}
+  .status{font-size:.88rem;color:var(--green);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <p class="eyebrow">Module 3 &middot; Activate Your Thinking</p>
+    <h1>Your Study Check-Up</h1>
+    <p>How did you study for your last test? About 3 minutes. Nothing is saved or graded.</p>
+  </div>
+
+  <div class="body" id="stage" tabindex="-1" aria-live="polite"></div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =====================================================================
+     DATA BLOCK. Edit wording here. Faculty can add or swap study habits
+     (for example, "traced the code line by line" for computer science).
+     tag: "durable", "fragile", or "depends" (shown in the report, but not
+     counted toward the header). Pointers name pages, not page numbers.
+     ===================================================================== */
+
+  var Q1 = {
+    title: "When did you start studying?",
+    help: "Choose one.",
+    opts: [
+      { text: "The night before (or the day of)", tag: "cram" },
+      { text: "Two or three days before", tag: "short" },
+      { text: "A week or more before, a little at a time", tag: "spaced" },
+      { text: "A week or more before, but most of it happened the last night", tag: "cram" }
+    ]
+  };
+
+  var Q2 = {
+    title: "What did you actually do?",
+    help: "Check everything you did, even a little.",
+    opts: [
+      { id: 1,  text: "Reread my notes or the chapter", tag: "fragile" },
+      { id: 2,  text: "Closed my notes and wrote down everything I could remember", tag: "durable" },
+      { id: 3,  text: "Highlighted or underlined", tag: "fragile" },
+      { id: 16, text: "Worked through the professor\u2019s study guide with my notes open", tag: "fragile" },
+      { id: 4,  text: "Had AI quiz me, and answered each question before looking", tag: "durable" },
+      { id: 5,  text: "Copied my notes over to make them neat", tag: "fragile" },
+      { id: 6,  text: "Asked myself “why?” or “how?” and explained it out loud", tag: "durable" },
+      { id: 7,  text: "Asked AI to summarize the reading or the lecture", tag: "fragile" },
+      { id: 19, text: "Studied with a classmate or small group", tag: "depends" },
+      { id: 8,  text: "Flipped through flashcards and checked the answer right away", tag: "fragile" },
+      { id: 9,  text: "Tested myself with flashcards, saying the answer before flipping", tag: "durable" },
+      { id: 17, text: "Answered the professor\u2019s study guide from memory first, then checked my notes", tag: "durable" },
+      { id: 10, text: "Watched or listened to someone explain it (video, tutor, AI)", tag: "fragile" },
+      { id: 11, text: "Mixed different kinds of problems together instead of doing one kind at a time", tag: "durable" },
+      { id: 12, text: "Read a study guide that AI made for me", tag: "fragile" },
+      { id: 13, text: "Drew a diagram, chart, or sketch and explained it", tag: "durable" },
+      { id: 18, text: "Wrote my own practice test and answer key", tag: "durable" },
+      { id: 14, text: "Studied with my phone nearby or other tabs open", tag: "fragile" },
+      { id: 15, text: "Did practice problems or an old exam without looking at the answers first", tag: "durable" }
+    ]
+  };
+
+  var Q3 = {
+    title: "How did it go?",
+    help: "Choose one. This one is optional.",
+    opts: [
+      { text: "I felt ready, and I did about as well as I expected", tag: "calibrated" },
+      { text: "I felt ready, but I did worse than I expected", tag: "illusion" },
+      { text: "I didn’t feel ready, and it showed", tag: "knew_it" },
+      { text: "I didn’t feel ready, but I did better than I expected", tag: "underconfident" },
+      { text: "I’d rather not say", tag: "skip" }
+    ]
+  };
+
+  var HEADERS = {
+    strong: "You’re already doing a lot that works.",
+    mixed:  "You’ve got some strong habits, and a few that may be costing you.",
+    none:   "You studied the way most students were taught to. Here’s what that’s missing.",
+    empty:  "Skipped this one? That’s fine. Here’s where to pay attention anyway."
+  };
+
+  var WORKING = {
+    spaced: "<b>Starting early and spreading it out.</b> Coming back to material over several days gives your memory time to settle, and each return makes it stronger.",
+    2:  "<b>Writing down what you remembered.</b> Pulling information out of your memory is one of the strongest ways to learn it. It’s called retrieval practice.",
+    4:  "<b>Having AI quiz you, and answering first.</b> That’s retrieval practice. Answering before you look is what makes it work.",
+    6:  "<b>Asking why and how.</b> Connecting new material to what you already know makes it stick. It’s called elaboration.",
+    9:  "<b>Testing yourself before flipping.</b> That pause where you try to remember is where the learning happens.",
+    11: "<b>Mixing problem types.</b> It feels harder, and that’s the point. It trains you to recognize which method a problem needs, which is exactly what an exam asks.",
+    13: "<b>Drawing it out.</b> Pairing words with a picture gives your memory two ways to hold on to an idea. It’s called dual coding.",
+    19: "<b>Studying with others.</b> A group can keep you going. It works best when you quiz each other or take turns explaining without notes. If the group mostly rereads together, it\u2019s the same as studying alone, just slower.",
+    17: "<b>Answering the study guide from memory first.</b> That turns a study guide into a practice test. Checking your notes afterward shows you exactly what you missed.",
+    18: "<b>Writing your own practice test.</b> Deciding what to ask makes you think about what matters most. Taking it later, without peeking at your answer key, is retrieval practice.",
+    15: "<b>Practicing without peeking.</b> Working problems before checking the answers is retrieval practice, and it shows you what you actually know."
+  };
+
+  var FRAGILE = {
+    cram: "<b>Most of the studying happened the last night.</b> Cramming can get you through the next morning, but much of it fades fast. Memory needs time and sleep to settle.",
+    1:  "<b>Rereading.</b> It feels productive because everything looks familiar. But recognizing something on the page is not the same as being able to pull it up on a test.",
+    3:  "<b>Highlighting.</b> Choosing what to mark can help a little. On its own, it mostly makes the page look studied without testing what you know.",
+    5:  "<b>Recopying notes.</b> Neat notes feel like progress, but copying doesn’t make you remember. Your hand does the work, not your memory.",
+    7:  "<b>AI summaries.</b> A summary reads smoothly, so it feels like understanding. But the thinking was the tool’s, not yours. That’s fragile learning: it looks and feels real, and it doesn’t last.",
+    16: "<b>Working the study guide with your notes open.</b> It feels like practice, but the answers were in front of you the whole time. The exam won\u2019t let you look. Try answering from memory first, then check.",
+    8:  "<b>Flipping flashcards right away.</b> If you see the answer before trying to remember it, the card is doing the work. Try answering first.",
+    10: "<b>Watching or listening to explanations.</b> Helpful for understanding, but following someone else’s explanation is not the same as being able to give one. Pair it with testing yourself.",
+    12: "<b>AI-made study guides.</b> Reading one feels like studying. But you didn’t make the connections, so they may not be there when you need them.",
+    14: "<b>Phone or tabs nearby.</b> Your working memory is small. Every notification takes a piece of it, and that’s space your studying needed."
+  };
+
+  var POINTERS = {
+    illusion: "<b>Encoding:</b> feeling ready and then struggling has a name, the <i>fluency illusion</i>. You’re not bad at tests. Your study method was telling you something that wasn’t true. This page shows what to do instead.",
+    reread:   "<b>Encoding</b> explains why rereading, highlighting, and recopying feel like they work, and what to do instead.",
+    spacing:  "<b>Making It Last:</b> look at spaced practice and sleep.",
+    guide:    "<b>Making It Last:</b> retrieval practice, and how to turn a study guide into a practice test.",
+    both:     "<b>Making It Last:</b> spaced practice, sleep, and how to turn a study guide into a practice test.",
+    flash:    "<b>Making It Last:</b> retrieval practice, and how to use flashcards so they actually test you.",
+    basics:   "<b>How Learning Happens:</b> start with the big picture. Every stop on the line has a strategy you can try right away.",
+    load:     "<b>Your Brain’s Battery:</b> working memory, cognitive load, and how to clear the clutter.",
+    ai:       "<b>Module 4</b> picks up AI summaries and study guides: when AI help builds learning, and when it only feels like it.",
+    aiquiz:   "<b>Making It Last</b> shows why answering first works. Module 4 builds on the way you used AI.",
+    science:  "<b>How Learning Happens:</b> the science behind why your habits work."
+  };
+
+  var CLOSING = "Keep your results in mind as you go. At the end of the module, you’ll <b>coach Bearbot</b> on what to do differently, and then come back to these and decide what <b>you</b> want to change.";
+
+  /* ============================== STATE ============================== */
+
+  var stage = document.getElementById("stage");
+  var step = 0;               // 0 intro, 1-3 questions, 4 report
+  var a1 = null, a2 = [], a3 = null;
+
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function strip(h){ var d = document.createElement("div"); d.innerHTML = h; return d.textContent || ""; }
+
+  function progress(){
+    var out = '<div class="progress">Question ' + step + ' of 3<span class="pips" aria-hidden="true">';
+    for (var i = 1; i <= 3; i++){ out += '<span class="pip' + (i === step ? ' on' : (i < step ? ' done' : '')) + '"></span>'; }
+    return out + '</span></div>';
+  }
+
+  function radioQ(q, name, val){
+    var h = progress() + '<fieldset><legend>' + q.title + '</legend><p class="help">' + q.help + '</p><div class="opts">';
+    q.opts.forEach(function(o, i){
+      var on = (val === i);
+      h += '<label class="opt' + (on ? ' sel' : '') + '"><input type="radio" name="' + name + '" value="' + i + '"' + (on ? ' checked' : '') + '><span>' + esc(o.text) + '</span></label>';
+    });
+    return h + '</div></fieldset>';
+  }
+
+  function render(focus){
+    var h = "";
+    if (step === 0){
+      h += '<div class="intro"><h2>Now you.</h2>'
+         + '<p>Think about the last test you studied for. Any class, any test.</p>'
+         + '<p>Answer honestly. Nothing here is saved or graded, and there are no wrong answers, only information.</p></div>'
+         + '<div class="acts"><button class="btn" type="button" id="go">Start</button></div>';
+    }
+    else if (step === 1){
+      h += radioQ(Q1, "q1", a1);
+      h += '<div class="acts"><button class="btn ghost" type="button" id="back">Back</button>'
+         + '<button class="btn" type="button" id="go"' + (a1 === null ? ' disabled' : '') + '>Next</button>'
+         + (a1 === null ? '<span class="hint">Choose one to continue.</span>' : '') + '</div>';
+    }
+    else if (step === 2){
+      h += progress() + '<fieldset><legend>' + Q2.title + '</legend><p class="help">' + Q2.help + '</p><div class="opts two">';
+      Q2.opts.forEach(function(o){
+        var on = a2.indexOf(o.id) > -1;
+        h += '<label class="opt' + (on ? ' sel' : '') + '"><input type="checkbox" value="' + o.id + '"' + (on ? ' checked' : '') + '><span>' + esc(o.text) + '</span></label>';
+      });
+      h += '</div></fieldset>';
+      h += '<div class="acts"><button class="btn ghost" type="button" id="back">Back</button>'
+         + '<button class="btn" type="button" id="go">Next</button></div>';
+    }
+    else if (step === 3){
+      h += radioQ(Q3, "q3", a3);
+      h += '<div class="acts"><button class="btn ghost" type="button" id="back">Back</button>'
+         + '<button class="btn" type="button" id="go">See my check-up</button></div>';
+    }
+    else {
+      h += report();
+    }
+    stage.innerHTML = h;
+    wire();
+    if (focus) stage.focus();
+    bump();
+  }
+
+  /* ============================== REPORT ============================== */
+
+  function build(){
+    var t1 = (a1 !== null) ? Q1.opts[a1].tag : null;
+    var t3 = (a3 !== null) ? Q3.opts[a3].tag : null;
+    var sel = Q2.opts.filter(function(o){ return a2.indexOf(o.id) > -1; });
+    var dur = sel.filter(function(o){ return o.tag === "durable"; });
+    var fra = sel.filter(function(o){ return o.tag === "fragile"; });
+    var has = function(id){ return a2.indexOf(id) > -1; };
+
+    var nDur = dur.length + (t1 === "spaced" ? 1 : 0);
+    var nFra = fra.length + (t1 === "cram" ? 1 : 0);
+
+    var header;
+    if (sel.length === 0 && t1 === null) header = HEADERS.empty;
+    else if (sel.length === 0) header = (nDur > 0) ? HEADERS.mixed : HEADERS.empty;
+    else if (dur.length === 0) header = HEADERS.none;
+    else if (nDur >= 3 && nFra <= 1) header = HEADERS.strong;
+    else header = HEADERS.mixed;
+
+    var work = [];
+    if (t1 === "spaced") work.push(WORKING.spaced);
+    dur.forEach(function(o){ if (WORKING[o.id]) work.push(WORKING[o.id]); });
+    if (has(19)) work.push(WORKING[19]);
+
+    var frag = [];
+    if (t1 === "cram") frag.push(FRAGILE.cram);
+    fra.forEach(function(o){ if (FRAGILE[o.id]) frag.push(FRAGILE[o.id]); });
+
+    var ptr = [];
+    function add(k){ if (ptr.indexOf(POINTERS[k]) === -1) ptr.push(POINTERS[k]); }
+    if (t3 === "illusion") add("illusion");
+    if (t3 !== "illusion" && (has(1) || has(3) || has(5) || has(10))) add("reread");  /* illusion already points to Encoding */
+    var late = (t1 === "cram" || t1 === "short");
+    if (late && has(16)) add("both");
+    else if (late) add("spacing");
+    if (has(16) && !late) add("guide");
+    if (has(8)) add("flash");
+    if (has(14)) add("load");
+    if (dur.length <= 1) add("basics");
+    if (has(7) || has(12)) add("ai");
+    if (has(4)) add("aiquiz");
+    if (ptr.length === 0) add("science");
+    ptr = ptr.slice(0, 3);
+
+    return { header: header, work: work, frag: frag, ptr: ptr };
+  }
+
+  function list(arr){ return '<ul>' + arr.map(function(x){ return '<li>' + x + '</li>'; }).join("") + '</ul>'; }
+
+  function report(){
+    var r = build(), h = '<div class="report"><h2>' + r.header + '</h2>';
+    if (r.work.length) h += '<div class="sec work"><h3><span class="ic" aria-hidden="true">&#10003;</span>What’s working</h3>' + list(r.work) + '</div>';
+    if (r.frag.length) h += '<div class="sec frag"><h3><span class="ic" aria-hidden="true">!</span>What might be fragile</h3>' + list(r.frag) + '</div>';
+    h += '<div class="sec next"><h3><span class="ic" aria-hidden="true">&#8594;</span>Where to pay attention in this module</h3>' + list(r.ptr) + '</div>';
+    h += '<div class="closing"><p>' + CLOSING + '</p></div>';
+    h += '<div class="acts"><button class="btn" type="button" id="copy">Copy my results</button>'
+       + '<button class="btn ghost" type="button" id="restart">Start over</button>'
+       + '<span class="status" id="status" role="status"></span></div>';
+    h += '<div id="copyslot"></div></div>';
+    return h;
+  }
+
+  function plainText(){
+    var r = build(), out = ["MY STUDY CHECK-UP (BEARS Basics, Module 3)", "", strip(r.header), ""];
+    if (a1 !== null) out.push("Started: " + Q1.opts[a1].text);
+    var did = Q2.opts.filter(function(o){ return a2.indexOf(o.id) > -1; }).map(function(o){ return "  - " + o.text; });
+    out.push("What I did:" + (did.length ? "" : " (nothing checked)"));
+    out = out.concat(did);
+    if (a3 !== null) out.push("How it went: " + Q3.opts[a3].text);
+    out.push("");
+    if (r.work.length){ out.push("WHAT'S WORKING"); r.work.forEach(function(x){ out.push("  - " + strip(x)); }); out.push(""); }
+    if (r.frag.length){ out.push("WHAT MIGHT BE FRAGILE"); r.frag.forEach(function(x){ out.push("  - " + strip(x)); }); out.push(""); }
+    out.push("WHERE TO PAY ATTENTION"); r.ptr.forEach(function(x){ out.push("  - " + strip(x)); });
+    return out.join("\n");
+  }
+
+  function copyResults(){
+    var text = plainText(), status = document.getElementById("status");
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch(e){}
+      document.body.removeChild(ta);
+      if (ok){ status.textContent = "Copied. Paste it anywhere you keep notes."; }
+      else {
+        document.getElementById("copyslot").innerHTML = '<div class="copybox"><label for="cb">Copying is blocked here. Select all of this text and copy it yourself:</label><textarea id="cb" readonly>' + esc(text) + '</textarea></div>';
+        var cb = document.getElementById("cb"); cb.focus(); cb.select();
+        status.textContent = "";
+        bump();
+      }
+    }
+    if (navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(function(){ status.textContent = "Copied. Paste it anywhere you keep notes."; }, fallback);
+    } else { fallback(); }
+  }
+
+  /* ============================== EVENTS ============================== */
+
+  function wire(){
+    var go = document.getElementById("go"), back = document.getElementById("back");
+    if (go) go.addEventListener("click", function(){ step++; render(true); });
+    if (back) back.addEventListener("click", function(){ step--; render(true); });
+
+    Array.prototype.forEach.call(stage.querySelectorAll('input[type=radio]'), function(inp){
+      inp.addEventListener("change", function(){
+        var v = parseInt(inp.value, 10);
+        if (inp.name === "q1") a1 = v; else a3 = v;
+        Array.prototype.forEach.call(stage.querySelectorAll('input[name=' + inp.name + ']'), function(o){ o.parentNode.classList.toggle("sel", o.checked); });
+        if (go){ go.disabled = false; var hint = stage.querySelector(".hint"); if (hint) hint.parentNode.removeChild(hint); }
+      });
+    });
+    Array.prototype.forEach.call(stage.querySelectorAll('input[type=checkbox]'), function(inp){
+      inp.addEventListener("change", function(){
+        var v = parseInt(inp.value, 10), i = a2.indexOf(v);
+        if (inp.checked && i === -1) a2.push(v);
+        if (!inp.checked && i > -1) a2.splice(i, 1);
+        inp.parentNode.classList.toggle("sel", inp.checked);
+      });
+    });
+
+    var c = document.getElementById("copy");
+    if (c) c.addEventListener("click", copyResults);
+    var r = document.getElementById("restart");
+    if (r) r.addEventListener("click", function(){ step = 0; a1 = null; a2 = []; a3 = null; render(true); });
+  }
+
+  /* --- Canvas iframe auto-resize (canonical pattern) --- */
+  var PAD = 24, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  function bump(){ setTimeout(sendHeight, 80); }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+
+  render(false);
+})();
+</script>
+</body>
+</html>
