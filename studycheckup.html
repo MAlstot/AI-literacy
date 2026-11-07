@@ -98,7 +98,7 @@
   <div class="hdr">
     <p class="eyebrow">Module 3 &middot; Activate Your Thinking</p>
     <h1>Your Study Check-Up</h1>
-    <p>How did you study for your last test? About 3 minutes. Nothing is saved or graded.</p>
+    <p>How did you study for your last test? About 3 minutes. Nothing is graded, and your answers stay in this browser only.</p>
   </div>
 
   <div class="body" id="stage" tabindex="-1" aria-live="polite"></div>
@@ -202,18 +202,18 @@
   var POINTERS = {
     illusion: "<b>Encoding:</b> feeling ready and then struggling has a name, the <i>fluency illusion</i>. You’re not bad at tests. Your study method was telling you something that wasn’t true. This page shows what to do instead.",
     reread:   "<b>Encoding</b> explains why rereading, highlighting, and recopying feel like they work, and what to do instead.",
-    spacing:  "<b>Making It Last:</b> look at spaced practice and sleep.",
-    guide:    "<b>Making It Last:</b> retrieval practice, and how to turn a study guide into a practice test.",
-    both:     "<b>Making It Last:</b> spaced practice, sleep, and how to turn a study guide into a practice test.",
-    flash:    "<b>Making It Last:</b> retrieval practice, and how to use flashcards so they actually test you.",
+    spacing:  "<b>Retrieval Practice:</b> spaced practice. <b>Consolidation:</b> why sleep matters.",
+    guide:    "<b>Retrieval Practice:</b> how to turn a study guide into a practice test.",
+    both:     "<b>Retrieval Practice:</b> spaced practice, and how to turn a study guide into a practice test. <b>Consolidation:</b> why sleep matters.",
+    flash:    "<b>Retrieval Practice:</b> how to use flashcards so they actually test you.",
     basics:   "<b>How Learning Happens:</b> start with the big picture. Every stop on the line has a strategy you can try right away.",
     load:     "<b>Your Brain’s Battery:</b> working memory, cognitive load, and how to clear the clutter.",
     ai:       "<b>Module 4</b> picks up AI summaries and study guides: when AI help builds learning, and when it only feels like it.",
-    aiquiz:   "<b>Making It Last</b> shows why answering first works. Module 4 builds on the way you used AI.",
+    aiquiz:   "<b>Retrieval Practice</b> shows why answering first works. Module 4 builds on the way you used AI.",
     science:  "<b>How Learning Happens:</b> the science behind why your habits work."
   };
 
-  var CLOSING = "Keep your results in mind as you go. At the end of the module, you’ll <b>coach Bearbot</b> on what to do differently, and then come back to these and decide what <b>you</b> want to change.";
+  var CLOSING = "Keep your results in mind as you go. At the end of the module, you’ll <b>coach Bearbot</b> on what to do differently, then use these results to make <b>your own</b> study plan.";
 
   /* ============================== STATE ============================== */
 
@@ -244,7 +244,7 @@
     if (step === 0){
       h += '<div class="intro"><h2>Now you.</h2>'
          + '<p>Think about the last test you studied for. Any class, any test.</p>'
-         + '<p>Answer honestly. Nothing here is saved or graded, and there are no wrong answers, only information.</p></div>'
+         + '<p>Answer honestly. Nothing here is graded or sent to anyone, and there are no wrong answers, only information. Your answers stay in this browser so you can use them for your study plan at the end of the module.</p></div>'
          + '<div class="acts"><button class="btn" type="button" id="go">Start</button></div>';
     }
     else if (step === 1){
@@ -270,6 +270,7 @@
     }
     else {
       h += report();
+      save();
     }
     stage.innerHTML = h;
     wire();
@@ -324,6 +325,16 @@
 
     return { header: header, work: work, frag: frag, ptr: ptr };
   }
+
+  /* Saved to this browser only, so the Study Plan at the end of the module can read it. */
+  var KEY = "bears-m3-checkup";
+  function save(){
+    try {
+      var t1 = (a1 !== null) ? Q1.opts[a1].tag : null;
+      window.localStorage.setItem(KEY, JSON.stringify({ v: 1, ts: Date.now(), a1tag: t1, a2: a2.slice() }));
+    } catch(e){}
+  }
+  function clearSaved(){ try { window.localStorage.removeItem(KEY); } catch(e){} }
 
   function list(arr){ return '<ul>' + arr.map(function(x){ return '<li>' + x + '</li>'; }).join("") + '</ul>'; }
 
@@ -403,7 +414,7 @@
     var c = document.getElementById("copy");
     if (c) c.addEventListener("click", copyResults);
     var r = document.getElementById("restart");
-    if (r) r.addEventListener("click", function(){ step = 0; a1 = null; a2 = []; a3 = null; render(true); });
+    if (r) r.addEventListener("click", function(){ clearSaved(); step = 0; a1 = null; a2 = []; a3 = null; render(true); });
   }
 
   /* --- Canvas iframe auto-resize (canonical pattern) --- */
