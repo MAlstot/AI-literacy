@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Builder: Build a Prompt That Keeps You Thinking</title>
+<!--
+  BEARS AI Basics · Module 4: Reach for the AI Assist
+  Prompt Builder. No AI inside: feedback is rule-based general guidance.
+  Nothing typed here is saved or sent anywhere.
+-->
+<style>
+  :root{
+    --green:#154734; --green-deep:#0d2c20; --gold:#FFB81C; --gold-soft:#FFF4DA;
+    --ink:#1a1a1a; --ink-mid:#4a4f4c; --ink-soft:#5f6461;
+    --paper:#ffffff; --wash:#F5F7F5; --rule:#DDE3DF;
+    --ok:#1e6b45; --ok-bg:#E8F3EC; --try:#7a4b00; --try-bg:#FFF4DA; --warn:#8B2820; --warn-bg:#FDECEA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;padding:16px;}
+  .pb{max-width:820px;margin:0 auto;}
+  .intro{background:var(--green);color:#fff;border-radius:8px;padding:18px 20px;border-bottom:4px solid var(--gold);margin-bottom:18px;}
+  .intro h1{font-size:1.35rem;margin-bottom:6px;}
+  .intro p{color:#E1EBE5;font-size:.95rem;}
+  .privacy{font-size:.85rem;background:var(--wash);border:1px solid var(--rule);border-radius:6px;padding:10px 14px;margin-bottom:18px;color:var(--ink-mid);}
+  .step{margin-bottom:22px;}
+  .step-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .num{background:var(--green);color:var(--gold);font-weight:700;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem;}
+  .step-head h2{font-size:1.1rem;color:var(--green);}
+  fieldset{border:none;}
+  legend{font-size:.92rem;color:var(--ink-mid);margin-bottom:8px;}
+  .tasks{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;}
+  .tasks label{display:flex;align-items:center;gap:8px;border:2px solid var(--rule);border-radius:8px;padding:10px 12px;cursor:pointer;font-weight:600;color:var(--green);background:#fff;}
+  .tasks input{accent-color:var(--green);width:18px;height:18px;}
+  .tasks label:has(input:checked){border-color:var(--green);background:var(--ok-bg);}
+  .tasks label:has(input:focus-visible){outline:3px solid var(--gold);outline-offset:2px;}
+  .box{background:var(--wash);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;margin-bottom:12px;}
+  .box label.lab{display:block;font-weight:700;color:var(--green);font-size:1rem;}
+  .help{font-size:.88rem;color:var(--ink-soft);margin:2px 0 8px;}
+  textarea{width:100%;min-height:70px;font:inherit;font-size:.95rem;border:1.5px solid var(--rule);border-radius:6px;padding:10px 12px;resize:vertical;background:#fff;color:var(--ink);}
+  textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(21,71,52,.15);}
+  textarea::placeholder{color:#8a918d;}
+  .fb{margin-top:8px;font-size:.9rem;border-radius:6px;padding:8px 12px;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:var(--ok-bg);color:var(--ok);border-left:4px solid var(--ok);}
+  .fb.try{background:var(--try-bg);color:var(--try);border-left:4px solid var(--gold);}
+  .fb.warn{background:var(--warn-bg);color:var(--warn);border-left:4px solid var(--warn);}
+  .fb strong{display:block;margin-bottom:2px;}
+  .fb ul{margin:4px 0 0 18px;}
+  .btn{background:var(--green);color:#fff;font:inherit;font-weight:700;border:none;border-radius:6px;padding:12px 22px;cursor:pointer;}
+  .btn:hover{background:var(--green-deep);}
+  .btn:focus-visible,.btn2:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  .btn2{background:#fff;color:var(--green);font:inherit;font-weight:700;border:2px solid var(--green);border-radius:6px;padding:10px 18px;cursor:pointer;}
+  .alert{display:none;margin:14px 0 0;background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:0 6px 6px 0;padding:12px 16px;color:var(--warn);font-size:.92rem;}
+  .alert.show{display:block;}
+  #out{display:none;}
+  #out.show{display:block;}
+  .prompt{white-space:pre-wrap;background:#fff;border:2px solid var(--green);border-radius:8px;padding:14px 16px;font-size:.95rem;margin-bottom:10px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .copied{font-size:.88rem;color:var(--ok);font-weight:600;}
+  .card{background:var(--gold-soft);border-left:5px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 16px;font-size:.93rem;}
+  .card ol{margin:6px 0 0 20px;}
+  .card li{margin-bottom:4px;}
+  .check{border:1px solid var(--rule);border-radius:8px;padding:14px 16px;}
+  .check label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--rule);font-size:.93rem;cursor:pointer;}
+  .check label:last-of-type{border-bottom:none;}
+  .check input{accent-color:var(--green);width:18px;height:18px;margin-top:2px;flex-shrink:0;}
+  .note{font-size:.88rem;color:var(--ink-mid);margin-top:10px;}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="pb">
+
+  <div class="intro">
+    <h1>Prompt Builder</h1>
+    <p>Build a prompt for something you're actually working on this week. Fill in the four parts, check it, then test it in your AI tool.</p>
+  </div>
+
+  <p class="privacy"><strong>Private by design.</strong> There's no AI on this page. Nothing you type is saved or sent anywhere, and it disappears when you leave. The tips below are general guidance, not a grade.</p>
+
+  <section class="step" aria-labelledby="s1">
+    <div class="step-head"><span class="num" aria-hidden="true">1</span><h2 id="s1">Pick your task</h2></div>
+    <fieldset>
+      <legend>What are you working on? The tips you get after you check your prompt will match your choice.</legend>
+      <div class="tasks">
+        <label><input type="radio" name="task" value="reading" checked> Reading and Watching</label>
+        <label><input type="radio" name="task" value="writing"> Writing</label>
+        <label><input type="radio" name="task" value="problems"> Practice Problems</label>
+        <label><input type="radio" name="task" value="exam"> Exam Prep</label>
+      </div>
+    </fieldset>
+  </section>
+
+  <section class="step" aria-labelledby="s2">
+    <div class="step-head"><span class="num" aria-hidden="true">2</span><h2 id="s2">Build your prompt</h2></div>
+
+    <div class="box">
+      <label class="lab" for="fCtx">Context</label>
+      <p class="help" id="hCtx">What you're working on and what you're trying to accomplish: the class, the topic or assignment, and where you are in it.</p>
+      <textarea id="fCtx" aria-describedby="hCtx fbCtx"></textarea>
+      <div class="fb" id="fbCtx" aria-live="polite"></div>
+    </div>
+
+    <div class="box">
+      <label class="lab" for="fRole">Role</label>
+      <p class="help" id="hRole">Who you want AI to be. The role decides how much of the thinking stays with you.</p>
+      <textarea id="fRole" aria-describedby="hRole fbRole"></textarea>
+      <div class="fb" id="fbRole" aria-live="polite"></div>
+    </div>
+
+    <div class="box">
+      <label class="lab" for="fHelp">Help Needed</label>
+      <p class="help" id="hHelp">Exactly what you want AI to do. "Help me" is too vague.</p>
+      <textarea id="fHelp" aria-describedby="hHelp fbHelp"></textarea>
+      <div class="fb" id="fbHelp" aria-live="polite"></div>
+    </div>
+
+    <div class="box">
+      <label class="lab" for="fRails">Rails</label>
+      <p class="help" id="hRails">The limits AI must follow. AI won't manage your learning for you. Rails are how you stay in charge of it.</p>
+      <textarea id="fRails" aria-describedby="hRails fbRails"></textarea>
+      <div class="fb" id="fbRails" aria-live="polite"></div>
+    </div>
+
+    <div class="row"><button class="btn" id="go" type="button">Check my prompt</button><button class="btn2" id="reset" type="button">Start over</button></div>
+    <div class="alert" id="alert" role="status"></div>
+  </section>
+
+  <div id="out">
+    <section class="step" aria-labelledby="s3">
+      <div class="step-head"><span class="num" aria-hidden="true">3</span><h2 id="s3">Your prompt</h2></div>
+      <div class="prompt" id="prompt"></div>
+      <div class="row">
+        <button class="btn" id="copy" type="button">Copy my prompt</button>
+        <span class="copied" id="copied" aria-live="polite"></span>
+      </div>
+      <p class="note">Want to change something? Edit the boxes above and select <strong>Check my prompt</strong> again.</p>
+    </section>
+
+    <section class="step" aria-labelledby="s4">
+      <div class="step-head"><span class="num" aria-hidden="true">4</span><h2 id="s4">Test it</h2></div>
+      <div class="card">
+        <ol>
+          <li>Open <strong>Copilot</strong> (sign in with your Baylor account) or another AI tool you use, in a new tab.</li>
+          <li>Start a <strong>new chat</strong>.</li>
+          <li>Paste your prompt.</li>
+          <li><strong>Check what you're about to share.</strong> Share your own work and your course's assignment directions and rubric. Remove other people's names or private information. If it isn't yours, like a classmate's work or a professor's slides, ask first.</li>
+          <li><strong>Give AI the work you're asking about.</strong> Attach or paste it with your prompt: your draft, your notes, the rubric and assignment directions, or the problem and your work so far. AI can only respond to what it can see.</li>
+          <li>Send it, then do your part: answer, try, explain.</li>
+          <li>If AI goes off track, correct it in the chat. Remember the fixes from <em>A Good Prompt</em>: "Shorter, please." "Stop. Don't show answers until I've tried."</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="s5">
+      <div class="step-head"><span class="num" aria-hidden="true">5</span><h2 id="s5">Check what came back</h2></div>
+      <div class="check" role="group" aria-labelledby="s5">
+        <label><input type="checkbox"> Did AI follow my rails?</label>
+        <label><input type="checkbox"> Did I do the thinking, or did AI do it for me?</label>
+        <label><input type="checkbox"> Did AI stick to the information I gave it?</label>
+        <label><input type="checkbox"> If AI disagreed with my notes, did I check with my textbook, professor, or TA?</label>
+      </div>
+      <p class="note">Any boxes left unchecked? Revise your prompt above, copy it again, and try it in a new chat. Then notice: what changed in AI's response?</p>
+    </section>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  var EX = {
+    reading: {
+      tips: ["Use only my notes.", "One question at a time.", "Don't show the answer until I've tried."]
+    },
+    writing: {
+      tips: ["Don't rewrite my work. Point to the spot instead.", "One suggestion at a time.", "Use only the rubric I gave you."]
+    },
+    problems: {
+      tips: ["Don't solve it or show the next step.", "Wait for me to try.", "Tell me which line has an error, but don't fix it."]
+    },
+    exam: {
+      tips: ["Use only the notes and study guide I give you.", "No answers until I've tried every question.", "Show strengths and areas that need more attention."]
+    }
+  };
+
+  function task(){ return document.querySelector('input[name="task"]:checked').value; }
+
+  function words(s){ return s.trim() ? s.trim().split(/\s+/).length : 0; }
+  function has(s, list){ s = s.toLowerCase().replace(/[’]/g,"'"); for (var i=0;i<list.length;i++){ if (s.indexOf(list[i]) !== -1) return true; } return false; }
+  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  function show(id, kind, title, body){
+    var el = $(id);
+    var icon = kind === "ok" ? "✓ " : (kind === "warn" ? "! " : "→ ");
+    el.className = "fb show " + kind;
+    el.innerHTML = "<strong>" + icon + title + "</strong>" + body;
+  }
+
+  var ROLE_RE = /\b(quiz|tutor|coach|partner|listener|reviewer|reader|opponent|debate|skeptic|study buddy|interview|critic|questioner|checker|professor|teacher|instructor|ta|mentor|advisor|adviser|classmate|grader|examiner|peer)\b/i;
+  var DOER_VERBS = ["solve","summarize","summarise","write ","write my","rewrite","do my","do it","answer ","complete","finish","make me a study guide","fix it","fix my"];
+  var LEARN_VERBS = ["quiz","ask me","hint","check","feedback","point out","question","test me","flag","which","where","interview","push back","argue","evaluate","strong","weak"];
+
+  /* Rail types students can stack. Each has detection phrases and an example (task-specific where it matters). */
+  var RAILS = [
+    { id:"hold", name:"Hold back answers",
+      find:["until i","don't show","do not show","don't give","do not give","no answer","don't tell","do not tell","before you show","don't reveal","do not reveal","before i"],
+      ex:{ all:"Don't show the answer until I've tried." } },
+    { id:"nodo", name:"Don't do my work",
+      find:["don't rewrite","do not rewrite","no rewriting","not rewrite","don't do","do not do","don't write","do not write","don't solve","do not solve","don't fix","do not fix","don't add","do not add","don't change","do not change","point to","offer to","don't summarize","do not summarize"],
+      ex:{ reading:"Don't summarize it for me.", writing:"Don't rewrite anything. Point to the spot instead.", problems:"Don't solve it or show the next step.", exam:"Don't explain the answers before I try." } },
+    { id:"source", name:"Stick to what I give you",
+      find:["only use","use only","only from","only on","only the","stick to","based on","my notes","i've given","i have given","i gave","i give you","information i","the rubric","directions"],
+      ex:{ reading:"Use only my notes.", writing:"Stick to the assignment directions and rubric.", problems:"Use only the problem and my work.", exam:"Use only my notes and study guide." } },
+    { id:"pace", name:"One at a time",
+      find:["one at a time","one question","one suggestion","one hint","one thing","two questions","at a time","one step","wait for my","wait for me","after each"],
+      ex:{ all:"One question or suggestion at a time. Wait for my response." } },
+    { id:"think", name:"Make me think",
+      find:["ask me","make me explain","question me","my reasoning","my thinking","have me","make me","quiz me"],
+      ex:{ all:"Ask me questions that make me explain my thinking." } },
+    { id:"honest", name:"Be honest",
+      find:["honest","be direct","don't just praise","do not just praise","not just strengths","be critical","weakness","weak","where i'm wrong","blunt","don't sugarcoat"],
+      ex:{ all:"Be direct. Point out weaknesses, not just strengths." } },
+    { id:"why", name:"Explain the why",
+      find:["explain why","tell me why","why it","reason for","the reason"],
+      ex:{ all:"If you point out a problem, explain why it's a problem." } },
+    { id:"short", name:"Keep it short",
+      find:["words","short","brief","sentence","top 2","top two","top three","no more than","limit"],
+      ex:{ all:"Keep each response under 100 words." } },
+    { id:"finish", name:"End with a next step",
+      find:["end with","at the end","finish by","list what","list the","revisit","what to study"],
+      ex:{ all:"End by listing what I should revisit." } }
+  ];
+  function railEx(rail, t){ return rail.ex[t] || rail.ex.all; }
+
+  function check(){
+    var c = $("fCtx").value, r = $("fRole").value, h = $("fHelp").value, rl = $("fRails").value;
+    var t = task(), e = EX[t];
+    var issues = 0;
+
+    // Context
+    if (!c.trim()){ issues++; show("fbCtx","try","Add some context.","<p>Name the class, the topic or assignment, and where you are in it. AI can't see your syllabus or your notes.</p>"); }
+    else if (words(c) < 8){ issues++; show("fbCtx","try","A little more detail will help.","<p>Try adding the class name and exactly what you're working on.</p>"); }
+    else { show("fbCtx","ok","Looks good.","<p>AI knows what you're working on.</p>"); }
+
+    // Role
+    if (!r.trim()){ issues++; show("fbRole","try","Who should AI be?","<p>Try a quiz partner, a tutor who gives hints, a feedback coach, or a debate partner.</p>"); }
+    else if (ROLE_RE.test(r)){ show("fbRole","ok","That role can keep the thinking with you.","<p>Make sure your rails match it.</p>"); }
+    else { issues++; show("fbRole","try","Check your role.","<p>Will this role do the work for you, or help you do it? Roles like quiz partner, tutor, or feedback coach keep the thinking with you.</p>"); }
+
+    // Help needed
+    var doer = has(h, DOER_VERBS), learn = has(h, LEARN_VERBS), explainOnly = has(h, ["explain"]) && !learn;
+    var withhold = has(rl, RAILS[0].find) || has(rl, RAILS[1].find);
+    var manyQs = (h.match(/\?/g) || []).length >= 3;
+    if (!h.trim()){ issues++; show("fbHelp","try","What do you want AI to do?","<p>Be specific. Say exactly what you want AI to do, using what you learned on the <em>A Good Prompt</em> page.</p>"); }
+    else if (words(h) < 5){ issues++; show("fbHelp","try","Be more specific.","<p>Say exactly what AI should do, so it doesn't have to guess.</p>"); }
+    else if (doer && !withhold){ issues++; show("fbHelp","warn","This sounds like AI doing the work.","<p>Asking AI to solve, summarize, or write puts it in the Executor role. If this task <em>is</em> the learning, ask it to quiz you, give a hint, or give feedback instead.</p>"); }
+    else if (explainOnly){ show("fbHelp","try","An explanation can be a fine start.","<p>Plan your next step: have AI quiz you, or explain it back in your own words and ask what you missed.</p>"); }
+    else if (manyQs && !has(rl, RAILS[3].find)){ show("fbHelp","try","You asked several questions at once.","<p>That's fine, but AI may answer them all in one long response. Consider a rail like \u201cOne at a time. Start with the area that needs the most work.\u201d</p>"); }
+    else { show("fbHelp","ok","Clear and specific.","<p>AI knows what success looks like.</p>"); }
+
+    // Rails: show what's stacked and what could be stacked
+    var used = [], open = [];
+    RAILS.forEach(function(x){ (has(rl, x.find) ? used : open).push(x); });
+    var usedHtml = used.length ? "<p><strong>Rails you stacked:</strong></p><ul>" + used.map(function(x){ return "<li>✓ " + esc(x.name) + "</li>"; }).join("") + "</ul>" : "";
+    var openHtml = "<p><strong>Rails you could stack:</strong></p><ul>" + open.map(function(x){ return "<li>" + esc(x.name) + ": “" + esc(railEx(x, t)) + "”</li>"; }).join("") + "</ul>";
+    if (!rl.trim()){ issues++; show("fbRails","try","Add some rails.","<p>Rails keep AI assisting, not doing. Stack several to keep the thinking with you.</p>" + openHtml); }
+    else if (used.length < 3){ issues++; show("fbRails","try","Good start. Try stacking more rails.","<p>The more rails you stack, the more likely AI keeps assisting instead of doing.</p>" + usedHtml + (open.length ? openHtml : "")); }
+    else { show("fbRails","ok","Strong rails.","<p>You stacked " + used.length + " kinds of rails.</p>" + usedHtml + (open.length ? "<p>Want to stack more? Pick any that fit:</p><ul>" + open.map(function(x){ return "<li>" + esc(x.name) + ": “" + esc(railEx(x, t)) + "”</li>"; }).join("") + "</ul>" : "")); }
+
+    // Illusion alert
+    var al = $("alert");
+    if (doer && !withhold){
+      al.innerHTML = "<strong>Illusion Alert:</strong> As written, AI may just hand you the answer. It will feel like learning, but the thinking will happen in AI, not in you. Add a rail like \"Don't show the answer until I've tried.\"";
+      al.className = "alert show";
+    } else { al.className = "alert"; al.innerHTML = ""; }
+
+    // Assemble prompt
+    var parts = [c, r, h, rl].map(function(s){ return s.trim(); }).filter(Boolean);
+    if (parts.length){
+      $("prompt").textContent = parts.join("\n\n");
+      $("out").className = "show";
+      $("copied").textContent = "";
+    }
+    setTimeout(sendHeight, 80);
+  }
+
+  $("go").addEventListener("click", check);
+
+  $("reset").addEventListener("click", function(){
+    ["fCtx","fRole","fHelp","fRails"].forEach(function(id){ $(id).value = ""; });
+    ["fbCtx","fbRole","fbHelp","fbRails"].forEach(function(id){ var el = $(id); el.className = "fb"; el.innerHTML = ""; });
+    $("alert").className = "alert"; $("alert").innerHTML = "";
+    $("out").className = ""; $("prompt").textContent = ""; $("copied").textContent = "";
+    Array.prototype.forEach.call(document.querySelectorAll('.check input'), function(cb){ cb.checked = false; });
+    document.querySelector('input[name="task"][value="reading"]').checked = true;
+    $("fCtx").focus();
+    setTimeout(sendHeight, 80);
+  });
+
+  $("copy").addEventListener("click", function(){
+    var t = $("prompt").textContent;
+    var done = function(){ $("copied").textContent = "Copied! Now paste it into your AI tool."; };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(done).catch(fallback);
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta);
+      ta.select(); try{ document.execCommand("copy"); done(); }catch(e){} document.body.removeChild(ta);
+    }
+  });
+
+  /* --- Canvas iframe auto-resize (correct pattern) ---
+     Measures the widget wrapper, NOT scrollHeight. PAD = body padding top + bottom. */
+  var lastH = 0, PAD = 32;
+  function sendHeight(){
+    try{
+      var el = document.querySelector(".pb");
+      var hgt = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(hgt - lastH) < 4) return;
+      lastH = hgt;
+      var msg = {subject:"lti.frameResize", height:hgt};
+      window.parent.postMessage(msg, "*");
+      window.parent.postMessage(JSON.stringify(msg), "*");
+    }catch(e){}
+  }
+  window.sendHeight = sendHeight;
+  window.addEventListener("load", sendHeight);
+  window.addEventListener("resize", sendHeight);
+  if (window.ResizeObserver){ new ResizeObserver(sendHeight).observe(document.querySelector(".pb")); }
+})();
+</script>
+</body>
+</html>
