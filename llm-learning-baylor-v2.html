@@ -137,7 +137,7 @@ function render(){
   }
   if(cur===1){
     st.appendChild(el('h2',null,'Predict, check, adjust'));
-    st.appendChild(el('p','lead','During training, the model guesses the next word, checks the real text, and adjusts its settings. These settings are called parameters.'));
+    st.appendChild(el('p','lead','During training, the model guesses the next word, checks the real text, and adjusts its settings. These settings are called parameters: the weights inside its neural network.'));
     var s=el('p','sentence'); s.appendChild(document.createTextNode("Sic 'em, ")); var gs=el('span','guess');
     if(guessStep===0){ gs.textContent='?'; } else { var gg=GUESSES[guessStep-1]; gs.textContent=gg[0]; gs.className='guess '+(guessStep===GUESSES.length?'right':'wrong'); }
     s.appendChild(gs); s.appendChild(document.createTextNode('!')); st.appendChild(s);
