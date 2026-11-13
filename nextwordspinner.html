@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Next-Word Machine</title>
+<style>
+  :root{
+    --baylor-green:#154734; --mid-green:#4C7C62; --m1-accent:#E6C24A; --m1-accent-dark:#8A6A14;
+    --cream:#FAF6EC; --cream-2:#F4EEDF; --pale-sage:#E7EFE9; --pale-gold:#FBF3DC;
+    --charcoal:#2B2B2B; --mid-gray:#5F5F5F; --border:#D6D2C8;
+    --ok:#2F6B4F; --ok-bg:#E4EFE7; --no:#9A4F30; --no-bg:#F3E4DC;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Lato, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--font);color:var(--charcoal);background:var(--cream);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 32px;}
+  .band{background:var(--baylor-green);color:#fff;border-radius:0 0 10px 10px;padding:18px 96px 18px 20px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+  .band::after{content:"";position:absolute;top:0;right:-40px;bottom:0;width:120px;background:var(--m1-accent);transform:skewX(-18deg);opacity:.9;}
+  .tag{background:var(--m1-accent);color:var(--baylor-green);font-weight:800;font-size:.72rem;letter-spacing:.06em;padding:4px 10px;border-radius:20px;text-transform:uppercase;position:relative;z-index:1;flex:0 0 auto;}
+  .band h1{font-size:1.18rem;margin:0;font-weight:700;position:relative;z-index:1;}
+  .intro{margin:18px 2px 6px;}
+  .intro p{margin:0 0 8px;}
+  .muted{color:var(--mid-gray);font-size:.92rem;}
+  button{font:inherit;cursor:pointer;}
+  button:focus-visible{outline:3px solid var(--baylor-green);outline-offset:2px;}
+  .btn{background:var(--baylor-green);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px;}
+  .btn:hover{background:#0f3527;}
+  .btn.ghost{background:#fff;color:var(--baylor-green);border:2px solid var(--baylor-green);}
+  .btn:disabled{background:#9DB3A8;cursor:not-allowed;}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+
+<style>
+  .stage{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:14px;}
+  .sentence{font-size:1.35rem;font-weight:700;color:var(--baylor-green);min-height:2.2em;margin:0 0 12px;}
+  .sentence .new{background:var(--pale-gold);border-bottom:3px solid var(--m1-accent);padding:0 4px;border-radius:4px;}
+  .sentence .blank{display:inline-block;width:70px;border-bottom:3px dashed var(--mid-green);}
+  .odds h2{font-size:.95rem;margin:0 0 8px;color:var(--charcoal);}
+  .row{display:grid;grid-template-columns:150px 1fr 48px;align-items:center;gap:10px;margin:6px 0;}
+  .word{font-weight:600;}
+  .bar{height:22px;background:var(--cream-2);border-radius:6px;overflow:hidden;}
+  .fill{height:100%;background:var(--mid-green);}
+  .row.picked .fill{background:var(--m1-accent);}
+  .row.picked .word::after{content:"  ← picked";color:var(--m1-accent-dark);font-weight:700;font-size:.85rem;}
+  .pct{text-align:right;font-variant-numeric:tabular-nums;}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px;}
+  .toggle{display:flex;align-items:center;gap:8px;font-weight:600;min-height:44px;}
+  .toggle input{width:22px;height:22px;accent-color:var(--baylor-green);}
+  .log{background:var(--pale-sage);border-radius:10px;padding:12px 16px;margin-top:14px;}
+  .log h2{font-size:1rem;margin:0 0 6px;color:var(--baylor-green);}
+  .log ol{margin:0;padding-left:22px;}
+  .insight{background:var(--pale-gold);border:1px solid var(--m1-accent);border-radius:10px;padding:14px 16px;margin-top:14px;}
+  .insight h2{font-size:1.05rem;margin:0 0 6px;color:var(--baylor-green);}
+  .insight p{margin:0 0 8px;}
+  @media (max-width:560px){.row{grid-template-columns:110px 1fr 44px;}.sentence{font-size:1.15rem;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="band"><span class="tag">Try it</span><h1>The Next-Word Machine</h1></div>
+  <div class="intro">
+    <p>A chatbot writes one word at a time. For each spot, it weighs the possible next words and picks one. Press <strong>Pick the next word</strong> until the sentence ends. Then build two more and compare.</p>
+    <p class="muted">The odds here are made up to show the idea. A real model weighs thousands of possible words, and its odds come from its training data.</p>
+  </div>
+  <div class="stage">
+    <p class="sentence" id="sentence" aria-live="polite"></p>
+    <div class="odds" id="odds"></div>
+    <div class="controls">
+      <button class="btn" id="pick" type="button">Pick the next word</button>
+      <button class="btn ghost" id="again" type="button">Start a new sentence</button>
+      <label class="toggle"><input type="checkbox" id="greedy"> Always pick the most likely word</label>
+    </div>
+  </div>
+  <div class="log" id="logbox" hidden><h2>Your sentences</h2><ol id="log"></ol></div>
+  <div id="insight"></div>
+</div>
+<script>
+/* ===== DATA: each key is the sentence so far. Options are [word(s), percent]. A key with no entry ends the sentence. ===== */
+var START = "After class, I'm going to";
+var TREE = {
+  "After class, I'm going to": [["grab",45],["head",30],["take",15],["finally",10]],
+  "After class, I'm going to grab": [["a",70],["some",30]],
+  "After class, I'm going to grab a": [["coffee.",40],["Dr Pepper.",35],["burrito.",25]],
+  "After class, I'm going to grab some": [["lunch.",60],["tacos.",40]],
+  "After class, I'm going to head": [["to",75],["back",25]],
+  "After class, I'm going to head to": [["the library.",45],["the SLC.",35],["my room.",20]],
+  "After class, I'm going to head back": [["to my room.",60],["home.",40]],
+  "After class, I'm going to take": [["a nap.",80],["a walk.",20]],
+  "After class, I'm going to finally": [["start my essay.",50],["eat something.",35],["call my mom.",15]]
+};
+/* ===== RENDER ===== */
+var current = START, lastWord = null, lastPicked = null, finished = [];
+function options(){ return TREE[current] || null; }
+function render(){
+  var s = document.getElementById('sentence');
+  var base = lastWord ? current.slice(0, current.length - lastWord.length) : current + ' ';
+  s.innerHTML = '';
+  s.appendChild(document.createTextNode(lastWord ? base : current + ' '));
+  if (lastWord){ var n=document.createElement('span'); n.className='new'; n.textContent=lastWord; s.appendChild(n); }
+  var opts = options();
+  if (opts){ var b=document.createElement('span'); b.className='blank'; b.setAttribute('aria-hidden','true'); s.appendChild(document.createTextNode(' ')); s.appendChild(b); }
+  var o = document.getElementById('odds'); o.innerHTML='';
+  var shown = opts || (lastPicked ? lastPicked.from : null);
+  if (shown){
+    var h=document.createElement('h2'); h.textContent = opts ? 'Possible next words and their odds:' : 'The odds for the last word were:'; o.appendChild(h);
+    shown.forEach(function(op){
+      var r=document.createElement('div'); r.className='row' + (!opts && lastPicked && op[0]===lastPicked.word ? ' picked':'');
+      r.innerHTML='<span class="word"></span><span class="bar"><span class="fill" style="display:block;width:'+op[1]+'%"></span></span><span class="pct">'+op[1]+'%</span>';
+      r.querySelector('.word').textContent=op[0]; o.appendChild(r);
+    });
+  }
+  document.getElementById('pick').disabled = !opts;
+  var lb=document.getElementById('logbox'), lg=document.getElementById('log');
+  lb.hidden = finished.length===0; lg.innerHTML='';
+  finished.forEach(function(f){ var li=document.createElement('li'); li.textContent=f.text + (f.greedy ? '  (most likely word every time)':''); lg.appendChild(li); });
+  var ins=document.getElementById('insight');
+  if (finished.length>=3){
+    ins.innerHTML='<div class="insight"><h2>What just happened</h2>'+
+      '<p><strong>Same start, different sentences.</strong> Each word was a weighted guess, and a little chance decided which one won. That is why asking an AI the same question twice can give you two different answers.</p>'+
+      '<p><strong>Try the checkbox.</strong> When the machine always takes the most likely word, you get the same sentence every time. Real chatbots keep some chance on purpose so their writing sounds natural.</p>'+
+      '<p><strong>So what?</strong> The output is a likely guess, not a looked-up fact. Likely and correct are not the same thing, which is why you check what AI gives you.</p></div>';
+  } else ins.innerHTML='';
+  setTimeout(sendHeight,80);
+}
+function pick(){
+  var opts=options(); if(!opts) return;
+  var choice;
+  if (document.getElementById('greedy').checked){ choice = opts.reduce(function(a,b){return b[1]>a[1]?b:a;}); }
+  else { var r=Math.random()*100, acc=0; for (var i=0;i<opts.length;i++){ acc+=opts[i][1]; if(r<acc){choice=opts[i];break;} } if(!choice) choice=opts[opts.length-1]; }
+  lastPicked={word:choice[0],from:opts}; lastWord=choice[0]; current = current + ' ' + choice[0];
+  if (!TREE[current]) finished.push({text:current, greedy:document.getElementById('greedy').checked});
+  render();
+}
+document.getElementById('pick').addEventListener('click', pick);
+document.getElementById('again').addEventListener('click', function(){ current=START; lastWord=null; lastPicked=null; render(); document.getElementById('pick').focus(); });
+/* --- Canvas iframe auto-resize (correct pattern) --- */
+var lastH = 0;
+function sendHeight(){
+  try{
+    var el = document.querySelector('.wrap');
+    var h = (el ? el.offsetHeight : document.body.offsetHeight) + 0;
+    if (Math.abs(h - lastH) < 4) return;
+    lastH = h;
+    var msg = {subject:'lti.frameResize', height:h};
+    window.parent.postMessage(msg,'*');
+    window.parent.postMessage(JSON.stringify(msg),'*');
+  }catch(e){}
+}
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+if(window.ResizeObserver){ new ResizeObserver(sendHeight).observe(document.querySelector('.wrap')); }
+render();
+</script>
+</body>
+</html>
