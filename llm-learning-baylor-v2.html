@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How an AI Model Gets Its Odds</title>
+<title>How an AI Model Generates Answers</title>
 <style>
   :root{
     --baylor-green:#154734; --mid-green:#4C7C62; --m1-accent:#E6C24A; --m1-accent-dark:#8A6A14;
@@ -70,7 +70,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="band"><span class="tag">Explore</span><h1>How an AI Model Gets Its Odds</h1></div>
+  <div class="band"><span class="tag">Explore</span><h1>How an AI Model Generates Answers</h1></div>
   <p class="intro muted">Four steps. Each one takes about 30 seconds.</p>
   <ol class="steps" id="steps" aria-label="Training steps"></ol>
   <div class="stage" id="stage" aria-live="polite"></div>
@@ -155,7 +155,7 @@ function render(){
   }
   if(cur===2){
     st.appendChild(el('h2',null,'You are the rater'));
-    st.appendChild(el('p','lead','Next, people rate the model’s answers, and it learns to give answers like the ones they picked. Which answer would you rate higher?'));
+    st.appendChild(el('p','lead','Next, people rate the model’s answers, and it learns to give answers like the ones they picked. This is called reinforcement learning from human feedback (RLHF). Which answer would you rate higher?'));
     st.appendChild(el('p','q',RATER.question));
     var a=el('div','answers'); a.setAttribute('role','group'); a.setAttribute('aria-label','Pick the better answer');
     [['a','Answer A',RATER.a],['b','Answer B',RATER.b]].forEach(function(x){
@@ -164,7 +164,7 @@ function render(){
       b.addEventListener('click',function(){ rated=x[0]; render(); }); a.appendChild(b);
     });
     st.appendChild(a);
-    if(rated){ var r3=el('div','result'); var p=el('p',null,rated==='a'?RATER.pickA:RATER.pickB); r3.appendChild(p); var p2=el('p'); p2.innerHTML='<strong>Confident is not the same as correct.</strong> This step, with people in the loop, is one reason chatbots can sound so sure of themselves.'; r3.appendChild(p2); st.appendChild(r3); }
+    if(rated){ var r3=el('div','result'); var p=el('p',null,rated==='a'?RATER.pickA:RATER.pickB); r3.appendChild(p); var p2=el('p'); p2.innerHTML='<strong>Confident is not the same as correct.</strong> RLHF, with people in the loop, is one reason chatbots can sound so sure of themselves.'; r3.appendChild(p2); st.appendChild(r3); }
   }
   if(cur===3){
     st.appendChild(el('h2',null,'Then training stops'));
