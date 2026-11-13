@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How an AI Model Gets Its Odds</title>
+<style>
+  :root{
+    --baylor-green:#154734; --mid-green:#4C7C62; --m1-accent:#E6C24A; --m1-accent-dark:#8A6A14;
+    --cream:#FAF6EC; --cream-2:#F4EEDF; --pale-sage:#E7EFE9; --pale-gold:#FBF3DC;
+    --charcoal:#2B2B2B; --mid-gray:#5F5F5F; --border:#D6D2C8;
+    --ok:#2F6B4F; --ok-bg:#E4EFE7; --no:#9A4F30; --no-bg:#F3E4DC;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Lato, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--font);color:var(--charcoal);background:var(--cream);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 32px;}
+  .band{background:var(--baylor-green);color:#fff;border-radius:0 0 10px 10px;padding:18px 96px 18px 20px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+  .band::after{content:"";position:absolute;top:0;right:-40px;bottom:0;width:120px;background:var(--m1-accent);transform:skewX(-18deg);opacity:.9;}
+  .tag{background:var(--m1-accent);color:var(--baylor-green);font-weight:800;font-size:.72rem;letter-spacing:.06em;padding:4px 10px;border-radius:20px;text-transform:uppercase;position:relative;z-index:1;flex:0 0 auto;}
+  .band h1{font-size:1.18rem;margin:0;font-weight:700;position:relative;z-index:1;}
+  .intro{margin:18px 2px 6px;}
+  .intro p{margin:0 0 8px;}
+  .muted{color:var(--mid-gray);font-size:.92rem;}
+  button{font:inherit;cursor:pointer;}
+  button:focus-visible{outline:3px solid var(--baylor-green);outline-offset:2px;}
+  .btn{background:var(--baylor-green);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:700;min-height:44px;}
+  .btn:hover{background:#0f3527;}
+  .btn.ghost{background:#fff;color:var(--baylor-green);border:2px solid var(--baylor-green);}
+  .btn:disabled{background:#9DB3A8;cursor:not-allowed;}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+
+<style>
+  .steps{display:flex;gap:8px;margin:16px 0 12px;list-style:none;padding:0;}
+  .steps li{flex:1;}
+  .steps button{width:100%;min-height:44px;border-radius:8px;border:2px solid var(--mid-green);background:#fff;color:var(--baylor-green);font-weight:700;font-size:.85rem;padding:6px 4px;}
+  .steps button[aria-current="step"]{background:var(--baylor-green);color:#fff;border-color:var(--baylor-green);}
+  .steps button.done{background:var(--pale-sage);}
+  .stage{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .stage h2{margin:0 0 4px;color:var(--baylor-green);font-size:1.25rem;}
+  .lead{font-size:1.05rem;margin:0 0 14px;}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+  .opt{background:var(--cream);border:2px solid var(--mid-green);color:var(--baylor-green);border-radius:8px;padding:10px;min-height:44px;font-weight:600;text-align:left;}
+  .opt[aria-pressed="true"]{background:var(--baylor-green);color:#fff;border-color:var(--baylor-green);}
+  .result{background:var(--pale-gold);border:1px solid var(--m1-accent);border-radius:10px;padding:12px 14px;margin-top:12px;}
+  .result p{margin:0 0 6px;}
+  .result p:last-child{margin:0;}
+  .sentence{font-size:1.4rem;font-weight:700;color:var(--baylor-green);margin:6px 0 10px;}
+  .guess{display:inline-block;min-width:110px;border-bottom:3px dashed var(--mid-green);padding:0 6px;}
+  .guess.wrong{color:var(--no);text-decoration:line-through;}
+  .guess.right{color:var(--ok);border-bottom-color:var(--ok);}
+  .meter{margin:10px 0;}
+  .meter-label{font-size:.88rem;color:var(--mid-gray);margin-bottom:4px;}
+  .track{position:relative;height:16px;background:var(--cream-2);border-radius:8px;}
+  .target{position:absolute;top:-4px;width:4px;height:24px;background:var(--ok);left:80%;border-radius:2px;}
+  .knob{position:absolute;top:-3px;width:22px;height:22px;border-radius:50%;background:var(--m1-accent);border:3px solid var(--baylor-green);transition:left .5s ease;transform:translateX(-50%);}
+  .count{font-weight:700;color:var(--baylor-green);}
+  .q{background:var(--pale-sage);border-radius:8px;padding:10px 12px;margin:0 0 10px;font-weight:600;}
+  .answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  .ans{background:#fff;border:2px solid var(--border);border-radius:10px;padding:12px;text-align:left;min-height:44px;color:var(--charcoal);}
+  .ans strong{display:block;color:var(--baylor-green);margin-bottom:4px;}
+  .ans[aria-pressed="true"]{border-color:var(--baylor-green);box-shadow:0 0 0 2px var(--baylor-green) inset;}
+  .lock{display:flex;gap:14px;align-items:center;}
+  .lock svg{flex:0 0 auto;}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;}
+  @media (max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));}.answers{grid-template-columns:1fr;}.steps button{font-size:.75rem;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="band"><span class="tag">Explore</span><h1>How an AI Model Gets Its Odds</h1></div>
+  <p class="intro muted">Four steps. Each one takes about 30 seconds.</p>
+  <ol class="steps" id="steps" aria-label="Training steps"></ol>
+  <div class="stage" id="stage" aria-live="polite"></div>
+  <div class="nav">
+    <button class="btn ghost" id="back" type="button">Back</button>
+    <button class="btn" id="next" type="button">Next</button>
+  </div>
+</div>
+<script>
+/* ===== DATA ===== */
+var STEPS = ["1. Feed it","2. Predict","3. Rate it","4. Done"];
+var SHELVES = [
+  {id:"text", label:"Textbooks", good:"explaining school subjects", gap:"textbook knowledge"},
+  {id:"social", label:"Social media posts", good:"sounding casual and current", gap:"everyday slang", warn:"It also soaks up opinions and rumors, and repeats them as if they were facts."},
+  {id:"news", label:"News stories up to 2020", good:"events through 2020", gap:"news", warn:"It knows nothing that happened after 2020."},
+  {id:"recipe", label:"Recipe blogs", good:"cooking and meal ideas", gap:"cooking"},
+  {id:"health", label:"Medical journals", good:"health research language", gap:"health and medicine"},
+  {id:"story", label:"Short stories", good:"writing fiction", gap:"storytelling"}
+];
+var GUESSES = [["Tigers",30],["Bulldogs",55],["Bears",80]];
+var RATER = {
+  question:"When was Baylor University founded?",
+  a:"Great question! Baylor was proudly founded in 1851 and has been a Texas favorite ever since. Sic 'em!",
+  b:"Baylor was chartered in 1845 by the Republic of Texas.",
+  pickA:"You picked the friendlier answer, and it has the year wrong. Baylor was chartered in 1845. Raters are human. When the answer that sounds best wins, the model learns to sound good, which is not always the same as being right.",
+  pickB:"Good catch. Answer A sounds warmer, but the year is wrong. Not every rater catches that. When the answer that sounds best wins, the model learns to sound good, which is not always the same as being right."
+};
+/* ===== STATE + RENDER ===== */
+var cur = 0, picked = [], guessStep = 0, rated = null, seen = [true,false,false,false];
+function stepNav(){
+  var ol = document.getElementById('steps'); ol.innerHTML = '';
+  STEPS.forEach(function(s,i){
+    var li=document.createElement('li'), b=document.createElement('button'); b.type='button'; b.textContent=s;
+    if(i===cur) b.setAttribute('aria-current','step'); else if(seen[i]) b.className='done';
+    b.addEventListener('click',function(){ go(i); }); li.appendChild(b); ol.appendChild(li);
+  });
+  document.getElementById('back').disabled = cur===0;
+  document.getElementById('next').disabled = cur===STEPS.length-1;
+}
+function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+function render(){
+  stepNav();
+  var st = document.getElementById('stage'); st.innerHTML='';
+  if(cur===0){
+    st.appendChild(el('h2',null,'Feed it'));
+    st.appendChild(el('p','lead','A model only knows what is in its training data. Pick 3 shelves for your model to learn from.'));
+    var g=el('div','grid'); g.setAttribute('role','group'); g.setAttribute('aria-label','Choose 3 shelves');
+    SHELVES.forEach(function(s){
+      var b=el('button','opt',s.label); b.type='button'; var on=picked.indexOf(s.id)>-1; b.setAttribute('aria-pressed',on?'true':'false');
+      b.addEventListener('click',function(){ var k=picked.indexOf(s.id); if(k>-1) picked.splice(k,1); else if(picked.length<3) picked.push(s.id); render(); });
+      g.appendChild(b);
+    });
+    st.appendChild(g);
+    if(picked.length<3){ st.appendChild(el('p','muted',(3-picked.length)+' more to pick.')); }
+    else {
+      var on=SHELVES.filter(function(s){return picked.indexOf(s.id)>-1;}), off=SHELVES.filter(function(s){return picked.indexOf(s.id)<0;});
+      var r=el('div','result');
+      var p1=el('p'); p1.innerHTML='<strong>Your model is good at:</strong> '; p1.appendChild(document.createTextNode(on.map(function(s){return s.good;}).join(', ')+'.')); r.appendChild(p1);
+      var p2=el('p'); p2.innerHTML='<strong>Blind spots:</strong> '; p2.appendChild(document.createTextNode(off.map(function(s){return s.gap;}).join(', ')+'. It never saw them, so its guesses there are weak.')); r.appendChild(p2);
+      on.forEach(function(s){ if(s.warn){ var w=el('p'); w.innerHTML='<strong>Watch out:</strong> '; w.appendChild(document.createTextNode(s.warn)); r.appendChild(w);} });
+      r.appendChild(el('p',null,'Real models learn from far more text, but the rule holds: what is missing or slanted in the data shows up in the answers.'));
+      st.appendChild(r);
+    }
+  }
+  if(cur===1){
+    st.appendChild(el('h2',null,'Predict, check, adjust'));
+    st.appendChild(el('p','lead','During training, the model guesses the next word, checks the real text, and adjusts its settings. These settings are called parameters.'));
+    var s=el('p','sentence'); s.appendChild(document.createTextNode("Sic 'em, ")); var gs=el('span','guess');
+    if(guessStep===0){ gs.textContent='?'; } else { var gg=GUESSES[guessStep-1]; gs.textContent=gg[0]; gs.className='guess '+(guessStep===GUESSES.length?'right':'wrong'); }
+    s.appendChild(gs); s.appendChild(document.createTextNode('!')); st.appendChild(s);
+    var m=el('div','meter'); m.appendChild(el('div','meter-label','One parameter, nudged toward the right answer after each check'));
+    var tr=el('div','track'); tr.setAttribute('aria-hidden','true'); var tg=el('span','target'); var kn=el('span','knob'); kn.style.left=(guessStep===0?8:GUESSES[guessStep-1][1])+'%'; tr.appendChild(tg); tr.appendChild(kn); m.appendChild(tr); st.appendChild(m);
+    if(guessStep<GUESSES.length){
+      var b=el('button','btn',guessStep===0?'Make a guess':'Adjust and guess again'); b.type='button';
+      b.addEventListener('click',function(){ guessStep++; render(); }); st.appendChild(b);
+      if(guessStep>0) st.appendChild(el('p','muted','Wrong. The real text says something else, so the setting shifts a little.'));
+    } else {
+      var r2=el('div','result'); r2.innerHTML='<p><strong>Got it in <span class="count">3</span> tries.</strong> A real model repeats this check billions of times, across billions of parameters, with no person involved.</p><p>The result is a very good next-word predictor. It is not yet a helpful assistant.</p>';
+      st.appendChild(r2);
+      var rs=el('button','btn ghost','Run it again'); rs.type='button'; rs.style.marginTop='10px'; rs.addEventListener('click',function(){ guessStep=0; render(); }); st.appendChild(rs);
+    }
+  }
+  if(cur===2){
+    st.appendChild(el('h2',null,'You are the rater'));
+    st.appendChild(el('p','lead','Next, people rate the model’s answers, and it learns to give answers like the ones they picked. Which answer would you rate higher?'));
+    st.appendChild(el('p','q',RATER.question));
+    var a=el('div','answers'); a.setAttribute('role','group'); a.setAttribute('aria-label','Pick the better answer');
+    [['a','Answer A',RATER.a],['b','Answer B',RATER.b]].forEach(function(x){
+      var b=el('button','ans'); b.type='button'; b.setAttribute('aria-pressed',rated===x[0]?'true':'false');
+      var t=el('strong',null,x[1]); b.appendChild(t); b.appendChild(document.createTextNode(x[2]));
+      b.addEventListener('click',function(){ rated=x[0]; render(); }); a.appendChild(b);
+    });
+    st.appendChild(a);
+    if(rated){ var r3=el('div','result'); var p=el('p',null,rated==='a'?RATER.pickA:RATER.pickB); r3.appendChild(p); var p2=el('p'); p2.innerHTML='<strong>Confident is not the same as correct.</strong> This step, with people in the loop, is one reason chatbots can sound so sure of themselves.'; r3.appendChild(p2); st.appendChild(r3); }
+  }
+  if(cur===3){
+    st.appendChild(el('h2',null,'Then training stops'));
+    var d=el('div','lock');
+    d.innerHTML='<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#154734" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>';
+    var t=el('p','lead'); t.style.margin='0'; t.textContent='The model you chat with is finished. Its parameters are set, and it does not learn from you as you talk.'; d.appendChild(t);
+    st.appendChild(d);
+    var r4=el('div','result'); r4.innerHTML='<p>Some apps save notes about you, or keep your chats to help train a <em>future</em> version. Neither one changes the model answering you right now.</p><p><strong>Next on the page:</strong> sort what the model learned in training from what the app saved about you.</p>';
+    st.appendChild(r4);
+  }
+  seen[cur]=true;
+  setTimeout(sendHeight,80);
+}
+function go(i){ cur=i; render(); var h=document.querySelector('.stage h2'); if(h){ h.tabIndex=-1; h.focus(); } }
+document.getElementById('next').addEventListener('click',function(){ if(cur<STEPS.length-1) go(cur+1); });
+document.getElementById('back').addEventListener('click',function(){ if(cur>0) go(cur-1); });
+/* --- Canvas iframe auto-resize (correct pattern) --- */
+var lastH = 0;
+function sendHeight(){
+  try{
+    var w = document.querySelector('.wrap');
+    var h = (w ? w.offsetHeight : document.body.offsetHeight) + 0;
+    if (Math.abs(h - lastH) < 4) return;
+    lastH = h;
+    var msg = {subject:'lti.frameResize', height:h};
+    window.parent.postMessage(msg,'*');
+    window.parent.postMessage(JSON.stringify(msg),'*');
+  }catch(e){}
+}
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+if(window.ResizeObserver){ new ResizeObserver(sendHeight).observe(document.querySelector('.wrap')); }
+render();
+</script>
+</body>
+</html>
