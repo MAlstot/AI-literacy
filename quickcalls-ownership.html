@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Calls: Who Owns It?</title>
+<style>
+  :root{
+    --green:#154734; --gold:#FFB81C;
+    --teal:#5E8A93; --teal-dk:#3E6A73; --teal-pale:#E6EFF1;
+    --char:#1F2A2E; --gray:#55606A; --line:#C9D6DA; --brick:#9C3F2C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:transparent}
+  body{color:var(--char);font-family:Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
+  .wrap{max-width:760px;margin:0 auto;padding:16px}
+  .head{border-left:6px solid var(--teal);padding:4px 0 4px 14px;margin-bottom:14px}
+  .eyebrow{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-dk);font-weight:700}
+  h1{font-size:24px;line-height:1.25;margin:2px 0 4px;color:var(--green)}
+  .sub{margin:0;color:var(--gray)}
+  .card{background:var(--teal-pale);border:1px solid var(--line);border-top:5px solid var(--gold);border-radius:12px;padding:18px}
+  .count{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--gray);margin-bottom:10px}
+  .pips{display:flex;gap:6px}
+  .pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--teal-dk);background:#fff}
+  .pip.on{background:var(--teal-dk)}
+  .q{font-size:19px;font-weight:700;margin:0 0 4px;color:var(--char)}
+  .hint{font-size:14px;color:var(--gray);margin:0 0 12px}
+  .opts{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+  .opt{width:100%;text-align:left;font:inherit;color:var(--char);background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+  .opt:hover{border-color:var(--teal)}
+  .opt:focus-visible,.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .opt[aria-pressed="true"]{border-color:var(--teal-dk);box-shadow:inset 0 0 0 1px var(--teal-dk)}
+  .box{flex:0 0 22px;height:22px;border:2px solid var(--teal-dk);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin-top:1px}
+  .radio .box{border-radius:50%}
+  .opt[aria-pressed="true"] .box{background:var(--teal-dk)}
+  .opt.right{border-color:var(--green)}
+  .opt.wrong{border-color:var(--brick)}
+  .tag{margin-left:auto;font-size:13px;font-weight:700;white-space:nowrap}
+  .tag.r{color:var(--green)} .tag.w{color:var(--brick)}
+  .row{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap}
+  .btn{font:inherit;font-weight:700;border-radius:999px;padding:9px 18px;cursor:pointer;border:2px solid var(--teal-dk)}
+  .btn.primary{background:var(--teal-dk);color:#fff}
+  .btn.ghost{background:#fff;color:var(--teal-dk)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  .note{font-size:14px;color:var(--gray)}
+  .fb{margin-top:14px;background:#fff;border-radius:10px;border-left:6px solid var(--green);padding:12px 14px}
+  .fb.miss{border-left-color:var(--brick)}
+  .verdict{font-weight:700;margin:0 0 4px}
+  .fb.hit .verdict{color:var(--green)} .fb.miss .verdict{color:var(--brick)}
+  .fb p{margin:0}
+  .why{margin-top:6px!important}
+  .sum{text-align:center;padding:6px 0}
+  .score{font-size:40px;font-weight:700;color:var(--green);line-height:1}
+  .sumlist{text-align:left;margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+  .sumlist li{background:#fff;border-radius:8px;padding:8px 12px;border-left:5px solid var(--green)}
+  .sumlist li.miss{border-left-color:var(--brick)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">Module 2 · Evaluate the Ethics</div>
+    <h1>Quick Calls: Who Owns It?</h1>
+    <p class="sub">Four quick questions about who owns what. Answer each one, then see why.</p>
+  </div>
+  <div class="card" id="stage"></div>
+  <div class="sr" id="live" aria-live="polite"></div>
+</div>
+<script>
+(function(){
+  "use strict";
+  /* Each item: q, hint, multi (select all), opts [{t, ok}], why */
+  var Q = [
+  {
+    "q": "You prompt an AI image tool until it makes exactly the graphic you wanted. Who owns it?",
+    "multi": false,
+    "opts": [
+      {
+        "t": "You",
+        "ok": false
+      },
+      {
+        "t": "The AI company",
+        "ok": false
+      },
+      {
+        "t": "Nobody",
+        "ok": true
+      }
+    ],
+    "why": "U.S. copyright protects human authorship only. Writing a prompt is like giving instructions to an artist you hired (U.S. Copyright Office, 2025). A federal court confirmed a machine can't be an author (Thaler v. Perlmutter, 2025)."
+  },
+  {
+    "q": "Maya asks AI for an op-ed draft. She throws out its structure, rewrites nearly every sentence, and adds three arguments of her own. Who owns the published op-ed?",
+    "multi": false,
+    "opts": [
+      {
+        "t": "Maya",
+        "ok": true
+      },
+      {
+        "t": "Nobody",
+        "ok": false
+      },
+      {
+        "t": "The AI company",
+        "ok": false
+      }
+    ],
+    "why": "What you substantially write, arrange, or change is yours. The more of the finished work you actually made, the more of it you hold."
+  },
+  {
+    "q": "Does Baylor own the papers and projects you create here?",
+    "multi": false,
+    "opts": [
+      {
+        "t": "Yes",
+        "ok": false
+      },
+      {
+        "t": "No",
+        "ok": true
+      }
+    ],
+    "why": "You hold the copyright on your academic work (Baylor University, n.d.). Other creators hold the rights to theirs, too."
+  },
+  {
+    "q": "You put a living artist's name in your prompt so your Diadeloso graphic looks like her work. Then you say you designed it. Which are true?",
+    "multi": true,
+    "opts": [
+      {
+        "t": "Nobody owns the AI image",
+        "ok": true
+      },
+      {
+        "t": "Saying you designed it is an Honor Code problem",
+        "ok": true
+      },
+      {
+        "t": "Her style is protected by copyright",
+        "ok": false
+      }
+    ],
+    "why": "Style alone isn't protected, and nobody owns the AI image. But the model learned her style from her work without asking, and claiming you designed it misrepresents authorship."
+  }
+];
+
+  var stage = document.getElementById("stage");
+  var live = document.getElementById("live");
+  var idx = 0, sel = [], checked = false;
+  var results = Q.map(function(){ return null; });
+
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function pips(){
+    var h = '<div class="pips" aria-hidden="true">';
+    for (var i = 0; i < Q.length; i++) h += '<span class="pip' + (i <= idx ? ' on' : '') + '"></span>';
+    return h + '</div>';
+  }
+  function correctSet(item){
+    var out = []; item.opts.forEach(function(o, i){ if (o.ok) out.push(i); }); return out;
+  }
+  function isRight(item){
+    var c = correctSet(item);
+    if (c.length !== sel.length) return false;
+    return c.every(function(i){ return sel.indexOf(i) > -1; });
+  }
+
+  function render(focusFirst){
+    var item = Q[idx], h = '';
+    h += '<div class="count"><span>Question ' + (idx + 1) + ' of ' + Q.length + '</span>' + pips() + '</div>';
+    h += '<p class="q" id="qtext">' + esc(item.q) + '</p>';
+    h += '<p class="hint">' + (item.multi ? 'Select all that apply, then check.' : 'Pick one, then check.') + '</p>';
+    h += '<ul class="opts' + (item.multi ? '' : ' radio') + '" role="group" aria-labelledby="qtext">';
+    item.opts.forEach(function(o, i){
+      var on = sel.indexOf(i) > -1, cls = 'opt', tag = '';
+      if (checked){
+        if (o.ok){ cls += ' right'; tag = '<span class="tag r">✓ Correct answer</span>'; }
+        else if (on){ cls += ' wrong'; tag = '<span class="tag w">✗ Not this one</span>'; }
+      }
+      h += '<li><button type="button" class="' + cls + '" data-i="' + i + '" aria-pressed="' + on + '"' + (checked ? ' disabled' : '') + '>'
+         + '<span class="box" aria-hidden="true">' + (on ? '✓' : '') + '</span><span>' + esc(o.t) + '</span>' + tag + '</button></li>';
+    });
+    h += '</ul>';
+    if (checked){
+      var ok = results[idx];
+      h += '<div class="fb ' + (ok ? 'hit' : 'miss') + '"><p class="verdict">' + (ok ? '✓ You got it.' : 'Not quite.') + '</p>'
+         + '<p class="why"><strong>Here’s why:</strong> ' + esc(item.why) + '</p></div>';
+      h += '<div class="row"><span class="note"></span><button type="button" class="btn primary" id="next">'
+         + (idx === Q.length - 1 ? 'See how you did' : 'Next question') + '</button></div>';
+    } else {
+      h += '<div class="row"><span class="note">' + (sel.length ? '' : 'Choose an answer to continue.') + '</span>'
+         + '<button type="button" class="btn primary" id="check"' + (sel.length ? '' : ' disabled') + '>Check</button></div>';
+    }
+    stage.innerHTML = h;
+    wire();
+    if (focusFirst){ var f = stage.querySelector('.opt'); if (f) f.focus(); }
+    bump();
+  }
+
+  function wire(){
+    Array.prototype.forEach.call(stage.querySelectorAll('.opt'), function(b){
+      b.addEventListener('click', function(){
+        if (checked) return;
+        var i = parseInt(b.getAttribute('data-i'), 10), item = Q[idx];
+        if (item.multi){
+          var at = sel.indexOf(i);
+          if (at > -1) sel.splice(at, 1); else sel.push(i);
+        } else { sel = [i]; }
+        render(false);
+        var again = stage.querySelector('.opt[data-i="' + i + '"]'); if (again) again.focus();
+      });
+    });
+    var c = document.getElementById('check');
+    if (c) c.addEventListener('click', function(){
+      checked = true;
+      results[idx] = isRight(Q[idx]);
+      render(false);
+      live.textContent = (results[idx] ? 'Correct. ' : 'Not quite. ') + 'Here’s why: ' + Q[idx].why;
+      var n = document.getElementById('next'); if (n) n.focus();
+    });
+    var n = document.getElementById('next');
+    if (n) n.addEventListener('click', function(){
+      if (idx === Q.length - 1){ summary(); return; }
+      idx++; sel = []; checked = false; render(true);
+    });
+  }
+
+  function summary(){
+    var score = results.filter(function(r){ return r; }).length;
+    var h = '<div class="sum"><div class="score">' + score + ' of ' + Q.length + '</div>'
+          + '<p>' + (score === Q.length ? 'Nice work. Keep going down the page.' : 'Good start. The rest of this page covers each one.') + '</p></div>';
+    h += '<ul class="sumlist">';
+    Q.forEach(function(item, i){
+      h += '<li class="' + (results[i] ? '' : 'miss') + '"><strong>' + (results[i] ? '✓ ' : '✗ ') + '</strong>' + esc(item.q) + '</li>';
+    });
+    h += '</ul><div class="row"><span></span><button type="button" class="btn ghost" id="again">Start over</button></div>';
+    stage.innerHTML = h;
+    live.textContent = 'You got ' + score + ' of ' + Q.length + '.';
+    document.getElementById('again').addEventListener('click', function(){
+      idx = 0; sel = []; checked = false; results = Q.map(function(){ return null; }); render(true);
+    });
+    bump();
+  }
+
+  /* --- Canvas iframe auto-resize (canonical pattern) --- */
+  var PAD = 24, lastH = 0;
+  function sendHeight(){
+    try{
+      var el = document.querySelector('.wrap');
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:'lti.frameResize', height:h};
+      window.parent.postMessage(msg,'*');
+      window.parent.postMessage(JSON.stringify(msg),'*');
+    }catch(e){}
+  }
+  function bump(){ setTimeout(sendHeight, 80); }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if(window.ResizeObserver){
+    var w = document.querySelector('.wrap');
+    if(w) new ResizeObserver(sendHeight).observe(w);
+  }
+
+  render(false);
+})();
+</script>
+</body>
+</html>
