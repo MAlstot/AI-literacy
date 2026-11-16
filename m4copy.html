@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copy and Try It | The BEARS AI Basics, Module 4</title>
+<!--
+  BEARS AI Basics · Module 4: Reach for the AI Assist
+  Copy widget. One file for every page: load with ?task=writing, role, reading, exam, or problems.
+  No parameter shows every set (preview mode).
+  Nothing is saved or sent anywhere.
+-->
+<style>
+  :root{
+    --green:#154734; --green-deep:#0d2c20; --blue:#3E5384; --blue-lt:#7E91BE; --blue-soft:#E9EDF6;
+    --ink:#1a1a1a; --ink-mid:#4a4f4c;
+    --rule:#DDE3DF; --wash:#F5F7F5; --ok:#1e6b45;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.5;padding:12px}
+  .cw{max-width:820px;margin:0 auto}
+  .set-title{font-size:1.05rem;color:#fff;background:var(--blue);border-left:8px solid var(--green);border-radius:8px;padding:10px 14px;margin:28px 0 12px}
+  .set-title .tag{color:#E9EDF6}
+  .set-title:first-child{margin-top:0}
+  .block{border:1px solid var(--rule);border-left:6px solid var(--blue);border-radius:8px;margin:0 0 12px;background:#fff}
+  .block.generic{border-left-color:#8a918d}
+  .block.rails{border-left-color:var(--green)}
+  .block.sample{border-left-color:var(--blue-lt)}
+  .step{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);margin-bottom:2px}
+  .head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;background:var(--wash);border-radius:0 8px 0 0;border-bottom:1px solid var(--rule)}
+  .label{font-weight:700;color:var(--green);font-size:.98rem}
+  .tag{display:block;font-weight:400;font-size:.82rem;color:var(--ink-mid);margin-top:2px}
+  .copy{font:inherit;font-size:.9rem;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;min-width:84px}
+  .copy:hover{background:var(--green-deep)}
+  .copy:focus-visible{outline:3px solid var(--blue-lt);outline-offset:2px}
+  .copy.done{background:var(--ok)}
+  .text{white-space:pre-wrap;padding:12px 14px;font-size:.95rem}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="cw" id="cw">
+  <div id="out"></div>
+  <p class="sr" id="status" role="status" aria-live="polite"></p>
+</div>
+
+<script>
+(function(){
+  var PARA = "Social media is a big problem for college students in many ways. Students spend a lot of time on their phones and this affects them and it can also affect their grades and their sleep and their friendships. Everyone knows someone who stays up too late scrolling. Some people say social media helps students stay connected, but it is mostly bad. Colleges should do something about this problem because it is important. In conclusion, social media has many effects on students and they should think about how they use it.";
+  var SAMPLE_NOTE = "Written for this course. Not a real student's work.";
+
+  var NOTES = "Intro to Sociology, Ch. 4: Socialization (my notes)\n- socialization = how we learn society's rules\n- primary = family\n- secondary = school, work?\n- agents: family, peers, media\n- Mead: the self, \"I\" and \"me\" ??\n- resocialization: military";
+  var GUIDE = "BIO 1305 Exam 2 Study Guide\n1. Where does glycolysis happen, and what does it produce?\n2. Why does the cell need oxygen at the end of the electron transport chain?\n3. Compare fermentation and aerobic respiration.\n4. What do enzymes do, and what happens when they're heated?\n5. Explain how ATP stores and releases energy.";
+  var WORK = "Problem: A $60 textbook is 25% off. Sales tax is 8%. What do you pay?\nLine 1: discount = 0.25 × 60 = 15\nLine 2: sale price = 60 − 15 = 45\nLine 3: tax = 45 × 0.08 = 0.36\nLine 4: total = 45 + 0.36 = $45.36";
+  var S1 = "Step 1: Copy, paste into a new chat, and send.";
+  var S2 = "Step 2: Start a new chat. Copy, paste, and send.";
+  function withSample(prompt, label, sample){ return prompt + "\n\n" + label + ":\n" + sample; }
+
+  var SETS = {
+    writing: { title: "Try It: Writing", blocks: [
+      { kind:"generic", step:S1, label:"Prompt 1: Generic, with the practice paragraph", tag:SAMPLE_NOTE, text:"Fix this paragraph.\n\n" + PARA },
+      { kind:"rails", step:"Step 2: Start a new chat. Paste and send this first.", label:"Prompt 2: With Rails", text:"I'm a first-year student writing an argumentative paper for my English class. The paper needs to be at least 600 words and no longer than 800. This is my opening paragraph. I need to make sure I have a clear argument. The rest of the paragraphs will be where I go into detail about each concern regarding social media and the evidence. Act as a writing coach and evaluate my first paragraph. Do not rewrite the paragraph or any of the sentences for me. Next, I will give you my paragraph." },
+      { kind:"sample", step:"Step 3: When AI asks for your paragraph, paste this.", label:"Practice paragraph", tag:SAMPLE_NOTE, text:PARA }
+    ]},
+    role: { title: "Optional: Try a Role", blocks: [
+      { kind:"rails", step:"Pick one. Copy, paste into a new chat, and send.", label:"Feedback coach, with the practice paragraph", tag:SAMPLE_NOTE, text:"Act as my feedback coach. A feedback coach points out strengths and weaknesses in my work and explains why, without rewriting it.\n\nHere's my paragraph:\n" + PARA },
+      { kind:"rails", step:"Then try another in a new chat and compare.", label:"Skeptical reader, with the practice paragraph", tag:SAMPLE_NOTE, text:"Act as my skeptical reader. A skeptical reader questions my claims and points out where my reasoning or evidence is thin.\n\nHere's my paragraph:\n" + PARA },
+      { kind:"rails", step:"Or this one.", label:"Curious listener, with the practice paragraph", tag:SAMPLE_NOTE, text:"Act as my curious listener. A curious listener hears my explanation and asks questions that show me what I left out.\n\nHere's my paragraph:\n" + PARA }
+    ]},
+    reading: { title: "Reading and Watching", blocks: [
+      { kind:"generic", step:S1, label:"Generic prompt, with the sample notes", tag:SAMPLE_NOTE, text:withSample("Explain chapter 4 using these notes.", "My notes", NOTES) },
+      { kind:"rails", step:S2, label:"Prompt with rails, with the sample notes", tag:SAMPLE_NOTE, text:withSample("I'm in Intro to Sociology. These are my notes on chapter 4, socialization, and I have a quiz Thursday. Act as my quiz partner. Ask me questions using only my notes to find what I don't understand yet. Ask one question at a time and wait for my answer. Don't explain the answer until I've tried. If my notes are missing something, tell me to check the reading instead of filling it in. When we finish, list what I should review.", "My notes", NOTES) }
+    ]},
+    exam: { title: "Exam Prep", blocks: [
+      { kind:"generic", step:S1, label:"Generic prompt, with the sample study guide", tag:SAMPLE_NOTE, text:withSample("Explain every item on this study guide.", "Study guide", GUIDE) },
+      { kind:"rails", step:S2, label:"Prompt with rails, with the sample study guide", tag:SAMPLE_NOTE, text:withSample("My Biology exam is in a week. Here's the study guide. Act as my quiz partner. Quiz me on the study guide so I can find out what I actually remember. Ask one question at a time and wait for my answer. Don't show the answer until I've tried. After I answer, tell me what was right and what was missing, then move on. Keep track of what I miss and quiz me on those again at the end.", "Study guide", GUIDE) }
+    ]},
+    problems: { title: "Practice Problems", blocks: [
+      { kind:"generic", step:S1, label:"Generic prompt, with the sample work", tag:SAMPLE_NOTE, text:withSample("Check my work.", "My work", WORK) },
+      { kind:"rails", step:S2, label:"Prompt with rails, with the sample work", tag:SAMPLE_NOTE, text:withSample("I'm working on a percent problem for my Quantitative Reasoning class. Here's my work, line by line. Act as my tutor. Check my work and tell me which line has an error and what kind of mistake it is. Don't fix it or give me the correct answer. Wait for me to try again. When I get it right, give me a similar problem to try on my own.", "My work", WORK) }
+    ]}
+  };
+
+  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  var param = (new URLSearchParams(location.search).get("task") || "").toLowerCase();
+  var keys = SETS[param] ? [param] : Object.keys(SETS);
+  var all = [], html = "";
+  keys.forEach(function(k){
+    var s = SETS[k];
+    if (keys.length > 1) html += '<h2 class="set-title">' + esc(s.title) + ' <span class="tag" style="display:inline">(?task=' + k + ')</span></h2>';
+    s.blocks.forEach(function(b){
+      var i = all.length; all.push(b);
+      html += '<div class="block ' + b.kind + '">' +
+        '<div class="head"><span class="label" id="l' + i + '">' + (b.step ? '<span class="step">' + esc(b.step) + '</span><br>' : '') + esc(b.label) + (b.tag ? '<span class="tag">' + esc(b.tag) + '</span>' : '') + '</span>' +
+        '<button type="button" class="copy" data-i="' + i + '" aria-describedby="l' + i + '">Copy</button></div>' +
+        '<div class="text">' + esc(b.text) + '</div></div>';
+    });
+  });
+  document.getElementById("out").innerHTML = html;
+
+  var status = document.getElementById("status");
+  document.getElementById("out").addEventListener("click", function(e){
+    var btn = e.target.closest(".copy"); if (!btn) return;
+    var b = all[+btn.getAttribute("data-i")];
+    function done(){
+      btn.textContent = "Copied!"; btn.classList.add("done");
+      status.textContent = b.label + " copied. Paste it into your AI tool.";
+      setTimeout(function(){ btn.textContent = "Copy"; btn.classList.remove("done"); }, 2000);
+    }
+    function fallback(){
+      var ta = document.createElement("textarea"); ta.value = b.text; ta.setAttribute("readonly","");
+      ta.style.position = "absolute"; ta.style.left = "-9999px"; document.body.appendChild(ta);
+      ta.select(); try { document.execCommand("copy"); done(); } catch(err){ status.textContent = "Copy didn't work. Select the text and copy it instead."; }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(b.text).then(done, fallback); }
+    else { fallback(); }
+  });
+
+  /* --- Canvas iframe auto-resize (correct pattern) ---
+     Measures the widget wrapper, NOT scrollHeight. PAD = body padding top + bottom. */
+  var lastH = 0, PAD = 24;
+  function sendHeight(){
+    try{
+      var el = document.getElementById("cw");
+      var h = (el ? el.offsetHeight : document.body.offsetHeight) + PAD;
+      if (Math.abs(h - lastH) < 4) return;
+      lastH = h;
+      var msg = {subject:"lti.frameResize", height:h};
+      window.parent.postMessage(msg, "*");
+      window.parent.postMessage(JSON.stringify(msg), "*");
+    }catch(e){}
+  }
+  window.addEventListener("load", sendHeight);
+  window.addEventListener("resize", sendHeight);
+  if (window.ResizeObserver){ new ResizeObserver(sendHeight).observe(document.getElementById("cw")); }
+})();
+</script>
+</body>
+</html>
