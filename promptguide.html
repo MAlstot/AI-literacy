@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Guide | The BEARS AI Basics</title>
+<!--
+  BEARS AI Basics · Module 4: Reach for the AI Assist
+  Prompt Guide: take-it-with-you resource. Linked from the M4 Overview, Rails page, and Conclusion.
+  Nothing typed or copied here is saved or sent anywhere.
+-->
+<style>
+  :root{
+    --green:#154734; --green-deep:#0d2c20; --blue:#3E5384; --blue-soft:#E9EDF6;
+    --blue-lt:#7E91BE; --blue-pale:#DDE3F1; --sage:#E7EFE9; --cream:#FBF8F3;
+    --ink:#1F2A2E; --ink-mid:#4a4f4c; --line:#D9D4CF; --ok:#1e6b45;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;line-height:1.5}
+  a{color:var(--blue)}
+  .wrap{max-width:960px;margin:0 auto;padding:16px}
+  header.top{background:var(--green);color:#fff;border-radius:12px 12px 0 0;padding:20px 22px;border-bottom:6px solid var(--blue)}
+  header.top h1{margin:0;font-size:1.6rem;line-height:1.2}
+  header.top p{margin:8px 0 0;color:#E3EDE7}
+  .intro{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;padding:16px 22px;margin-bottom:16px}
+  .intro p{margin:0 0 10px}
+  details.save{background:var(--sage);border-radius:8px;padding:10px 14px}
+  details.save summary{cursor:pointer;font-weight:700;color:var(--green)}
+  details.save ul{margin:8px 0 0;padding-left:20px}
+  nav.jump ul{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0 0 18px;padding:0}
+  nav.jump a{display:inline-block;font-weight:600;font-size:.95rem;padding:8px 14px;border-radius:999px;border:2px solid var(--green);background:#fff;color:var(--green);text-decoration:none}
+  nav.jump a:focus-visible,.copy:focus-visible,.filters button:focus-visible,summary:focus-visible{outline:3px solid var(--blue-lt);outline-offset:2px}
+  section.part{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:0 0 18px}
+  h2{margin:0 0 6px;font-size:1.3rem;color:var(--green);border-bottom:3px solid var(--blue);padding-bottom:4px}
+  h3{margin:16px 0 8px;font-size:1.08rem;color:var(--ink)}
+  .lead{margin:6px 0 12px}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:8px 0 4px;padding:0;list-style:none;counter-reset:s}
+  .steps li{background:var(--blue-soft);border-radius:10px;padding:12px 14px;counter-increment:s}
+  .steps li::before{content:counter(s);display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;margin-right:8px}
+  .steps strong{color:var(--green)}
+  .steps p{margin:6px 0 0;font-size:.92rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin:8px 0 6px}
+  .card{background:var(--sage);border-top:5px solid var(--green);border-radius:10px;padding:14px 14px 12px;display:flex;flex-direction:column}
+  .card.lvl-Reflector{background:var(--blue-soft);border-top-color:var(--blue)}
+  .card.lvl-Opponent{background:var(--blue-pale);border-top-color:var(--blue-lt)}
+  .card h4{margin:0 0 4px;font-size:1.02rem}
+  .lvl{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-mid);margin:0 0 6px}
+  .card p{margin:0 0 8px;font-size:.93rem}
+  .card .good{font-size:.85rem;color:var(--ink-mid)}
+  .card .copyrow{margin-top:auto}
+  .quote{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:6px;padding:10px 12px;margin:6px 0 8px;font-size:.93rem;white-space:pre-wrap}
+  .copy{font:inherit;font-size:.85rem;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer}
+  .copy:hover{background:var(--green-deep)}
+  .copy.done{background:var(--ok)}
+  ul.ctx{margin:6px 0 10px;padding-left:20px}
+  ul.ctx li{margin:0 0 4px}
+  table.rails{width:100%;border-collapse:collapse;margin:6px 0 8px;font-size:.93rem}
+  table.rails th,table.rails td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+  table.rails th{background:var(--sage);color:var(--green)}
+  table.rails td:last-child{width:1%;white-space:nowrap}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px;padding:0;list-style:none}
+  .filters button{font:inherit;font-size:.95rem;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;border:2px solid var(--green);background:#fff;color:var(--green)}
+  .filters button[aria-pressed="true"]{background:var(--green);color:#fff}
+  .alert{background:#FDECEA;border-left:5px solid #8B2820;border-radius:0 8px 8px 0;padding:10px 14px;margin:0 0 12px;font-size:.93rem}
+  .alert strong{color:#8B2820}
+  details.strat{border:1px solid var(--line);border-radius:10px;margin:0 0 10px;background:#fff}
+  details.strat > summary{cursor:pointer;list-style:none;padding:12px 14px;display:flex;gap:10px;align-items:center;font-weight:700;color:var(--green)}
+  details.strat > summary::-webkit-details-marker{display:none}
+  details.strat > summary .rt{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-mid);background:var(--sage);border-radius:999px;padding:2px 8px}
+  details.strat > summary .chev{margin-left:auto;transition:transform .15s}
+  details.strat[open] > summary .chev{transform:rotate(180deg)}
+  .sbody{padding:0 14px 12px}
+  .sbody p{margin:0 0 8px;font-size:.93rem}
+  .next{background:var(--blue-pale);border-radius:6px;padding:8px 10px;font-size:.9rem}
+  .menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin:6px 0}
+  .menu .grp{background:var(--wash,#F5F7F5);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .menu .grp h4{margin:0 0 6px;font-size:.95rem;color:var(--green)}
+  .menu ul{margin:0;padding:0;list-style:none}
+  .menu li{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px dashed var(--line);font-size:.9rem}
+  .menu li:first-child{border-top:0}
+  .menu .copy{padding:4px 8px;font-size:.78rem;flex-shrink:0}
+  .fix{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+  .fix div{background:var(--blue-soft);border-radius:8px;padding:10px 12px;font-size:.92rem}
+  .fix strong{display:block;color:var(--green)}
+  .builder{width:100%;border:0;min-height:900px}
+  .help{background:var(--blue-pale);border-left:5px solid var(--blue-lt);border-radius:0 8px 8px 0;padding:12px 16px}
+  .help p{margin:0 0 8px}
+  footer{font-size:.85rem;color:var(--ink-mid);border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+  footer p{margin:0 0 8px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Prompt Guide: Keep the Thinking Yours</h1>
+    <p>How to ask AI for help that supports your learning instead of replacing it.</p>
+  </header>
+  <section class="intro" aria-label="How to use this guide">
+    <p><strong>You don't need AI to study well.</strong> But when you use it, by choice or because a class requires it, you stay in charge of the thinking.</p>
+    <p>Everything here is a starting point, not a script. Copy what fits, change it to match your class, and check your syllabus for your professor's AI policy first.</p>
+    <details class="save">
+      <summary>Save this page to your phone</summary>
+      <ul>
+        <li><strong>iPhone (Safari):</strong> tap the Share button, then <em>Add to Home Screen</em>.</li>
+        <li><strong>Android (Chrome):</strong> tap the three-dot menu, then <em>Add to Home screen</em>.</li>
+        <li><strong>Laptop:</strong> bookmark this page in your browser.</li>
+      </ul>
+    </details>
+  </section>
+
+  <nav class="jump" aria-label="Jump to a section">
+    <ul>
+      <li><a href="#parts">The four parts</a></li>
+      <li><a href="#roles">Role cards</a></li>
+      <li><a href="#rails">Rails</a></li>
+      <li><a href="#tasks">By study task</a></li>
+      <li><a href="#fixes">When AI goes off track</a></li>
+      <li><a href="#build">Build a prompt</a></li>
+      <li><a href="#help">Get help</a></li>
+    </ul>
+  </nav>
+
+  <section class="part" id="parts" aria-labelledby="h-parts">
+    <h2 id="h-parts">The Four Parts of a Prompt</h2>
+    <p class="lead">A prompt that keeps you thinking tells AI four things.</p>
+    <ol class="steps">
+      <li><strong>Context</strong><p>What you're working on, the requirements, and where you are in it.</p></li>
+      <li><strong>Role</strong><p>The job you want AI to do, with a short description of that job.</p></li>
+      <li><strong>Help Needed</strong><p>One specific goal, so AI knows what success looks like.</p></li>
+      <li><strong>Rails</strong><p>The rules of engagement: what AI can and can't do, and how the conversation goes.</p></li>
+    </ol>
+    <h3>Context: give details</h3>
+    <ul class="ctx">
+      <li><strong>Who you are:</strong> "I'm a first-year student in English 1302."</li>
+      <li><strong>What the assignment is:</strong> paste in the assignment directions and the grading criteria or rubric.</li>
+      <li><strong>The requirements:</strong> length, format, sources, due date.</li>
+      <li><strong>Where you are in it:</strong> just starting, first draft done, studying for the exam.</li>
+    </ul>
+    <h3>Help Needed: name one goal</h3>
+    <p>"Help me" and "give me feedback" make AI guess. Pick one goal at a time.</p>
+    <ul class="ctx">
+      <li><strong>Writing:</strong> "Tell me whether my main point is clear, and where it gets fuzzy."</li>
+      <li><strong>Reading:</strong> "Ask me how and why questions about chapter 3." (encoding)</li>
+      <li><strong>Exam prep:</strong> "Quiz me on the study guide topics I missed last time." (retrieval practice)</li>
+      <li><strong>Practice problems:</strong> "Show me which step has the error, and help me figure out why I made it. Don't fix it for me." (worked examples)</li>
+    </ul>
+  </section>
+
+  <section class="part" id="roles" aria-labelledby="h-roles">
+    <h2 id="h-roles">Role Cards</h2>
+    <p class="lead">A role is a title plus what that job does. The higher the role on the AI Cognitive Use Pyramid, the more of the thinking stays with you. Copy a card into the Role part of your prompt.</p>
+    <div class="grid" id="roleGrid"></div>
+    <p class="good"><strong>Two roles you won't assign.</strong> Evidence isn't a role you give AI. It's what you do when you check AI's work against what you know. Executor (AI does the task for you) fits tasks that aren't the learning, like turning due dates into a calendar.</p>
+  </section>
+
+  <section class="part" id="rails" aria-labelledby="h-rails">
+    <h2 id="h-rails">Rails: Rules of Engagement</h2>
+    <p class="lead">A role tells AI what job to do. Rails set the rules of engagement. You need both. Stack two to four rails at the end of your prompt.</p>
+    <table class="rails">
+      <thead><tr><th scope="col">Type of rail</th><th scope="col">Example</th><th scope="col"><span class="sr">Copy</span></th></tr></thead>
+      <tbody id="railRows"></tbody>
+    </table>
+  </section>
+
+  <section class="part" id="tasks" aria-labelledby="h-tasks">
+    <h2 id="h-tasks">By Study Task: Strategies and Rail Menus</h2>
+    <p class="lead">Pick your task. Each one has a trap to watch for, strategies with starting-point prompts, and a Rail Menu to copy from.</p>
+    <ul class="filters" id="taskFilters" aria-label="Choose a study task"></ul>
+    <div id="taskOut"></div>
+  </section>
+
+  <section class="part" id="fixes" aria-labelledby="h-fixes">
+    <h2 id="h-fixes">When AI Goes Off Track, Revise</h2>
+    <p class="lead">Even a good prompt doesn't always work the first time. You're in charge, so correct it. Ask which part needs fixing, then try again.</p>
+    <div class="fix" id="fixGrid"></div>
+    <p class="lead" style="margin-top:12px"><strong>Check every response.</strong> Did AI follow your rails, or did it do the thinking for you?</p>
+  </section>
+
+  <section class="part" id="build" aria-labelledby="h-build">
+    <h2 id="h-build">Build a Prompt</h2>
+    <p class="lead">Use the Prompt Builder to put all four parts together and get tips on your rails. Nothing you type is saved.</p>
+    <iframe class="builder" id="builder" title="Prompt Builder: write a four-part prompt, get tips, then copy it into your AI tool" src="promptbuilder.html?v=2" loading="lazy" allow="clipboard-write"></iframe>
+  </section>
+
+  <section class="part" id="help" aria-labelledby="h-help">
+    <h2 id="h-help">Bring a Human Into the Loop</h2>
+    <div class="help">
+      <p>Getting help in college is normal, and successful students do it often. AI can be one place to start. It can help you figure out what you're stuck on, so you walk in with better questions and get more out of the session.</p>
+      <p><strong>At Baylor:</strong> your professor's office hours, your TA, tutoring at the Paul L. Foster Success Center, the Center for Writing Excellence, and your subject librarian.</p>
+    </div>
+  </section>
+
+  <p class="sr" id="status" role="status" aria-live="polite"></p>
+
+  <footer>
+    <p>From <strong>The BEARS AI Basics</strong>, Baylor University. Created for the course with the help of AI. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>. You may share this guide and use it in any AI tool.</p>
+    <p>Roles adapted from the AI Cognitive Use Pyramid by Dr. Inara Scott, licensed under CC BY-NC-SA 4.0.</p>
+    <p>Sample prompts were written for this course. AI responses will vary, so check what comes back.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  var COPY = [];
+  function copyBtn(text, label){
+    var i = COPY.length; COPY.push({text:text, label:label});
+    return '<button type="button" class="copy" data-c="' + i + '" aria-label="Copy: ' + esc(label) + '">Copy</button>';
+  }
+
+  /* Role cards */
+  var ROLES = [
+    ["Scaffold","Quiz partner","Act as my quiz partner. A quiz partner asks me questions one at a time and waits for my answer before telling me if I'm right.","Exam prep, reading"],
+    ["Scaffold","Tutor","Act as my tutor. A tutor helps me understand by explaining ideas a different way and asking questions that help me make connections.","Practice problems, reading"],
+    ["Scaffold","Study guide builder","Act as my study guide builder. A study guide builder gives me structure, like headings and blanks, that I fill in myself.","Reading and watching"],
+    ["Reflector","Feedback coach","Act as my feedback coach. A feedback coach points out strengths and weaknesses in my work and explains why, without rewriting it.","Writing, practice problems"],
+    ["Reflector","Curious listener","Act as my curious listener. A curious listener hears my explanation and asks questions that show me what I left out.","Exam prep, reading"],
+    ["Opponent","Skeptical reader","Act as my skeptical reader. A skeptical reader questions my claims and points out where my reasoning or evidence is thin.","Writing"],
+    ["Opponent","Debate partner","Act as my debate partner. A debate partner takes the other side and makes me defend each point.","Writing, discussion prep"]
+  ];
+  document.getElementById("roleGrid").innerHTML = ROLES.map(function(r){
+    return '<div class="card lvl-' + r[0] + '"><span class="lvl">' + esc(r[0]) + '</span><h4>' + esc(r[1]) + '</h4>' +
+      '<p>' + esc(r[2]) + '</p><p class="good">Good for: ' + esc(r[3]) + '</p><div class="copyrow">' + copyBtn(r[2], r[1] + " role") + '</div></div>';
+  }).join("");
+
+  /* Rail types */
+  var RAILS = [
+    ["Start the right way","Next, I'll give you my paragraph. Wait for it."],
+    ["Hold back answers","Don't show the answer until I've tried."],
+    ["Don't do my work","Don't rewrite my paragraph. Point to the sentence instead."],
+    ["One at a time","Ask one question at a time and wait for my answer."],
+    ["Stick to my material","Use only my notes and the rubric."],
+    ["Be honest","Point out weaknesses, not just strengths."],
+    ["Keep it short","Keep each response under 100 words."]
+  ];
+  document.getElementById("railRows").innerHTML = RAILS.map(function(r){
+    return '<tr><th scope="row">' + esc(r[0]) + '</th><td>"' + esc(r[1]) + '"</td><td>' + copyBtn(r[1], r[0] + " rail") + '</td></tr>';
+  }).join("");
+
+  /* Tasks: trap, strategies, rail menu */
+  var TASKS = {
+    writing: { name:"Writing",
+      trap:"Letting AI draft or rewrite your work. Polished sentences feel like your thinking, but the thinking happened in AI, not in you. Check your syllabus: professors set different AI rules for writing.",
+      strats:[
+        { n:"Brainstorm a Topic", role:"Scaffold", why:"Helps you find what you want to write about. You make the choice.",
+          p:"I'm writing a 6-page paper for my religion and culture course on how a faith community has adapted to change. I don't have a topic yet. Interview me about my interests, one question at a time, to help me figure out what I want to write about. Give me 4 topic options, not a thesis. I'll make the choice.",
+          next:"Pick one. Then write two sentences in your own words about why it interests you." },
+        { n:"Argue the Other Side", role:"Opponent", why:"Tests your argument so you can make it stronger.",
+          p:"Here's my thesis for my history paper: the Dust Bowl was caused mainly by drought. Act as my skeptical reader. A skeptical reader questions my claims and points out where my reasoning or evidence is thin. Push back with one counterpoint at a time and wait for my response. Don't write my rebuttal. Tell me what I might need to research.",
+          next:"If the pushback shows a gap, find sources to fill it. A subject librarian can help." },
+        { n:"Check Your Structure", role:"Evidence", why:"AI shows you what your draft actually says. You judge whether it matches what you meant.",
+          p:"Here's my draft. Write a one-line reverse outline of what each paragraph actually says. Don't add points, reorder anything, or comment on the writing.",
+          next:"Compare the reverse outline to what you meant to say. Where they don't match is where to revise." },
+        { n:"Feedback on a Draft", role:"Reflector", why:"Feedback against the assignment, so you know what to revise.",
+          p:"I've drafted most of my essay for my religious history course. Here are my draft, the assignment directions, and the rubric. Act as my feedback coach. A feedback coach points out strengths and weaknesses in my work and explains why, without rewriting it. Tell me which rubric criterion my draft meets least, and where. Be honest, not just positive. One suggestion at a time. Don't rewrite anything or offer to rewrite it.",
+          next:"Revise it yourself. Then take your draft to the Center for Writing Excellence for feedback from a person." },
+        { n:"Polish Your Wording", role:"Reflector", why:"Flags sentences to fix. You decide how to fix them.",
+          p:"Here's my final draft. Flag sentences that are awkward, too long, or run-on. Point to them, but don't rewrite them. If you suggest a change, explain why. Keep my voice.",
+          next:"Before you change anything, check: does it still say what I meant, in my voice?" }
+      ],
+      menu:[
+        ["Keep it my work",["Don't rewrite anything or offer to rewrite it.","Don't write sentences for me. Point to the spot instead.","Give me options, not a thesis."]],
+        ["Stick to the assignment",["Stick to the assignment directions and the rubric.","Judge my draft only against the rubric I gave you."]],
+        ["Be honest",["Point out weaknesses, not just strengths.","Tell me the weakest part first."]],
+        ["One at a time",["One suggestion at a time.","Wait for my response before you move on."]],
+        ["Make me think",["Ask me questions about my argument instead of telling me what to say.","Ask me what I meant before you suggest a change."]],
+        ["Protect my voice",["If you suggest a change, explain why.","Keep my voice. Don't make it sound generic.","Don't change my meaning."]]
+      ] },
+    reading: { name:"Reading and Watching",
+      trap:"\"AI can summarize it, so I don't need to read it.\" The summary feels like learning, but you skipped the encoding work that makes it stick. Read it first, write your own summary, then check it.",
+      strats:[
+        { n:"Quiz Me on My Notes", role:"Scaffold", why:"Turns your notes into retrieval practice.",
+          p:"I'm in Intro to Sociology. Here are my notes on chapter 4, socialization. Act as my quiz partner. A quiz partner asks me questions one at a time and waits for my answer before telling me if I'm right. Ask me 10 questions using only my notes. After I answer all 10, list the topics I need to study more.",
+          next:"Keep your notes closed for every answer. Study the topics you missed first, then ask to be quizzed again." },
+        { n:"How and Why Questions", role:"Scaffold", why:"Builds elaboration: asking how and why, then answering in your own words.",
+          p:"I just finished the section on cognitive dissonance in my psychology reading. Ask me one how or why question about it at a time. I'll answer without looking at the reading. Then tell me what my answer is missing, but don't give me the full answer.",
+          next:"Close the reading before you answer. Then add your best answer to your notes in your own words." },
+        { n:"Skeleton Notes", role:"Scaffold", why:"Turns your own notes into a fill-in-the-blank retrieval activity.",
+          p:"Here's a photo of my handwritten notes from my biology lecture on cell transport. Act as my study guide builder. A study guide builder gives me structure, like headings and blanks, that I fill in myself. Keep my headings and leave blanks for the key terms and ideas. Use only my notes. Don't fill in the blanks.",
+          next:"Fill in the blanks from memory. Then check against your original notes in a different color." },
+        { n:"Note Guide for a Video", role:"Scaffold", why:"Gives you structure so you stay active while you watch. You take the notes.",
+          p:"I'm about to watch a 40-minute documentary on the Great Depression for my history class. Here's the transcript. Create a note-taking guide with section headings and a few questions to answer as I watch. Follow the video's order. Don't summarize the video or answer the questions.",
+          next:"Watch and take your own notes in the guide. Then close it and quiz yourself. If the video belongs to your instructor, ask before you share the transcript." },
+        { n:"Explain It Back", role:"Reflector", why:"You explain it. AI gives feedback on your thinking, not a rewrite.",
+          p:"I read about opportunity cost for my economics class. Here's my explanation in my own words: [your explanation]. Act as my feedback coach. A feedback coach points out strengths and weaknesses in my work and explains why, without rewriting it. Ask me a question instead of correcting me.",
+          next:"Revise your explanation yourself. Tomorrow, explain it again without your notes." }
+      ],
+      menu:[
+        ["Stick to my material",["Use only my notes.","Only ask about what's in the notes I gave you.","If something isn't in my notes, tell me instead of filling it in."]],
+        ["Hold back answers",["Don't show the answer until I've tried.","Don't summarize the reading for me."]],
+        ["One at a time",["Ask one question at a time.","Wait for my answer before you move on."]],
+        ["Make me think",["Ask me how and why questions, not just definitions.","Ask me for an example from my own life.","Make me explain it in my own words."]],
+        ["Feedback, not fixes",["Point out what's missing, but don't rewrite my answer.","Tell me which part is wrong, and let me fix it."]],
+        ["Finish strong",["Keep each question to one sentence.","When we finish, list the topics I missed."]]
+      ] },
+    exam: { name:"Exam Prep",
+      trap:"Pasting the study guide into AI and reading its explanation of every item. It feels like studying, but it's rereading someone else's answers. Answer from memory first, then use AI to check you.",
+      strats:[
+        { n:"Diagnostic Pretest", role:"Scaffold", why:"For when you don't know where to start. A pretest is retrieval practice, and it shows you where to focus.",
+          p:"My biology exam is in 10 days. Here are my lecture notes and the study guide. Give me a short pretest with two questions for each topic on the study guide. Use only my notes and the study guide. No answers until I've answered every question. Then show my strengths and the areas that need more attention.",
+          next:"Spend most of your study time on the areas that need more attention. Don't let AI tell you you're ready." },
+        { n:"Keep Testing Yourself", role:"Scaffold", why:"Retrieval practice, repeated over several days.",
+          p:"Here are my notes from units 3 and 4. Act as my quiz partner. A quiz partner asks me questions one at a time and waits for my answer before telling me if I'm right. Use only my notes. Last time I missed questions on enzymes, so include more of those.",
+          next:"Come back in two or three days and test yourself again. Focus each round on what you missed." },
+        { n:"Map It From Memory", role:"Reflector", why:"You draw the connections. AI asks you to explain them.",
+          p:"Here's a photo of a concept map I drew from memory for my history unit on the Reformation. Ask me to explain each connection, one at a time. Point out missing or unlabeled links, but don't add them for me.",
+          next:"Add the missing links yourself. In a few days, redraw the map from memory and compare." },
+        { n:"Explain It Out Loud", role:"Reflector", why:"Elaboration plus retrieval: explaining out loud, with your notes closed.",
+          p:"I'm going to explain how a bill becomes law, with my notes closed. Act as my curious listener. A curious listener hears my explanation and asks questions that show me what I left out. Ask me one question at a time. Point out gaps, but don't explain it for me.",
+          next:"Write down the gaps AI pointed out and study those next. Voice mode works well for this one." }
+      ],
+      menu:[
+        ["Stick to my materials",["Use only my notes and the study guide.","Don't add topics that aren't in my materials."]],
+        ["Hold back answers",["No answers until I've answered every question.","Don't explain it before I try."]],
+        ["Pace",["Ask one question at a time.","Ask more questions on the topics I missed last time."]],
+        ["Honest feedback",["Show my strengths and the areas that need more attention.","Don't tell me I'm ready. Show me what I missed.","Be direct about wrong answers."]],
+        ["Make me think",["Ask me to explain, not just recall.","Ask me how two topics connect."]],
+        ["Keep my work mine",["Don't write my practice questions for me.","Point out gaps in my concept map, but don't add links.","End by listing the topics I should review next."]]
+      ] },
+    problems: { name:"Practice Problems",
+      trap:"Letting AI solve it while you watch. Following a solution feels like understanding, but on the exam you have to produce the steps yourself. AI makes math mistakes too, so check it against your textbook, notes, or answer key.",
+      strats:[
+        { n:"Hint, Not the Answer", role:"Scaffold", why:"Gets you unstuck without taking the problem away from you.",
+          p:"I'm working on a Calculus I problem set on the chain rule. I'm stuck on problem 6: find the derivative of (3x² + 1)⁵. Act as my tutor. A tutor helps me understand by explaining ideas a different way and asking questions that help me make connections. Give me a hint for the first step only. Don't solve it or show the next step. Wait for me to try.",
+          next:"Try the step. Still stuck? Ask for a second, smaller hint, not the answer." },
+        { n:"Check My Step", role:"Reflector", why:"Finds where your thinking went off track. You fix it.",
+          p:"Here's my work on a stoichiometry problem for General Chemistry, line by line. Tell me if there's an error and which line it's on. Tell me what kind of mistake it is, but don't fix it or show the correct answer.",
+          next:"Find and fix the error yourself. Then rework the problem from the start without looking at your old work." },
+        { n:"Worked Example, Then More Like It", role:"Scaffold", why:"Understand why each step works, then do it yourself.",
+          p:"Show me one worked example of a two-sample t-test and explain why each step works. Then give me a similar problem I haven't seen and leave all the steps for me. Don't show the answer until I submit mine.",
+          next:"Solve the new problem without looking back at the example." }
+      ],
+      menu:[
+        ["Hold back answers",["Don't solve it.","Don't show the next step.","No answers until I've submitted mine."]],
+        ["Hints, not solutions",["Give me a hint for one step only.","If I'm still stuck, give me a smaller hint, not the answer."]],
+        ["Find, don't fix",["Tell me which line has an error, but don't fix it.","Tell me what kind of mistake it is, not how to fix it."]],
+        ["Make me explain",["Ask me why I chose that step.","Make me name the method before I start."]],
+        ["Practice that stretches me",["Give me problems I haven't seen.","Give me more problems like the one I keep missing."]],
+        ["Stick to my course",["Use only the methods in my notes.","Match the notation my textbook uses."]]
+      ] }
+  };
+  var ORDER = ["writing","reading","exam","problems"];
+  var fl = document.getElementById("taskFilters");
+  fl.innerHTML = ORDER.map(function(k, i){
+    return '<li><button type="button" data-t="' + k + '" aria-pressed="' + (i === 0 ? "true" : "false") + '" aria-controls="taskOut">' + esc(TASKS[k].name) + '</button></li>';
+  }).join("");
+
+  function renderTask(k){
+    var t = TASKS[k];
+    var h = '<div class="alert"><strong>Illusion Alert:</strong> ' + esc(t.trap) + '</div>';
+    h += '<h3>Strategies</h3>';
+    t.strats.forEach(function(s, i){
+      h += '<details class="strat"' + (i === 0 ? ' open' : '') + '><summary>' + esc(s.n) + ' <span class="rt">' + esc(s.role) + '</span><span class="chev" aria-hidden="true">&#9662;</span></summary>' +
+        '<div class="sbody"><p>' + esc(s.why) + '</p><div class="quote">' + esc(s.p) + '</div>' +
+        '<p>' + copyBtn(s.p, s.n + " prompt") + '</p><p class="next"><strong>Next step:</strong> ' + esc(s.next) + '</p></div></details>';
+    });
+    h += '<h3>Rail Menu</h3><p>Copy the rails that fit and stack them at the end of your prompt.</p><div class="menu">';
+    t.menu.forEach(function(g){
+      h += '<div class="grp"><h4>' + esc(g[0]) + '</h4><ul>' + g[1].map(function(r){ return '<li><span>' + esc(r) + '</span>' + copyBtn(r, "rail: " + r) + '</li>'; }).join("") + '</ul></div>';
+    });
+    h += '</div>';
+    document.getElementById("taskOut").innerHTML = h;
+  }
+  fl.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    Array.prototype.forEach.call(fl.querySelectorAll("button"), function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    renderTask(b.getAttribute("data-t"));
+  });
+  var start = (location.hash.match(/^#task-(\w+)/) || [])[1];
+  if (start && TASKS[start]){
+    Array.prototype.forEach.call(fl.querySelectorAll("button"), function(x){ x.setAttribute("aria-pressed", x.getAttribute("data-t") === start ? "true" : "false"); });
+    renderTask(start);
+  } else { renderTask("writing"); }
+
+  /* Fixes */
+  var FIXES = [
+    ["It rewrote my work.","Fix the rails: \"Don't rewrite it. Point to the sentence. I'll fix it myself.\""],
+    ["It gave away the answer.","Fix the rails: \"Stop. Don't show answers until I've tried.\""],
+    ["The response is too long.","Fix the help needed or rails: \"One suggestion at a time. Under 100 words.\""],
+    ["It answered something I didn't ask.","Fix the help needed: name one goal."],
+    ["It was generic.","Fix the context: add the class, assignment, and requirements."],
+    ["It forgot its role.","Fix the role: \"Remember, you're my quiz partner.\" Still drifting? Start a new chat with your rails at the top."]
+  ];
+  document.getElementById("fixGrid").innerHTML = FIXES.map(function(f){ return '<div><strong>' + esc(f[0]) + '</strong>' + esc(f[1]) + '</div>'; }).join("");
+
+  /* Copy handling */
+  var status = document.getElementById("status");
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest(".copy"); if (!btn) return;
+    var c = COPY[+btn.getAttribute("data-c")];
+    function done(){
+      var old = btn.textContent; btn.textContent = "Copied!"; btn.classList.add("done");
+      status.textContent = c.label + " copied.";
+      setTimeout(function(){ btn.textContent = old === "Copied!" ? "Copy" : old; btn.classList.remove("done"); }, 2000);
+    }
+    function fallback(){
+      var ta = document.createElement("textarea"); ta.value = c.text; ta.setAttribute("readonly","");
+      ta.style.position = "absolute"; ta.style.left = "-9999px"; document.body.appendChild(ta);
+      ta.select(); try { document.execCommand("copy"); done(); } catch(err){ status.textContent = "Copy didn't work. Select the text and copy it instead."; }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(c.text).then(done, fallback); } else { fallback(); }
+  });
+
+  /* Size the embedded Prompt Builder from its own resize messages */
+  var bf = document.getElementById("builder");
+  window.addEventListener("message", function(e){
+    if (e.source !== bf.contentWindow) return;
+    var d = e.data; if (typeof d === "string"){ try { d = JSON.parse(d); } catch(err){ return; } }
+    if (d && d.subject === "lti.frameResize" && d.height){ bf.style.height = d.height + "px"; bf.style.minHeight = "0"; }
+  });
+})();
+</script>
+</body>
+</html>

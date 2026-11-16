@@ -247,7 +247,7 @@
     else { show("fbCtx","ok","Looks good.","<p>AI knows what you're working on.</p>"); }
 
     // Role
-    if (!r.trim()){ issues++; show("fbRole","try","Who should AI be?","<p>Try a quiz partner, a tutor who gives hints, a feedback coach, or a debate partner.</p>"); }
+    if (!r.trim()){ issues++; show("fbRole","try","Who should AI be?","<p>Try a quiz partner, a tutor, a feedback coach, or a debate partner.</p>"); }
     else if (ROLE_RE.test(r)){ show("fbRole","ok","That role can keep the thinking with you.","<p>Make sure your rails match it.</p>"); }
     else { issues++; show("fbRole","try","Check your role.","<p>Will this role do the work for you, or help you do it? Roles like quiz partner, tutor, or feedback coach keep the thinking with you.</p>"); }
 
