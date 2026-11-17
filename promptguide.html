@@ -27,8 +27,16 @@
   details.save{background:var(--sage);border-radius:8px;padding:10px 14px}
   details.save summary{cursor:pointer;font-weight:700;color:var(--green)}
   details.save ul{margin:8px 0 0;padding-left:20px}
-  nav.jump ul{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0 0 18px;padding:0}
-  nav.jump a{display:inline-block;font-weight:600;font-size:.95rem;padding:8px 14px;border-radius:999px;border:2px solid var(--green);background:#fff;color:var(--green);text-decoration:none}
+  html{scroll-padding-top:76px}
+  @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+  nav.jump{position:sticky;top:0;z-index:20;background:var(--cream);margin:0 -16px 18px;padding:10px 16px;border-bottom:1px solid transparent;transition:box-shadow .15s,border-color .15s}
+  nav.jump.stuck{box-shadow:0 4px 10px rgba(0,0,0,.08);border-bottom-color:var(--line)}
+  nav.jump ul{display:flex;gap:8px;list-style:none;margin:0;padding:0 0 2px;overflow-x:auto;scrollbar-width:thin}
+  nav.jump li{flex:0 0 auto}
+  nav.jump a{display:inline-block;white-space:nowrap;font-weight:600;font-size:.92rem;padding:7px 13px;border-radius:999px;border:2px solid var(--green);background:#fff;color:var(--green);text-decoration:none}
+  nav.jump a[aria-current="true"]{background:var(--green);color:#fff}
+  .totop{margin:14px 0 0;text-align:right;font-size:.88rem}
+  .totop a{font-weight:600;color:var(--blue)}
   nav.jump a:focus-visible,.copy:focus-visible,.filters button:focus-visible,summary:focus-visible{outline:3px solid var(--blue-lt);outline-offset:2px}
   section.part{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:0 0 18px}
   h2{margin:0 0 6px;font-size:1.3rem;color:var(--green);border-bottom:3px solid var(--blue);padding-bottom:4px}
@@ -92,7 +100,7 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="top">
   <header class="top">
     <h1>Prompt Guide: Keep the Thinking Yours</h1>
     <p>How to ask AI for help that supports your learning instead of replacing it.</p>
@@ -110,7 +118,8 @@
     </details>
   </section>
 
-  <nav class="jump" aria-label="Jump to a section">
+  <span id="navsentinel" aria-hidden="true"></span>
+  <nav class="jump" id="jumpnav" aria-label="Jump to a section">
     <ul>
       <li><a href="#parts">The four parts</a></li>
       <li><a href="#roles">Role cards</a></li>
@@ -146,6 +155,7 @@
       <li><strong>Exam prep:</strong> "Quiz me on the study guide topics I missed last time." (retrieval practice)</li>
       <li><strong>Practice problems:</strong> "Show me which step has the error, and help me figure out why I made it. Don't fix it for me." (worked examples)</li>
     </ul>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <section class="part" id="roles" aria-labelledby="h-roles">
@@ -153,6 +163,7 @@
     <p class="lead">A role is a title plus what that job does. The higher the role on the AI Cognitive Use Pyramid, the more of the thinking stays with you. Copy a card into the Role part of your prompt.</p>
     <div class="grid" id="roleGrid"></div>
     <p class="good"><strong>Two roles you won't assign.</strong> Evidence isn't a role you give AI. It's what you do when you check AI's work against what you know. Executor (AI does the task for you) fits tasks that aren't the learning, like turning due dates into a calendar.</p>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <section class="part" id="rails" aria-labelledby="h-rails">
@@ -162,6 +173,7 @@
       <thead><tr><th scope="col">Type of rail</th><th scope="col">Example</th><th scope="col"><span class="sr">Copy</span></th></tr></thead>
       <tbody id="railRows"></tbody>
     </table>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <section class="part" id="tasks" aria-labelledby="h-tasks">
@@ -169,6 +181,7 @@
     <p class="lead">Pick your task. Each one has a trap to watch for, strategies with starting-point prompts, and a Rail Menu to copy from.</p>
     <ul class="filters" id="taskFilters" aria-label="Choose a study task"></ul>
     <div id="taskOut"></div>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <section class="part" id="fixes" aria-labelledby="h-fixes">
@@ -176,12 +189,14 @@
     <p class="lead">Even a good prompt doesn't always work the first time. You're in charge, so correct it. Ask which part needs fixing, then try again.</p>
     <div class="fix" id="fixGrid"></div>
     <p class="lead" style="margin-top:12px"><strong>Check every response.</strong> Did AI follow your rails, or did it do the thinking for you?</p>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <section class="part" id="build" aria-labelledby="h-build">
     <h2 id="h-build">Build a Prompt</h2>
     <p class="lead">Use the Prompt Builder to put all four parts together and get tips on your rails. Nothing you type is saved.</p>
     <iframe class="builder" id="builder" title="Prompt Builder: write a four-part prompt, get tips, then copy it into your AI tool" src="promptbuilder.html?v=2" loading="lazy" allow="clipboard-write"></iframe>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <section class="part" id="help" aria-labelledby="h-help">
@@ -190,6 +205,7 @@
       <p>Getting help in college is normal, and successful students do it often. AI can be one place to start. It can help you figure out what you're stuck on, so you walk in with better questions and get more out of the session.</p>
       <p><strong>At Baylor:</strong> your professor's office hours, your TA, tutoring at the Paul L. Foster Success Center, the Center for Writing Excellence, and your subject librarian.</p>
     </div>
+    <p class="totop"><a href="#top">Back to top &uarr;</a></p>
   </section>
 
   <p class="sr" id="status" role="status" aria-live="polite"></p>
@@ -410,6 +426,38 @@
     if (e.source !== bf.contentWindow) return;
     var d = e.data; if (typeof d === "string"){ try { d = JSON.parse(d); } catch(err){ return; } }
     if (d && d.subject === "lti.frameResize" && d.height){ bf.style.height = d.height + "px"; bf.style.minHeight = "0"; }
+  });
+  /* Sticky nav: shadow when stuck, highlight the section in view */
+  var nav = document.getElementById("jumpnav");
+  var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+  if (window.IntersectionObserver){
+    new IntersectionObserver(function(es){ nav.classList.toggle("stuck", !es[0].isIntersecting); }).observe(document.getElementById("navsentinel"));
+  }
+  var secs = links.map(function(a){ return document.getElementById(a.getAttribute("href").slice(1)); });
+  var ticking = false;
+  function markCurrent(){
+    ticking = false;
+    var on = -1;
+    secs.forEach(function(sec, i){ if (sec && sec.getBoundingClientRect().top <= 110) on = i; });
+    if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 4) on = secs.length - 1;
+    links.forEach(function(a, i){
+      if (i === on){
+        if (a.getAttribute("aria-current") !== "true"){
+          a.setAttribute("aria-current","true");
+          var ul = a.closest("ul"); var l = a.offsetLeft - ul.offsetLeft;
+          if (l < ul.scrollLeft || l + a.offsetWidth > ul.scrollLeft + ul.clientWidth){ ul.scrollLeft = l - 16; }
+        }
+      } else { a.removeAttribute("aria-current"); }
+    });
+  }
+  window.addEventListener("scroll", function(){ if (!ticking){ ticking = true; requestAnimationFrame(markCurrent); } }, {passive:true});
+  markCurrent();
+  /* Move keyboard focus to the section heading after a jump */
+  nav.addEventListener("click", function(e){
+    var a = e.target.closest("a"); if (!a) return;
+    var sec = document.getElementById(a.getAttribute("href").slice(1));
+    var h = sec && sec.querySelector("h2");
+    if (h){ h.setAttribute("tabindex","-1"); setTimeout(function(){ h.focus({preventScroll:true}); }, 350); }
   });
 })();
 </script>
