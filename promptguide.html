@@ -63,10 +63,11 @@
   .copy:hover{background:var(--green-deep)}
   .copy.done{background:var(--ok)}
   .copy.sm{padding:3px 8px;font-size:.76rem;flex-shrink:0}
-  .rl{list-style:none;padding:0;margin:0}
+  .rl,.card .rl{list-style:none;padding:0;margin:0}
   .rl li{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:6px 0;border-top:1px dashed var(--line);font-size:.9rem;margin:0}
   .rl li:first-child{border-top:0}
   .rl .t{font-weight:700;color:var(--green);display:block}
+  .rl .b{background:var(--blue-pale);border-radius:4px;padding:0 3px;color:var(--blue);font-weight:600}
   .menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
   .menu .grp{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
   .menu h4{margin:0 0 4px;font-size:.93rem;color:var(--green)}
@@ -168,7 +169,7 @@
       '<li><strong>Writing:</strong> "Tell me whether my main point is clear, and where it gets fuzzy."</li>' +
       '<li><strong>Reading:</strong> "Ask me how and why questions about [chapter]."</li>' +
       '<li><strong>Exam prep:</strong> "Quiz me on the study guide topics I missed last time."</li>' +
-      '<li><strong>Practice problems:</strong> "Show me which step has the error, and help me figure out why I made it. Don\'t fix it for me."</li></ul></div>';
+      '<li><strong>Practice problems:</strong> "Show me which step has the error, and help me figure out why I made it. Don\'t fix it for me."</li></ul><p class="note">Each study task has a Help Needed Menu with more goals to choose from.</p></div>';
     h += '<div class="card basic"><h3>Rails</h3><p>A role tells AI what job to do. Rails set the rules of engagement. You need both. Stack two to four.</p><ul class="rl">' +
       RAILS.map(function(r){ return '<li><span><span class="t">' + esc(r[0]) + '</span>"' + esc(r[1]) + '"</span>' + copyBtn(r[1], r[0] + " rail", true) + '</li>'; }).join("") + '</ul></div>';
     h += '<div class="card basic"><h3>When AI Goes Off Track, Revise</h3><p>You\'re in charge, so correct it. Ask which part needs fixing, then try again.</p><ul>' +
@@ -184,7 +185,8 @@
 
   /* ---------- Study tasks ---------- */
   var TASKS = {
-    writing: { name:"Writing",
+    writing: { help:[["Is my thesis clear?", "Tell me whether my main point is clear, and where it gets fuzzy."], ["Does my structure flow?", "Tell me whether my paragraphs follow a logical order, and where a reader might get lost."], ["Does my evidence hold up?", "Point to any claim that doesn't have enough evidence behind it."], ["Which sentences are unclear?", "Point to sentences that are wordy or unclear. Don't rewrite them."], ["Does it meet the assignment?", "Tell me which rubric criterion my draft meets least, and where."]],
+      name:"Writing",
       lead:"Use AI to think about your writing, not to write it. Professors set different AI rules for writing, so check your syllabus first.",
       trap:"Letting AI draft or rewrite your work. Polished sentences feel like your thinking, but the thinking happened in AI, not in you.",
       strats:[
@@ -212,7 +214,8 @@
         ["Make me think",["Ask me questions about my argument instead of telling me what to say.","Ask me what I meant before you suggest a change."]],
         ["Protect my voice",["If you suggest a change, explain why.","Keep my voice. Don't make it sound generic.","Don't change my meaning."]]
       ] },
-    reading: { name:"Reading and Watching",
+    reading: { help:[["Check what stuck", "Ask me questions about [chapter or topic] to find out what I remember."], ["Find my gaps", "Look at my notes on [topic] and tell me what's missing, but don't fill it in."], ["Explain, then check me", "Explain [concept] briefly, then ask me questions about what you just explained."], ["Use what I already know", "Ask me about a topic I know well, then explain [concept] using examples from that topic."], ["Ask me how and why", "Ask me how and why questions about [chapter or topic]."], ["Connect ideas", "Ask me how [idea] connects to [another idea]."]],
+      name:"Reading and Watching",
       lead:"Use AI to check what stuck after you read or watch, not to skip the reading.",
       trap:"\"AI can summarize it, so I don't need to read it.\" The summary feels like learning, but you skipped the encoding work that makes it stick. Read it first, write your own summary, then check it.",
       strats:[
@@ -240,7 +243,8 @@
         ["Feedback, not fixes",["Point out what's missing, but don't rewrite my answer.","Tell me which part is wrong, and let me fix it."]],
         ["Finish strong",["Keep each question to one sentence.","When we finish, list the topics I missed."]]
       ] },
-    exam: { name:"Exam Prep",
+    exam: { help:[["Find my weak topics", "Give me a short pretest on my study guide and show which topics need more attention."], ["Practice recall", "Quiz me on the study guide topics I missed last time."], ["Explain it out loud", "Listen to me explain [topic] and ask questions that show what I left out."], ["Connect topics", "Ask me how [topic] and [another topic] connect."]],
+      name:"Exam Prep",
       lead:"Use AI to test yourself, not to reread answers. If it feels a little hard, it's working.",
       trap:"Pasting the study guide into AI and reading its explanation of every item. It feels like studying, but it's rereading someone else's answers. Answer from memory first, then use AI to check you.",
       strats:[
@@ -265,7 +269,8 @@
         ["Make me think",["Ask me to explain, not just recall.","Ask me how two topics connect."]],
         ["Keep my work mine",["Point out gaps in my concept map, but don't add links.","End by listing the topics I should review next."]]
       ] },
-    problems: { name:"Practice Problems",
+    problems: { help:[["Get unstuck", "Give me a hint for the next step only."], ["Find my error", "Show me which step has the error, and help me figure out why I made it. Don't fix it for me."], ["Understand the method", "Show me one worked example of [method] and explain why each step works."], ["Get more practice", "Give me a similar problem I haven't seen, without the answer."]],
+      name:"Practice Problems",
       lead:"Use AI to get unstuck or find your mistake, not to solve it for you. AI makes math mistakes too, so check it against your textbook, notes, or answer key.",
       trap:"Letting AI solve it while you watch. Following a solution feels like understanding, but on the exam you have to produce the steps yourself.",
       strats:[
@@ -297,6 +302,8 @@
         '<div class="tpl">' + marked(s.p) + '</div><div class="row">' + copyBtn(s.p, s.n + " prompt") + '</div>' +
         '<p class="next"><strong>Next step:</strong> ' + esc(s.next) + '</p></div>';
     });
+    h += '<div class="card wide basic"><h3>' + esc(t.name) + ' Help Needed Menu</h3><p>What do you need right now? Pick one goal and copy it into the Help Needed part of your prompt.</p><div class="menu">' +
+      t.help.map(function(x){ return '<div class="grp"><h4>' + esc(x[0]) + '</h4><ul class="rl"><li><span>' + marked(x[1]) + '</span>' + copyBtn(x[1], x[0], true) + '</li></ul></div>'; }).join('') + '</div></div>';
     h += '<div class="card wide basic"><h3>' + esc(t.name) + ' Rail Menu</h3><p>Copy the rails that fit and stack them at the end of your prompt.</p><div class="menu">';
     t.menu.forEach(function(g){
       h += '<div class="grp"><h4>' + esc(g[0]) + '</h4><ul class="rl">' + g[1].map(function(r){ return '<li><span>' + esc(r) + '</span>' + copyBtn(r, "rail: " + r, true) + '</li>'; }).join("") + '</ul></div>';
