@@ -44,8 +44,9 @@
   .card{background:var(--blue-soft);border-top:5px solid var(--blue);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column}
   .card.wide{grid-column:1/-1}
   .card.basic{background:#fff;border:1px solid var(--line);border-top:5px solid var(--green)}
-  .card.alert{background:var(--warn-bg);border-top-color:var(--warn);align-self:start}
-  .card.alert h3{color:var(--warn)}
+  .card.alert{background:#FBDDD8;border:2px solid var(--warn);border-top-width:2px;padding:0 0 4px;align-self:start;overflow:hidden}
+  .card.alert h3{background:var(--warn);color:#fff;margin:0 0 10px;padding:9px 16px;font-size:1.05rem;display:flex;gap:8px;align-items:center}
+  .card.alert p{padding:0 16px;color:#2a1a18}
   .card.role{background:var(--sage);border-top-color:var(--green)}
   .card.lvl-Reflector{background:var(--blue-soft);border-top-color:var(--blue)}
   .card.lvl-Opponent{background:var(--blue-pale);border-top-color:var(--blue-lt)}
@@ -290,7 +291,7 @@
   function taskHTML(k){
     var t = TASKS[k];
     var h = '<p class="sec-lead">' + esc(t.lead) + '</p><div class="grid">';
-    h += '<div class="card alert"><h3>Illusion Alert</h3><p>' + esc(t.trap) + '</p></div>';
+    h += '<div class="card alert" role="note" aria-label="Illusion Alert"><h3><span aria-hidden="true">&#9888;</span> Illusion Alert</h3><p>' + esc(t.trap) + '</p></div>';
     t.strats.forEach(function(s){
       h += '<div class="card"><span class="tag">' + esc(s.role) + '</span><h3>' + esc(s.n) + '</h3><p>' + esc(s.why) + '</p>' +
         '<div class="tpl">' + marked(s.p) + '</div><div class="row">' + copyBtn(s.p, s.n + " prompt") + '</div>' +
