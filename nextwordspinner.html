@@ -61,16 +61,17 @@
 <div class="wrap">
   <div class="band"><span class="tag">Try it</span><h1>The Next-Word Machine</h1></div>
   <div class="intro">
-    <p>A chatbot writes one word at a time. For each spot, it weighs the possible next words and picks one. Press <strong>Pick the next word</strong> until the sentence ends. Then build two more and compare.</p>
+    <p>A chatbot writes one word at a time. For each spot, it weighs the possible next words and picks one. <strong>You don't choose the words. The machine does,</strong> like a spinner where more likely words get a bigger slice.</p>
+    <p>Press <strong>Spin for the next word</strong> until the sentence ends. Then start two more sentences and compare.</p>
     <p class="muted">The odds here are made up to show the idea. A real model weighs thousands of possible words, and its odds come from its training data.</p>
   </div>
   <div class="stage">
     <p class="sentence" id="sentence" aria-live="polite"></p>
     <div class="odds" id="odds"></div>
     <div class="controls">
-      <button class="btn" id="pick" type="button">Pick the next word</button>
+      <button class="btn" id="pick" type="button">Spin for the next word</button>
       <button class="btn ghost" id="again" type="button">Start a new sentence</button>
-      <label class="toggle"><input type="checkbox" id="greedy"> Always pick the most likely word</label>
+      <label class="toggle"><input type="checkbox" id="greedy"> Make the machine always pick the most likely word</label>
     </div>
   </div>
   <div class="log" id="logbox" hidden><h2>Your sentences</h2><ol id="log"></ol></div>
@@ -104,7 +105,7 @@ function render(){
   var o = document.getElementById('odds'); o.innerHTML='';
   var shown = opts || (lastPicked ? lastPicked.from : null);
   if (shown){
-    var h=document.createElement('h2'); h.textContent = opts ? 'Possible next words and their odds:' : 'The odds for the last word were:'; o.appendChild(h);
+    var h=document.createElement('h2'); h.textContent = opts ? 'The machine will pick one of these. Odds of each:' : 'The machine picked from these odds:'; o.appendChild(h);
     shown.forEach(function(op){
       var r=document.createElement('div'); r.className='row' + (!opts && lastPicked && op[0]===lastPicked.word ? ' picked':'');
       r.innerHTML='<span class="word"></span><span class="bar"><span class="fill" style="display:block;width:'+op[1]+'%"></span></span><span class="pct">'+op[1]+'%</span>';
@@ -112,6 +113,7 @@ function render(){
     });
   }
   document.getElementById('pick').disabled = !opts;
+  if (!opts){ var d=document.createElement('p'); d.className='muted'; d.style.margin='10px 0 0'; d.textContent='Sentence done. Press Start a new sentence to see what the machine builds next.'; o.appendChild(d); }
   var lb=document.getElementById('logbox'), lg=document.getElementById('log');
   lb.hidden = finished.length===0; lg.innerHTML='';
   finished.forEach(function(f){ var li=document.createElement('li'); li.textContent=f.text + (f.greedy ? '  (most likely word every time)':''); lg.appendChild(li); });
