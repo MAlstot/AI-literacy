@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How an AI Model Generates Answers</title>
+<title>How an LLM Learns</title>
 <style>
   :root{
     --baylor-green:#154734; --mid-green:#4C7C62; --m1-accent:#E6C24A; --m1-accent-dark:#8A6A14;
@@ -70,7 +70,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="band"><span class="tag">Explore</span><h1>How an AI Model Generates Answers</h1></div>
+  <div class="band"><span class="tag">Explore</span><h1>How an LLM Learns</h1></div>
   <p class="intro muted">Four steps. Each one takes about 30 seconds.</p>
   <ol class="steps" id="steps" aria-label="Training steps"></ol>
   <div class="stage" id="stage" aria-live="polite"></div>
@@ -116,7 +116,8 @@ function render(){
   var st = document.getElementById('stage'); st.innerHTML='';
   if(cur===0){
     st.appendChild(el('h2',null,'Feed it'));
-    st.appendChild(el('p','lead','A model only knows what is in its training data. Pick 3 shelves for your model to learn from.'));
+    st.appendChild(el('p','lead','An LLM only knows what is in its training data. Pick 3 shelves of text for your model to learn from.'));
+    st.appendChild(el('p','muted','Real LLMs learn from trillions of words, from all of these and much more. Yours gets 3 so you can see its blind spots.'));
     var g=el('div','grid'); g.setAttribute('role','group'); g.setAttribute('aria-label','Choose 3 shelves');
     SHELVES.forEach(function(s){
       var b=el('button','opt',s.label); b.type='button'; var on=picked.indexOf(s.id)>-1; b.setAttribute('aria-pressed',on?'true':'false');
@@ -133,11 +134,13 @@ function render(){
       on.forEach(function(s){ if(s.warn){ var w=el('p'); w.innerHTML='<strong>Watch out:</strong> '; w.appendChild(document.createTextNode(s.warn)); r.appendChild(w);} });
       r.appendChild(el('p',null,'Real models learn from far more text, but the rule holds: what is missing or slanted in the data shows up in the answers.'));
       st.appendChild(r);
+      var rb=el('button','btn ghost','Start over'); rb.type='button'; rb.style.marginTop='10px'; rb.addEventListener('click',function(){ picked=[]; render(); }); st.appendChild(rb);
     }
   }
   if(cur===1){
     st.appendChild(el('h2',null,'Predict, check, adjust'));
     st.appendChild(el('p','lead','During training, the model guesses the next word, checks the real text, and adjusts its settings. These settings are called parameters: the weights inside its neural network.'));
+    st.appendChild(el('p',null,'What to do: press the button and watch. The model guesses the missing word, checks the real text, and nudges one setting. Repeat until it gets it right.'));
     var s=el('p','sentence'); s.appendChild(document.createTextNode("Sic 'em, ")); var gs=el('span','guess');
     if(guessStep===0){ gs.textContent='?'; } else { var gg=GUESSES[guessStep-1]; gs.textContent=gg[0]; gs.className='guess '+(guessStep===GUESSES.length?'right':'wrong'); }
     s.appendChild(gs); s.appendChild(document.createTextNode('!')); st.appendChild(s);
@@ -170,9 +173,9 @@ function render(){
     st.appendChild(el('h2',null,'Then training stops'));
     var d=el('div','lock');
     d.innerHTML='<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#154734" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>';
-    var t=el('p','lead'); t.style.margin='0'; t.textContent='The model you chat with is finished. Its parameters are set, and it does not learn from you as you talk.'; d.appendChild(t);
+    var t=el('p','lead'); t.style.margin='0'; t.textContent='The model you chat with is finished. Its parameters are set, and it doesn\u2019t learn from you as you talk.'; d.appendChild(t);
     st.appendChild(d);
-    var r4=el('div','result'); r4.innerHTML='<p>Some apps save notes about you, or keep your chats to help train a <em>future</em> version. Neither one changes the model answering you right now.</p><p><strong>Next on the page:</strong> sort what the model learned in training from what the app saved about you.</p>';
+    var r4=el('div','result'); r4.innerHTML='<p>When it seems to know what you want, it\u2019s predicting the response that best fits your words, based on patterns it learned from its training data.</p><p>Some apps save notes about you, or keep your chats to help train a <em>future</em> version. Neither one changes the model answering you right now.</p>';
     st.appendChild(r4);
   }
   seen[cur]=true;
