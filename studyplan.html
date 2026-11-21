@@ -151,8 +151,8 @@
   };
 
   var Q3 = {
-    title: "If you get stuck, who will you ask first?",
-    help: "Choose one. This one is optional.",
+    title: "If you get stuck, who will you ask?",
+    help: "Check everyone you might go to. This one is optional.",
     opts: [
       { text: "My professor or TA, in office hours", tag: "office" },
       { text: "A classmate or study partner (if my professor allows it)", tag: "peer" },
@@ -201,15 +201,15 @@
 
   var stage = document.getElementById("stage");
   var step = 0;               // 0 intro, 1-3 questions, 4 plan
-  var a1 = null, a2 = [], a3 = null;
+  var a1 = null, a2 = [], a3 = [];
   var KEY_CHECKUP = "bears-m3-checkup", KEY_PLAN = "bears-m3-plan";
 
   function load(k){ try { var v = window.localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch(e){ return null; } }
   var checkup = load(KEY_CHECKUP);
   var saved = load(KEY_PLAN);
-  if (saved && saved.v === 1){ a1 = saved.a1; a2 = saved.a2 || []; a3 = saved.a3; step = 4; }
+  if (saved && saved.v === 1){ a1 = saved.a1; a2 = saved.a2 || []; a3 = (typeof saved.a3 === "number") ? [saved.a3] : (saved.a3 || []); step = 4; }
 
-  function save(){ try { window.localStorage.setItem(KEY_PLAN, JSON.stringify({ v: 1, a1: a1, a2: a2.slice(), a3: a3 })); } catch(e){} }
+  function save(){ try { window.localStorage.setItem(KEY_PLAN, JSON.stringify({ v: 1, a1: a1, a2: a2.slice(), a3: a3.slice() })); } catch(e){} }
   function clearSaved(){ try { window.localStorage.removeItem(KEY_PLAN); } catch(e){} }
 
   function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -260,7 +260,12 @@
          + '<button class="btn" type="button" id="go">Next</button></div>';
     }
     else if (step === 3){
-      h += radioQ(Q3, "q3", a3);
+      h += progress() + '<fieldset><legend>' + Q3.title + '</legend><p class="help">' + Q3.help + '</p><div class="opts">';
+      Q3.opts.forEach(function(o, i){
+        var on = a3.indexOf(i) > -1;
+        h += '<label class="opt' + (on ? ' sel' : '') + '"><input type="checkbox" name="q3" value="' + i + '"' + (on ? ' checked' : '') + '><span>' + esc(o.text) + '</span></label>';
+      });
+      h += '</div></fieldset>';
       h += '<div class="acts"><button class="btn ghost" type="button" id="back">Back</button>'
          + '<button class="btn" type="button" id="go">See my plan</button></div>';
     }
@@ -311,7 +316,7 @@
       cmp = { added: added, dropped: dropped, start: start };
     }
 
-    var help = (a3 !== null) ? HELP[Q3.opts[a3].tag] : null;
+    var help = a3.slice().sort(function(x, y){ return x - y; }).map(function(i){ return HELP[Q3.opts[i].tag]; });
     return { header: header, strong: strong, watch: watch, cmp: cmp, help: help };
   }
 
@@ -329,7 +334,7 @@
       if (!c.added.length && !c.dropped.length) inner += '<p class="sub">Same habits as last time</p>' + list(['Your plan matches your Check-Up. Is there one strategy from this module you could add?']);
       h += '<div class="sec cmp"><h3><span class="ic" aria-hidden="true">&#8644;</span>Compared with my Study Check-Up</h3>' + inner + '</div>';
     }
-    if (r.help) h += '<div class="sec next"><h3><span class="ic" aria-hidden="true">&#8594;</span>If I get stuck</h3>' + list([esc(r.help)]) + '</div>';
+    if (r.help.length) h += '<div class="sec next"><h3><span class="ic" aria-hidden="true">&#8594;</span>If I get stuck</h3>' + list(r.help.map(esc)) + '</div>';
     h += '<div class="closing"><p>' + CLOSING + '</p></div>';
     h += '<div class="acts"><button class="btn" type="button" id="copy">Copy my plan</button>'
        + '<button class="btn ghost" type="button" id="restart">Start over</button>'
@@ -353,7 +358,7 @@
       if (r.cmp.dropped.length) out.push("  Leaving behind: " + r.cmp.dropped.join("; "));
       out.push("");
     }
-    if (r.help) out.push("If I get stuck: " + r.help);
+    if (r.help.length) out.push("If I get stuck: " + r.help.join(" "));
     return out.join("\n");
   }
 
@@ -389,16 +394,17 @@
     Array.prototype.forEach.call(stage.querySelectorAll('input[type=radio]'), function(inp){
       inp.addEventListener("change", function(){
         var v = parseInt(inp.value, 10);
-        if (inp.name === "q1") a1 = v; else a3 = v;
+        a1 = v;
         Array.prototype.forEach.call(stage.querySelectorAll('input[name=' + inp.name + ']'), function(o){ o.parentNode.classList.toggle("sel", o.checked); });
         if (go){ go.disabled = false; var hint = stage.querySelector(".hint"); if (hint) hint.parentNode.removeChild(hint); }
       });
     });
     Array.prototype.forEach.call(stage.querySelectorAll('input[type=checkbox]'), function(inp){
       inp.addEventListener("change", function(){
-        var v = parseInt(inp.value, 10), i = a2.indexOf(v);
-        if (inp.checked && i === -1) a2.push(v);
-        if (!inp.checked && i > -1) a2.splice(i, 1);
+        var arr = (inp.name === "q3") ? a3 : a2;
+        var v = parseInt(inp.value, 10), i = arr.indexOf(v);
+        if (inp.checked && i === -1) arr.push(v);
+        if (!inp.checked && i > -1) arr.splice(i, 1);
         inp.parentNode.classList.toggle("sel", inp.checked);
       });
     });
@@ -406,7 +412,7 @@
     var c = document.getElementById("copy");
     if (c) c.addEventListener("click", copyResults);
     var r = document.getElementById("restart");
-    if (r) r.addEventListener("click", function(){ clearSaved(); step = 0; a1 = null; a2 = []; a3 = null; render(true); });
+    if (r) r.addEventListener("click", function(){ clearSaved(); step = 0; a1 = null; a2 = []; a3 = []; render(true); });
   }
 
   /* --- Canvas iframe auto-resize (canonical pattern) --- */
