@@ -132,24 +132,15 @@
     help: "Check everything you did, even a little.",
     opts: [
       { id: 1,  text: "Reread my notes or the chapter", tag: "fragile" },
-      { id: 2,  text: "Closed my notes and wrote down everything I could remember", tag: "durable" },
+      { id: 2,  text: "Closed my notes and wrote down everything I could remember, then checked", tag: "durable" },
       { id: 3,  text: "Highlighted or underlined", tag: "fragile" },
-      { id: 16, text: "Worked through the professor\u2019s study guide with my notes open", tag: "fragile" },
-      { id: 4,  text: "Had AI quiz me, and answered each question before looking", tag: "durable" },
+      { id: 9,  text: "Quizzed myself with flashcards or practice questions (or had AI quiz me), answering before I checked", tag: "durable" },
       { id: 5,  text: "Copied my notes over to make them neat", tag: "fragile" },
-      { id: 6,  text: "Asked myself “why?” or “how?” and explained it out loud", tag: "durable" },
+      { id: 21, text: "Drew a concept map from memory, then checked my notes", tag: "durable" },
+      { id: 16, text: "Worked through the professor\u2019s study guide with my notes open", tag: "fragile" },
+      { id: 6,  text: "Asked myself \u201cwhy?\u201d or \u201chow?\u201d and explained it in my own words", tag: "durable" },
       { id: 7,  text: "Asked AI to summarize the reading or the lecture", tag: "fragile" },
-      { id: 19, text: "Studied with a classmate or small group", tag: "depends" },
-      { id: 8,  text: "Flipped through flashcards and checked the answer right away", tag: "fragile" },
-      { id: 9,  text: "Tested myself with flashcards, saying the answer before flipping", tag: "durable" },
-      { id: 17, text: "Answered the professor\u2019s study guide from memory first, then checked my notes", tag: "durable" },
-      { id: 10, text: "Watched or listened to someone explain it (video, tutor, AI)", tag: "fragile" },
-      { id: 11, text: "Mixed different kinds of problems together instead of doing one kind at a time", tag: "durable" },
-      { id: 12, text: "Read a study guide that AI made for me", tag: "fragile" },
-      { id: 13, text: "Drew a diagram, chart, or sketch and explained it", tag: "durable" },
-      { id: 18, text: "Wrote my own practice test and answer key", tag: "durable" },
-      { id: 14, text: "Studied with my phone nearby or other tabs open", tag: "fragile" },
-      { id: 15, text: "Did practice problems or an old exam without looking at the answers first", tag: "durable" }
+      { id: 24, text: "Studied in short sessions spread over several days", tag: "durable" }
     ]
   };
 
@@ -174,29 +165,20 @@
 
   var WORKING = {
     spaced: "<b>Starting early and spreading it out.</b> Coming back to material over several days gives your memory time to settle, and each return makes it stronger.",
-    2:  "<b>Writing down what you remembered.</b> Pulling information out of your memory is one of the strongest ways to learn it. It’s called retrieval practice.",
-    4:  "<b>Having AI quiz you, and answering first.</b> That’s retrieval practice. Answering before you look is what makes it work.",
-    6:  "<b>Asking why and how.</b> Connecting new material to what you already know makes it stick. It’s called elaboration.",
-    9:  "<b>Testing yourself before flipping.</b> That pause where you try to remember is where the learning happens.",
-    11: "<b>Mixing problem types.</b> It feels harder, and that’s the point. It trains you to recognize which method a problem needs, which is exactly what an exam asks.",
-    13: "<b>Drawing it out.</b> Pairing words with a picture gives your memory two ways to hold on to an idea. It’s called dual coding.",
-    19: "<b>Studying with others.</b> A group can keep you going. It works best when you quiz each other or take turns explaining without notes. If the group mostly rereads together, it\u2019s the same as studying alone, just slower.",
-    17: "<b>Answering the study guide from memory first.</b> That turns a study guide into a practice test. Checking your notes afterward shows you exactly what you missed.",
-    18: "<b>Writing your own practice test.</b> Deciding what to ask makes you think about what matters most. Taking it later, without peeking at your answer key, is retrieval practice.",
-    15: "<b>Practicing without peeking.</b> Working problems before checking the answers is retrieval practice, and it shows you what you actually know."
+    2:  "<b>Writing down what you remembered.</b> Pulling information out of your memory is one of the strongest ways to learn it. It\u2019s called retrieval practice.",
+    9:  "<b>Answering before you check.</b> Whether it\u2019s a flashcard, a practice question, or an AI quiz, that pause where you try to remember is where the learning happens.",
+    21: "<b>Mapping from memory.</b> Rebuilding how ideas connect, without looking, is retrieval practice and schema building at once.",
+    6:  "<b>Asking why and how.</b> Connecting new material to what you already know makes it stick. It\u2019s called elaboration.",
+    24: "<b>Short sessions over several days.</b> Each return to the material, with sleep in between, makes the memory stronger."
   };
 
   var FRAGILE = {
     cram: "<b>Most of the studying happened the last night.</b> Cramming can get you through the next morning, but much of it fades fast. Memory needs time and sleep to settle.",
     1:  "<b>Rereading.</b> It feels productive because everything looks familiar. But recognizing something on the page is not the same as being able to pull it up on a test.",
     3:  "<b>Highlighting.</b> Choosing what to mark can help a little. On its own, it mostly makes the page look studied without testing what you know.",
-    5:  "<b>Recopying notes.</b> Neat notes feel like progress, but copying doesn’t make you remember. Your hand does the work, not your memory.",
-    7:  "<b>AI summaries.</b> A summary reads smoothly, so it feels like understanding. But the thinking was the tool’s, not yours. That’s fragile learning: it looks and feels real, and it doesn’t last.",
-    16: "<b>Working the study guide with your notes open.</b> It feels like practice, but the answers were in front of you the whole time. The exam won\u2019t let you look. Try answering from memory first, then check.",
-    8:  "<b>Flipping flashcards right away.</b> If you see the answer before trying to remember it, the card is doing the work. Try answering first.",
-    10: "<b>Watching or listening to explanations.</b> Helpful for understanding, but following someone else’s explanation is not the same as being able to give one. Pair it with testing yourself.",
-    12: "<b>AI-made study guides.</b> Reading one feels like studying. But you didn’t make the connections, so they may not be there when you need them.",
-    14: "<b>Phone or tabs nearby.</b> Your working memory is small. Every notification takes a piece of it, and that’s space your studying needed."
+    5:  "<b>Recopying notes.</b> Neat notes feel like progress, but copying doesn\u2019t make you remember. Your hand does the work, not your memory.",
+    7:  "<b>AI summaries.</b> A summary reads smoothly, so it feels like understanding. But the thinking was the tool\u2019s, not yours. That\u2019s fragile learning: it looks and feels real, and it doesn\u2019t last.",
+    16: "<b>Working the study guide with your notes open.</b> It feels like practice, but the answers were in front of you the whole time. The exam won\u2019t let you look. Try answering from memory first, then check."
   };
 
   var POINTERS = {
@@ -300,8 +282,7 @@
 
     var work = [];
     if (t1 === "spaced") work.push(WORKING.spaced);
-    dur.forEach(function(o){ if (WORKING[o.id]) work.push(WORKING[o.id]); });
-    if (has(19)) work.push(WORKING[19]);
+    dur.forEach(function(o){ if (WORKING[o.id] && !(o.id === 24 && t1 === "spaced")) work.push(WORKING[o.id]); });
 
     var frag = [];
     if (t1 === "cram") frag.push(FRAGILE.cram);
@@ -310,16 +291,13 @@
     var ptr = [];
     function add(k){ if (ptr.indexOf(POINTERS[k]) === -1) ptr.push(POINTERS[k]); }
     if (t3 === "illusion") add("illusion");
-    if (t3 !== "illusion" && (has(1) || has(3) || has(5) || has(10))) add("reread");  /* illusion already points to Encoding */
-    var late = (t1 === "cram" || t1 === "short");
+    if (t3 !== "illusion" && (has(1) || has(3) || has(5))) add("reread");  /* illusion already points to Encoding */
+    var late = (t1 === "cram" || t1 === "short") && !has(24);
     if (late && has(16)) add("both");
     else if (late) add("spacing");
     if (has(16) && !late) add("guide");
-    if (has(8)) add("flash");
-    if (has(14)) add("load");
     if (dur.length <= 1) add("basics");
-    if (has(7) || has(12)) add("ai");
-    if (has(4)) add("aiquiz");
+    if (has(7)) add("ai");
     if (ptr.length === 0) add("science");
     ptr = ptr.slice(0, 3);
 

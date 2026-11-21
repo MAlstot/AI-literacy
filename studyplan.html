@@ -132,31 +132,21 @@
   };
 
   /* Same ids as the Study Check-Up, in the future tense, plus four Module 3
-     strategies the Check-Up didn't list (ids 20 to 23). */
+     strategies. Both lists hold the same 10 habits: five fluency traps and five strategies. */
   var Q2 = {
     title: "What will you do?",
-    help: "Check everything you plan to do. Be honest: it’s fine to keep some old habits.",
+    help: "Check everything you plan to do. Be honest: it\u2019s fine to keep some old habits.",
     opts: [
       { id: 1,  text: "Reread my notes or the chapter", tag: "fragile" },
       { id: 2,  text: "Close my notes and write down everything I can remember, then check", tag: "durable" },
       { id: 3,  text: "Highlight or underline", tag: "fragile" },
-      { id: 16, text: "Work through the professor’s study guide with my notes open", tag: "fragile" },
-      { id: 17, text: "Answer the professor’s study guide from memory first, then check my notes", tag: "durable" },
-      { id: 6,  text: "Ask myself “why?” or “how?” and explain it in my own words", tag: "durable" },
-      { id: 13, text: "Draw a diagram, chart, or sketch and explain it", tag: "durable" },
-      { id: 20, text: "Find or make a concrete example for each new idea", tag: "durable" },
-      { id: 21, text: "Draw a concept map and label every line", tag: "durable" },
-      { id: 11, text: "Mix different kinds of problems together instead of doing one kind at a time", tag: "durable" },
+      { id: 9,  text: "Quiz myself with flashcards or practice questions (or have AI quiz me), answering before I check", tag: "durable" },
       { id: 5,  text: "Copy my notes over to make them neat", tag: "fragile" },
-      { id: 8,  text: "Flip through flashcards and check the answer right away", tag: "fragile" },
-      { id: 9,  text: "Test myself with flashcards, saying the answer before flipping", tag: "durable" },
-      { id: 15, text: "Do practice problems or an old exam without looking at the answers first", tag: "durable" },
-      { id: 18, text: "Write my own practice test and answer key", tag: "durable" },
-      { id: 10, text: "Watch or listen to someone explain it (a video or a tutor)", tag: "fragile" },
-      { id: 19, text: "Study with a classmate or small group", tag: "depends" },
-      { id: 14, text: "Study with my phone nearby or other tabs open", tag: "fragile" },
-      { id: 22, text: "Put my phone away and close extra tabs", tag: "durable" },
-      { id: 23, text: "Keep a steady sleep schedule and skip the all-nighter", tag: "durable" }
+      { id: 21, text: "Draw a concept map from memory, then check my notes", tag: "durable" },
+      { id: 16, text: "Work through the professor\u2019s study guide with my notes open", tag: "fragile" },
+      { id: 6,  text: "Ask myself \u201cwhy?\u201d or \u201chow?\u201d and explain it in my own words", tag: "durable" },
+      { id: 7,  text: "Ask AI to summarize the reading or the lecture", tag: "fragile" },
+      { id: 24, text: "Study in short sessions spread over several days", tag: "durable" }
     ]
   };
 
@@ -182,18 +172,10 @@
   var STRONG = {
     spaced: "<b>Starting early and spreading it out.</b> Short sessions over several days, with sleep in between, give each idea time to settle.",
     2:  "<b>Brain dump, then check.</b> Retrieval practice: pull it out first, then fix what you missed.",
-    17: "<b>Study guide from memory first.</b> That turns the study guide into a practice test.",
+    9:  "<b>Answer before you check.</b> Flashcard, practice question, or AI quiz: the pause where you try to remember is where the learning happens.",
+    21: "<b>Concept map from memory.</b> Rebuilding how ideas connect, then checking, is retrieval and schema building at once.",
     6:  "<b>Why and how, in your own words.</b> Elaboration: it gives new ideas something to stick to.",
-    13: "<b>Draw it and explain it.</b> Dual coding: words and a picture, so your memory has two ways in.",
-    20: "<b>Concrete examples.</b> Explain how each example matches the idea, then make your own.",
-    21: "<b>Concept map with labeled lines.</b> Deciding how ideas connect builds the connections.",
-    11: "<b>Mixing problem types.</b> Interleaving trains you to tell which method each problem needs.",
-    9:  "<b>Answer before you flip.</b> That pause where you try to remember is where the learning happens.",
-    15: "<b>Practice without peeking.</b> It shows you what you actually know.",
-    18: "<b>Your own practice test.</b> Writing it makes you decide what matters. Taking it later, without the key, is retrieval.",
-    22: "<b>Phone away, tabs closed.</b> More of your working memory goes to the learning.",
-    23: "<b>Steady sleep.</b> Sleep helps settle what you studied each day.",
-    19: "<b>Studying with others.</b> Make it count: quiz each other or take turns explaining without notes."
+    24: "<b>Short sessions over several days.</b> Each return, with sleep in between, makes the memory stronger."
   };
 
   var WATCH = {
@@ -201,10 +183,8 @@
     1:  "<b>Rereading.</b> If you keep it, close the book afterward and write down what you remember.",
     3:  "<b>Highlighting.</b> Turn what you highlight into why and how questions, then answer them without looking.",
     16: "<b>Study guide with notes open.</b> Answer from memory first, then open your notes to check.",
-    5:  "<b>Recopying notes.</b> Redraw the ideas as a sketch or concept map instead of copying the words.",
-    8:  "<b>Flipping flashcards right away.</b> Say the answer first. Put the ones you miss in a “not yet” pile.",
-    10: "<b>Watching explanations.</b> Afterward, explain it back in your own words without the video.",
-    14: "<b>Phone or tabs nearby.</b> Every notification takes a piece of your working memory. Put it in another room."
+    5:  "<b>Recopying notes.</b> Redraw the ideas as a concept map from memory instead of copying the words.",
+    7:  "<b>AI summaries.</b> If you read one, close it and explain the ideas in your own words, then check."
   };
 
   var HELP = {
@@ -313,8 +293,7 @@
 
     var strong = [];
     if (t1 === "spaced") strong.push(STRONG.spaced);
-    dur.forEach(function(o){ if (STRONG[o.id]) strong.push(STRONG[o.id]); });
-    if (a2.indexOf(19) > -1) strong.push(STRONG[19]);
+    dur.forEach(function(o){ if (STRONG[o.id] && !(o.id === 24 && t1 === "spaced")) strong.push(STRONG[o.id]); });
 
     var watch = [];
     if (t1 === "cram") watch.push(WATCH.cram);
